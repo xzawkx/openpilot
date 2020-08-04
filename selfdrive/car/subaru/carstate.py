@@ -50,8 +50,8 @@ class CarState(CarStateBase):
     ret.steeringTorque = cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD[self.car_fingerprint]
 
-    ret.cruiseState.enabled = cp.vl["CruiseControl"]['Cruise_Activated'] != 0
-    ret.cruiseState.available = cp.vl["CruiseControl"]['Cruise_On'] != 0
+    ret.cruiseState.enabled = cp_cam.vl["ES_DashStatus"]['Cruise_Activated'] != 0
+    ret.cruiseState.available = cp_cam.vl["ES_DashStatus"]['Cruise_On'] != 0
     ret.cruiseState.speed = cp_cam.vl["ES_DashStatus"]['Cruise_Set_Speed'] * CV.KPH_TO_MS
 
     # ACC speed units
@@ -125,8 +125,8 @@ class CarState(CarStateBase):
       # sig_name, sig_address, default
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
       ("Steering_Angle", "Steering_Torque", 0),
-      ("Cruise_On", "CruiseControl", 0),
-      ("Cruise_Activated", "CruiseControl", 0),
+      #("Cruise_On", "CruiseControl", 0),
+      #("Cruise_Activated", "CruiseControl", 0),
       ("Brake_Pedal", "Brake_Pedal", 0),
       ("Throttle_Pedal", "Throttle", 0),
       ("LEFT_BLINKER", "Dashlights", 0),
@@ -167,20 +167,20 @@ class CarState(CarStateBase):
       checks += [
         ("Dashlights", 10),
         ("BodyInfo", 10),
-        ("CruiseControl", 20),
+        #("CruiseControl", 20),
       ]
 
     if CP.carFingerprint == CAR.FORESTER_PREGLOBAL:
       checks += [
         ("Dashlights", 20),
         ("BodyInfo", 1),
-        ("CruiseControl", 50),
+        #("CruiseControl", 50),
       ]
 
     if CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
       checks += [
         ("Dashlights", 10),
-        ("CruiseControl", 50),
+        #("CruiseControl", 50),
       ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
@@ -189,6 +189,8 @@ class CarState(CarStateBase):
   def get_cam_can_parser(CP):
     if CP.carFingerprint in PREGLOBAL_CAR:
       signals = [
+        ("Cruise_On", "ES_DashStatus", 0),
+        ("Cruise_Activated", "ES_DashStatus", 0),
         ("Cruise_Set_Speed", "ES_DashStatus", 0),
         ("Not_Ready_Startup", "ES_DashStatus", 0),
 
@@ -216,6 +218,8 @@ class CarState(CarStateBase):
       ]
     else:
       signals = [
+        ("Cruise_On", "ES_DashStatus", 0),
+        ("Cruise_Activated", "ES_DashStatus", 0),
         ("Cruise_Set_Speed", "ES_DashStatus", 0),
         ("Conventional_Cruise", "ES_DashStatus", 0),
 
