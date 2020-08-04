@@ -1,7 +1,7 @@
 [submodule "panda"]
 	path = panda
 	url = ../../martinl/panda.git
-	branch = Subaru-PR-master
+	branch = forester-2020
 [submodule "opendbc"]
 	path = opendbc
 	url = ../../martinl/opendbc.git
