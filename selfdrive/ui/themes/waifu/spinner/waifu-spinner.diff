@@ -1,8 +1,8 @@
 diff --git a/selfdrive/common/spinner.c b/selfdrive/common/spinner.c
-index 99e0ed42..2f22619d 100644
+index c571b510..2f22619d 100644
 --- a/selfdrive/common/spinner.c
 +++ b/selfdrive/common/spinner.c
-@@ -21,14 +21,14 @@
+@@ -21,8 +21,8 @@
  #define SPINTEXT_LENGTH 128
  
  // external resources linked in
@@ -11,19 +11,9 @@ index 99e0ed42..2f22619d 100644
 +extern const unsigned char _binary_cheeky_rabbit_ttf_start[];
 +extern const unsigned char _binary_cheeky_rabbit_ttf_end[];
  
--extern const unsigned char _binary_img_spinner_track_png_start[];
--extern const unsigned char _binary_img_spinner_track_png_end[];
-+extern const unsigned char _binary_spinner_track_png_start[];
-+extern const unsigned char _binary_spinner_track_png_end[];
- 
--extern const unsigned char _binary_img_spinner_comma_png_start[];
--extern const unsigned char _binary_img_spinner_comma_png_end[];
-+extern const unsigned char _binary_spinner_comma_png_start[];
-+extern const unsigned char _binary_spinner_comma_png_end[];
- 
- bool stdin_input_available() {
-   struct timeval timeout;
-@@ -65,17 +65,17 @@ int spin(int argc, char** argv) {
+ extern const unsigned char _binary_spinner_track_png_start[];
+ extern const unsigned char _binary_spinner_track_png_end[];
+@@ -65,7 +65,7 @@ int spin(int argc, char** argv) {
    NVGcontext *vg = nvgCreateGLES3(NVG_ANTIALIAS | NVG_STENCIL_STROKES);
    assert(vg);
  
@@ -31,63 +21,32 @@ index 99e0ed42..2f22619d 100644
 +  int font = nvgCreateFontMem(vg, "Bold", (unsigned char*)_binary_cheeky_rabbit_ttf_start, _binary_cheeky_rabbit_ttf_end-_binary_cheeky_rabbit_ttf_start, 0);
    assert(font >= 0);
  
--  int spinner_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_img_spinner_track_png_start, _binary_img_spinner_track_png_end - _binary_img_spinner_track_png_start);
-+  int spinner_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_spinner_track_png_start, _binary_spinner_track_png_end - _binary_spinner_track_png_start);
-   assert(spinner_img >= 0);
-   int spinner_img_s = 360;
-   int spinner_img_x = ((fb_w/2)-(spinner_img_s/2));
-   int spinner_img_y = 260;
-   int spinner_img_xc = (fb_w/2);
-   int spinner_img_yc = (fb_h/2)-100;
--  int spinner_comma_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_img_spinner_comma_png_start, _binary_img_spinner_comma_png_end - _binary_img_spinner_comma_png_start);
-+  int spinner_comma_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_spinner_comma_png_start, _binary_spinner_comma_png_end - _binary_spinner_comma_png_start);
-   assert(spinner_comma_img >= 0);
- 
-   for (int cnt = 0; ; cnt++) {
-diff --git a/selfdrive/ui/paint.cc b/selfdrive/ui/paint.cc
-index 3fcb4f53..e57903e6 100644
---- a/selfdrive/ui/paint.cc
-+++ b/selfdrive/ui/paint.cc
-@@ -1,4 +1,4 @@
--#include "themes/base/theme.hpp"
-+#include "themes/waifu/theme.hpp"
- #include "ui.hpp"
- #include <assert.h>
- #include <map>
-diff --git a/selfdrive/ui/sound.cc b/selfdrive/ui/sound.cc
-index ed9a93ac..c259e5f6 100644
---- a/selfdrive/ui/sound.cc
-+++ b/selfdrive/ui/sound.cc
-@@ -1,4 +1,4 @@
--#include "themes/base/sounds.hpp"
-+#include "themes/waifu/sounds.hpp"
- #include "sound.hpp"
- #include <math.h>
- #include <stdlib.h>
+   int spinner_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_spinner_track_png_start, _binary_spinner_track_png_end - _binary_spinner_track_png_start);
 diff --git a/selfdrive/ui/spinner/Makefile b/selfdrive/ui/spinner/Makefile
-index 93871bb0..b5ddb16e 100644
+index 5e0b3437..b5ddb16e 100644
 --- a/selfdrive/ui/spinner/Makefile
 +++ b/selfdrive/ui/spinner/Makefile
 @@ -48,15 +48,15 @@ spinner: $(OBJS)
             -I$(PHONELIBS)/android_hardware_libhardware/include \
             -c -o '$@' '$<'
  
--opensans_semibold.o: ../../assets/fonts/opensans_semibold.ttf
+-opensans_semibold.o: ../themes/base/fonts/opensans_semibold.ttf
 +opensans_semibold.o: ../themes/waifu/fonts/cheeky-rabbit.ttf
  	@echo "[ bin2o ] $@"
  	cd '$(dir $<)' && ld -r -b binary '$(notdir $<)' -o '$(abspath $@)'
  
--img_spinner_track.o: ../../assets/img_spinner_track.png
+-img_spinner_track.o: ../themes/base/images/spinner_track.png
 +img_spinner_track.o: ../themes/waifu/images/spinner_track.png
  	@echo "[ bin2o ] $@"
  	cd '$(dir $<)' && ld -r -b binary '$(notdir $<)' -o '$(abspath $@)'
  
--img_spinner_comma.o: ../../assets/img_spinner_comma.png
+-img_spinner_comma.o: ../themes/base/images/spinner_comma.png
 +img_spinner_comma.o: ../themes/waifu/images/spinner_comma.png
  	@echo "[ bin2o ] $@"
  	cd '$(dir $<)' && ld -r -b binary '$(notdir $<)' -o '$(abspath $@)'
  
 diff --git a/selfdrive/ui/spinner/spinner b/selfdrive/ui/spinner/spinner
-deleted file mode 100755
-index c8f8e68e..00000000
-Binary files a/selfdrive/ui/spinner/spinner and /dev/null differ
+old mode 100644
+new mode 100755
+index 74f4a394..d171b537
+Binary files a/selfdrive/ui/spinner/spinner and b/selfdrive/ui/spinner/spinner differ
