@@ -19,6 +19,7 @@ if [ "$1" == "base" ]; then
 else
   if [ -d "$1" ]; then
     echo "Switching to theme: $1"
+
     cd "$1"
 
     if [ -f install_bootanim.sh ]; then
@@ -27,7 +28,7 @@ else
     fi
 
     echo "Patching ui"
-    cd /data/opepilot
+    cd /data/openpilot
     if [ -f selfdrive/ui/themes/$1/diff/$1-theme.diff ]; then
       git apply selfdrive/ui/themes/$1/diff/$1-theme.diff
     else
