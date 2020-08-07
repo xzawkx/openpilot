@@ -45,8 +45,3 @@ index 5e0b3437..b5ddb16e 100644
  	@echo "[ bin2o ] $@"
  	cd '$(dir $<)' && ld -r -b binary '$(notdir $<)' -o '$(abspath $@)'
  
-diff --git a/selfdrive/ui/spinner/spinner b/selfdrive/ui/spinner/spinner
-old mode 100644
-new mode 100755
-index 74f4a394..d171b537
-Binary files a/selfdrive/ui/spinner/spinner and b/selfdrive/ui/spinner/spinner differ
