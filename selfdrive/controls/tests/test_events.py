@@ -22,7 +22,7 @@ class TestAlerts(unittest.TestCase):
 
   # ensure alert text doesn't exceed allowed width
   def test_alert_text_length(self):
-    font_path = os.path.join(BASEDIR, "selfdrive/assets/fonts")
+    font_path = os.path.join(BASEDIR, "selfdrive/ui/themes/base/fonts")
     regular_font_path = os.path.join(font_path, "opensans_semibold.ttf")
     bold_font_path = os.path.join(font_path, "opensans_semibold.ttf")
     semibold_font_path = os.path.join(font_path, "opensans_semibold.ttf")
