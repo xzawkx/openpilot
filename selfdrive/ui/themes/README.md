@@ -18,7 +18,7 @@ spinner and actual theme switching (ui/paint.cc and ui/sound.cc) require `git di
 
 ```
 cd /data/openpilot/selfdrive/ui/themes
-./switch-theme.sh
+./switch-theme.sh <theme>
 ```
 
 ## Create a new theme
