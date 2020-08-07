@@ -882,7 +882,7 @@ void ui_nvg_init(UIState *s) {
   assert(s->img_battery_charging != 0);
 
   for(int i=0;i<=5;++i) {
-    char network_asset[32];
+    char network_asset[34];
     snprintf(network_asset, sizeof(network_asset), IMG_NETWORK, i);
     s->img_network[i] = nvgCreateImage(s->vg, network_asset, 1);
     assert(s->img_network[i] != 0);

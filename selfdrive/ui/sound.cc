@@ -1,4 +1,4 @@
-
+#include "themes/base/sounds.hpp"
 #include "sound.hpp"
 #include <math.h>
 #include <stdlib.h>
