@@ -12,7 +12,7 @@ spinner and actual theme switching (ui/paint.cc and ui/sound.cc) require `git di
 
 ## List of themes
 - base - openpilot stock theme
-- waifu - anime-inspired theme by Tunder
+- waifu - anime-inspired theme by @Tundergit
 
 ## Switching to a new theme
 
