@@ -20,27 +20,31 @@ else
   if [ -d "$1" ]; then
     echo "Switching to theme: $1"
     cd "$1"
-    if [ -f diff/$1-theme.diff ]; then
-      git apply diff/$1-theme.diff
-    else
-      echo "diff/$1-theme.diff not found. Exiting"
-      exit
-    fi
+
     if [ -f install_bootanim.sh ]; then
       echo "Installing boot animation"
       ./install_bootanim.sh
     fi
+
+    echo "Patching ui"
+    cd /data/opepilot
+    if [ -f selfdrive/ui/themes/$1/diff/$1-theme.diff ]; then
+      git apply selfdrive/ui/themes/$1/diff/$1-theme.diff
+    else
+      echo "selfdrive/ui/themes/$1/diff/$1-theme.diff not found"
+    fi
+
     echo "Patching spinner"
-    if [ -f diff/$1-spinner.diff ]; then
-      git apply diff/$1-spinner.diff
+    if [ -f selfdrive/ui/themes/$1/diff/$1-spinner.diff ]; then
+      git apply selfdrive/ui/themes/$1/diff/$1-spinner.diff
       echo "Rebuilding spinner"
-      cd ../../spinner
+      cd selfdrive/ui/spinner
       make clean
       make
     else
       echo "Spinner patch not found"
     fi
-    echo "Restarting to apply changes"
+    echo "Restarting to apply theme.."
     sleep 2
     reboot
   else
