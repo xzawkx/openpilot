@@ -386,8 +386,8 @@ selfdrive/modeld/runners/run.h
 selfdrive/monitoring/dmonitoringd.py
 selfdrive/monitoring/driver_monitor.py
 
-selfdrive/assets
-selfdrive/assets/fonts/*.ttf
+selfdrive/ui/themes/base
+selfdrive/ui/themes/base/fonts/*.ttf
 
 phonelibs/SConscript
 

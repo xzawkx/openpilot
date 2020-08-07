@@ -16,6 +16,7 @@
 
 #include "common/framebuffer.h"
 #include "common/touch.h"
+#include "ui/themes/base/colors.hpp"
 
 
 #define COLOR_WHITE nvgRGBA(255, 255, 255, 255)
@@ -52,14 +53,14 @@ assert(font >= 0);
   // background
   nvgBeginPath(vg);
   NVGpaint bg = nvgLinearGradient(vg, fb_w, 0, fb_w, fb_h,
-  nvgRGBA(0, 0, 0, 175), nvgRGBA(0, 0, 0, 255));  // text_bg : text_bg_alpha
+  TEXT_BG, TEXT_BG_ALPHA);  // text_bg : text_bg_alpha
   nvgFillPaint(vg, bg);
   nvgRect(vg, 0, 0, fb_w, fb_h);
   nvgFill(vg);
 
 
   // Text
-  nvgFillColor(vg, COLOR_WHITE);  // text
+  nvgFillColor(vg, COLOR_TEXT);
   nvgFontSize(vg, 75.0f);
 
   if (argc >= 2) {
@@ -89,16 +90,16 @@ assert(font >= 0);
   int b_h = 150;
 
   nvgBeginPath(vg);
-  nvgFillColor(vg, nvgRGBA(8, 8, 8, 255));  // button_bg
+  nvgFillColor(vg, COLOR_BUTTON_BG);
   nvgRoundedRect(vg, b_x, b_y, b_w, b_h, 20);
   nvgFill(vg);
 
-  nvgFillColor(vg, nvgRGBA(255, 255, 255, 255)); // button_label
+  nvgFillColor(vg, COLOR_BUTTON_LABEL);
   nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   nvgText(vg, b_x+b_w/2, b_y+b_h/2, "Exit", NULL);
 
   nvgBeginPath(vg);
-  nvgStrokeColor(vg, nvgRGBA(255, 255, 255, 50)); // button_border
+  nvgStrokeColor(vg, COLOR_BUTTON_BORDER);
   nvgStrokeWidth(vg, 5);
   nvgRoundedRect(vg, b_x, b_y, b_w, b_h, 20);
   nvgStroke(vg);
