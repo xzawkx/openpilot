@@ -1,0 +1,20 @@
+diff --git a/selfdrive/ui/paint.cc b/selfdrive/ui/paint.cc
+index 3fcb4f53..e57903e6 100644
+--- a/selfdrive/ui/paint.cc
++++ b/selfdrive/ui/paint.cc
+@@ -1,4 +1,4 @@
+-#include "themes/base/theme.hpp"
++#include "themes/waifu/theme.hpp"
+ #include "ui.hpp"
+ #include <assert.h>
+ #include <map>
+diff --git a/selfdrive/ui/sound.cc b/selfdrive/ui/sound.cc
+index ad8aa55c..b8889e47 100644
+--- a/selfdrive/ui/sound.cc
++++ b/selfdrive/ui/sound.cc
+@@ -1,4 +1,4 @@
+-#include "themes/base/sounds.hpp"
++#include "themes/waifu/sounds.hpp"
+ #include "sound.hpp"
+ #include <math.h>
+ #include <stdlib.h>
