@@ -48,15 +48,15 @@ spinner: $(OBJS)
            -I$(PHONELIBS)/android_hardware_libhardware/include \
            -c -o '$@' '$<'
 
-opensans_semibold.o: ../../assets/fonts/opensans_semibold.ttf
+opensans_semibold.o: ../themes/base/fonts/opensans_semibold.ttf
 	@echo "[ bin2o ] $@"
 	cd '$(dir $<)' && ld -r -b binary '$(notdir $<)' -o '$(abspath $@)'
 
-img_spinner_track.o: ../../assets/img_spinner_track.png
+img_spinner_track.o: ../themes/base/images/spinner_track.png
 	@echo "[ bin2o ] $@"
 	cd '$(dir $<)' && ld -r -b binary '$(notdir $<)' -o '$(abspath $@)'
 
-img_spinner_comma.o: ../../assets/img_spinner_comma.png
+img_spinner_comma.o: ../themes/base/images/spinner_comma.png
 	@echo "[ bin2o ] $@"
 	cd '$(dir $<)' && ld -r -b binary '$(notdir $<)' -o '$(abspath $@)'
 

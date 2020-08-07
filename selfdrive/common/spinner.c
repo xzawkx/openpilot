@@ -24,11 +24,11 @@
 extern const unsigned char _binary_opensans_semibold_ttf_start[];
 extern const unsigned char _binary_opensans_semibold_ttf_end[];
 
-extern const unsigned char _binary_img_spinner_track_png_start[];
-extern const unsigned char _binary_img_spinner_track_png_end[];
+extern const unsigned char _binary_spinner_track_png_start[];
+extern const unsigned char _binary_spinner_track_png_end[];
 
-extern const unsigned char _binary_img_spinner_comma_png_start[];
-extern const unsigned char _binary_img_spinner_comma_png_end[];
+extern const unsigned char _binary_spinner_comma_png_start[];
+extern const unsigned char _binary_spinner_comma_png_end[];
 
 bool stdin_input_available() {
   struct timeval timeout;
@@ -68,14 +68,14 @@ int spin(int argc, char** argv) {
   int font = nvgCreateFontMem(vg, "Bold", (unsigned char*)_binary_opensans_semibold_ttf_start, _binary_opensans_semibold_ttf_end-_binary_opensans_semibold_ttf_start, 0);
   assert(font >= 0);
 
-  int spinner_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_img_spinner_track_png_start, _binary_img_spinner_track_png_end - _binary_img_spinner_track_png_start);
+  int spinner_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_spinner_track_png_start, _binary_spinner_track_png_end - _binary_spinner_track_png_start);
   assert(spinner_img >= 0);
   int spinner_img_s = 360;
   int spinner_img_x = ((fb_w/2)-(spinner_img_s/2));
   int spinner_img_y = 260;
   int spinner_img_xc = (fb_w/2);
   int spinner_img_yc = (fb_h/2)-100;
-  int spinner_comma_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_img_spinner_comma_png_start, _binary_img_spinner_comma_png_end - _binary_img_spinner_comma_png_start);
+  int spinner_comma_img = nvgCreateImageMem(vg, 0, (unsigned char*)_binary_spinner_comma_png_start, _binary_spinner_comma_png_end - _binary_spinner_comma_png_start);
   assert(spinner_comma_img >= 0);
 
   for (int cnt = 0; ; cnt++) {
