@@ -1,3 +1,4 @@
+#include "themes/base/theme.hpp"
 #include "ui.hpp"
 #include <assert.h>
 #include <map>
@@ -20,12 +21,20 @@ const mat3 intrinsic_matrix = (mat3){{
   0.,   0.,   1.
 }};
 
+const uint8_t bg_colors[][4] = {
+  [STATUS_STOPPED] = COLOR_BG_STATUS_STOPPED,
+  [STATUS_DISENGAGED] = COLOR_BG_STATUS_DISENGAGED,
+  [STATUS_ENGAGED] = COLOR_BG_STATUS_ENGAGED,
+  [STATUS_WARNING] = COLOR_BG_STATUS_WARNING,
+  [STATUS_ALERT] = COLOR_BG_STATUS_ALERT
+};
+
 const uint8_t alert_colors[][4] = {
-  [STATUS_STOPPED] = {0x07, 0x23, 0x39, 0xf1},
-  [STATUS_DISENGAGED] = {0x17, 0x33, 0x49, 0xc8},
-  [STATUS_ENGAGED] = {0x17, 0x86, 0x44, 0xf1},
-  [STATUS_WARNING] = {0xDA, 0x6F, 0x25, 0xf1},
-  [STATUS_ALERT] = {0xC9, 0x22, 0x31, 0xf1},
+  [STATUS_STOPPED] = COLOR_ALERT_STATUS_STOPPED,
+  [STATUS_DISENGAGED] = COLOR_ALERT_STATUS_DISENGAGED,
+  [STATUS_ENGAGED] = COLOR_ALERT_STATUS_ENGAGED,
+  [STATUS_WARNING] = COLOR_ALERT_STATUS_WARNING,
+  [STATUS_ALERT] = COLOR_ALERT_STATUS_ALERT
 };
 
 // Projects a point in car to space to the corresponding point in full frame
@@ -124,7 +133,7 @@ static void draw_lead(UIState *s, const cereal::RadarState::LeadData::Reader &le
     }
     fillAlpha = (int)(fmin(fillAlpha, 255));
   }
-  draw_chevron(s, d_rel, lead.getYRel(), 25, nvgRGBA(201, 34, 49, fillAlpha), COLOR_YELLOW);
+  draw_chevron(s, d_rel, lead.getYRel(), 25, COLOR_CHEVRON, COLOR_CHEVRON_BORDER);
 }
 
 static void ui_draw_lane_line(UIState *s, const model_path_vertices_data *pvd, NVGcolor color) {
@@ -224,7 +233,7 @@ static void ui_draw_track(UIState *s, bool is_mpc, track_vertices_data *pvd) {
   } else {
     // Draw white vision track
     track_bg = nvgLinearGradient(s->vg, vwp_w, vwp_h, vwp_w, vwp_h*.4,
-      COLOR_WHITE, COLOR_WHITE_ALPHA(0));
+      COLOR_TRACK_BG, COLOR_TRACK_BG_ALPHA);
   }
   nvgFillPaint(s->vg, track_bg);
   nvgFill(s->vg);
@@ -416,25 +425,24 @@ static void ui_draw_vision_maxspeed(UIState *s) {
 
   // Draw Background
   ui_draw_rect(s->vg, viz_maxspeed_x, viz_maxspeed_y, viz_maxspeed_w, viz_maxspeed_h,
-               is_set_over_limit ? nvgRGBA(218, 111, 37, 180) : COLOR_BLACK_ALPHA(100), 30);
+               is_set_over_limit ? COLOR_MAXSPEED_OVER_LIMIT_BG : COLOR_MAXSPEED_UNDER_LIMIT_BG, 30);
 
   // Draw Border
-  NVGcolor color = COLOR_WHITE_ALPHA(100);
+  NVGcolor color = COLOR_MAXSPEED_LIMIT_BORDER;
   if (is_set_over_limit) {
-    color = COLOR_OCHRE;
+    color = COLOR_MAXSPEED_OVER_LIMIT;
   } else if (is_speedlim_valid) {
-    color = s->is_ego_over_limit ? COLOR_WHITE_ALPHA(20) : COLOR_WHITE;
+    color = s->is_ego_over_limit ? COLOR_MAXSPEED_EGO_OVER_LIMIT : COLOR_MAXSPEED_EGO_UNDER_LIMIT;
   }
 
   ui_draw_rect(s->vg, viz_maxspeed_x, viz_maxspeed_y, viz_maxspeed_w, viz_maxspeed_h, color, 20, 10);
 
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   const int text_x = viz_maxspeed_x + (viz_maxspeed_xo / 2) + (viz_maxspeed_w / 2);
-  ui_draw_text(s->vg, text_x, 148, "MAX", 26 * 2.5, COLOR_WHITE_ALPHA(is_cruise_set ? 200 : 100), s->font_sans_regular);
-
+  ui_draw_text(s->vg, text_x, 148, "MAX", 26 * 2.5, (is_cruise_set ? COLOR_MAXSPEED_CRUISE_SET_LABEL : COLOR_MAXSPEED_CRUISE_NOT_SET_LABEL), s->font_sans_regular);
   if (is_cruise_set) {
     snprintf(maxspeed_str, sizeof(maxspeed_str), "%d", maxspeed_calc);
-    ui_draw_text(s->vg, text_x, 242, maxspeed_str, 48 * 2.5, COLOR_WHITE, s->font_sans_bold);
+    ui_draw_text(s->vg, text_x, 242, maxspeed_str, 48 * 2.5, COLOR_MAXSPEED_CRUISE_SET, s->font_sans_bold);
   } else {
     ui_draw_text(s->vg, text_x, 242, "N/A", 42 * 2.5, COLOR_WHITE_ALPHA(100), s->font_sans_semibold);
   }
@@ -467,29 +475,29 @@ static void ui_draw_vision_speedlimit(UIState *s) {
     viz_speedlim_y += 5;
   }
   // Draw Background
-  NVGcolor color = COLOR_WHITE_ALPHA(100);
+  NVGcolor color = COLOR_SPEEDLIMIT_BG;
   if (is_speedlim_valid && s->is_ego_over_limit) {
-    color = nvgRGBA(218, 111, 37, 180);
+    color = COLOR_SPEEDLIMIT_EGO_OVER_LIMIT_BG;
   } else if (is_speedlim_valid) {
-    color = COLOR_WHITE;
+    color = COLOR_SPEEDLIMIT_VALID_BG;
   }
   ui_draw_rect(s->vg, viz_speedlim_x, viz_speedlim_y, viz_speedlim_w, viz_speedlim_h, color, is_speedlim_valid ? 30 : 15);
 
   // Draw Border
   if (is_speedlim_valid) {
     ui_draw_rect(s->vg, viz_speedlim_x, viz_speedlim_y, viz_speedlim_w, viz_speedlim_h,
-                 s->is_ego_over_limit ? COLOR_OCHRE : COLOR_WHITE, 20, 10);
+                 s->is_ego_over_limit ? COLOR_SPEEDLIMIT_EGO_OVER_LIMIT_BORDER : COLOR_SPEEDLIMIT_EGO_UNDER_LIMIT_BORDER, 20, 10);
   }
   const float text_x = viz_speedlim_x + viz_speedlim_w / 2;
   const float text_y = viz_speedlim_y + (is_speedlim_valid ? 50 : 45);
   // Draw "Speed Limit" Text
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  color = is_speedlim_valid && s->is_ego_over_limit ? COLOR_WHITE : COLOR_BLACK;
+  color = is_speedlim_valid && s->is_ego_over_limit ? COLOR_SPEEDLIMIT_EGO_OVER_LIMIT_LABEL : COLOR_SPEEDLIMIT_EGO_UNDER_LIMIT_LABEL;
   ui_draw_text(s->vg, text_x + (is_speedlim_valid ? 6 : 0), text_y, "SMART", 50, color, s->font_sans_semibold);
   ui_draw_text(s->vg, text_x + (is_speedlim_valid ? 6 : 0), text_y + 40, "SPEED", 50, color, s->font_sans_semibold);
 
   // Draw Speed Text
-  color = s->is_ego_over_limit ? COLOR_WHITE : COLOR_BLACK;
+  color = s->is_ego_over_limit ? COLOR_SPEEDLIMIT_EGO_OVER_LIMIT : COLOR_SPEEDLIMIT_EGO_UNDER_LIMIT;
   if (is_speedlim_valid) {
     snprintf(speedlim_str, sizeof(speedlim_str), "%d", speedlim_calc);
     ui_draw_text(s->vg, text_x, viz_speedlim_y + (is_speedlim_valid ? 170 : 165), speedlim_str, 48*2.5, color, s->font_sans_bold);
@@ -515,8 +523,8 @@ static void ui_draw_vision_speed(UIState *s) {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
 
   snprintf(speed_str, sizeof(speed_str), "%d", (int)speed);
-  ui_draw_text(s->vg, viz_speed_x + viz_speed_w / 2, 240, speed_str, 96*2.5, COLOR_WHITE, s->font_sans_bold);
-  ui_draw_text(s->vg, viz_speed_x + viz_speed_w / 2, 320, s->is_metric?"kph":"mph", 36*2.5, COLOR_WHITE_ALPHA(200), s->font_sans_regular);
+  ui_draw_text(s->vg, viz_speed_x + viz_speed_w / 2, 240, speed_str, 96*2.5, COLOR_SPEED, s->font_sans_bold);
+  ui_draw_text(s->vg, viz_speed_x + viz_speed_w / 2, 320, s->is_metric?"kph":"mph", 36*2.5, COLOR_SPEED_UNIT, s->font_sans_regular);
 }
 
 static void ui_draw_vision_event(UIState *s) {
@@ -532,13 +540,13 @@ static void ui_draw_vision_event(UIState *s) {
     const int bg_wheel_size = 96;
     const int bg_wheel_x = viz_event_x + (viz_event_w-bg_wheel_size);
     const int bg_wheel_y = viz_event_y + (bg_wheel_size/2);
-    NVGcolor color = COLOR_BLACK_ALPHA(0);
+    NVGcolor color = COLOR_STEERING_WHEEL;
     if (s->status == STATUS_ENGAGED) {
-      color = nvgRGBA(23, 134, 68, 255);
+      color = COLOR_STEERING_WHEEL_STATUS_ENGAGED;
     } else if (s->status == STATUS_WARNING) {
-      color = COLOR_OCHRE;
+      color = COLOR_STEERING_WHEEL_STATUS_WARNING;
     } else {
-      color = nvgRGBA(23, 51, 73, 255);
+      color = COLOR_STEERING_WHEEL_STATUS_DISENGAGED;
     }
 
     if (s->scene.controls_state.getEngageable()){
@@ -575,13 +583,13 @@ static void ui_draw_driver_view(UIState *s) {
   NVGpaint gradient = nvgLinearGradient(s->vg, scene->is_rhd ? valid_frame_x : (valid_frame_x + valid_frame_w),
                                         box_y,
                                         scene->is_rhd ? (valid_frame_w - box_h / 2) : (valid_frame_x + box_h / 2), box_y,
-                                        COLOR_BLACK, COLOR_BLACK_ALPHA(0));
+                                        COLOR_DRIVER_BG_FROM, COLOR_DRIVER_BG_TO);
   ui_draw_rect(s->vg, scene->is_rhd ? valid_frame_x : (valid_frame_x + box_h / 2), box_y, valid_frame_w - box_h / 2, box_h, gradient);
-  ui_draw_rect(s->vg, scene->is_rhd ? valid_frame_x : valid_frame_x + box_h / 2, box_y, valid_frame_w - box_h / 2, box_h, COLOR_BLACK_ALPHA(144));
+  ui_draw_rect(s->vg, scene->is_rhd ? valid_frame_x : valid_frame_x + box_h / 2, box_y, valid_frame_w - box_h / 2, box_h, COLOR_DRIVER_BG_ALPHA);
 
   // borders
-  ui_draw_rect(s->vg, frame_x, box_y, valid_frame_x - frame_x, box_h, nvgRGBA(23, 51, 73, 255));
-  ui_draw_rect(s->vg, valid_frame_x + valid_frame_w, box_y, frame_w - valid_frame_w - (valid_frame_x - frame_x), box_h, nvgRGBA(23, 51, 73, 255));
+  ui_draw_rect(s->vg, frame_x, box_y, valid_frame_x - frame_x, box_h, COLOR_DRIVER_BORDER_OUT);
+  ui_draw_rect(s->vg, valid_frame_x + valid_frame_w, box_y, frame_w - valid_frame_w - (valid_frame_x - frame_x), box_h, COLOR_DRIVER_BORDER_IN);
 
   // draw face box
   if (scene->dmonitoring_state.getFaceDetected()) {
@@ -670,14 +678,14 @@ void ui_draw_vision_alert(UIState *s, cereal::ControlsState::AlertSize va_size, 
                         nvgRGBAf(0.0,0.0,0.0,0.05), nvgRGBAf(0.0,0.0,0.0,0.35));
   ui_draw_rect(s->vg, alr_x, alr_y, alr_w, alr_h, gradient);
 
-  nvgFillColor(s->vg, COLOR_WHITE);
+  nvgFillColor(s->vg, COLOR_ALERT_BG);
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
 
   if (va_size == cereal::ControlsState::AlertSize::SMALL) {
-    ui_draw_text(s->vg, alr_x+alr_w/2, alr_y+alr_h/2+15, va_text1, 40*2.5, COLOR_WHITE, s->font_sans_semibold);
+    ui_draw_text(s->vg, alr_x+alr_w/2, alr_y+alr_h/2+15, va_text1, 40*2.5, COLOR_ALERT, s->font_sans_semibold);
   } else if (va_size == cereal::ControlsState::AlertSize::MID) {
-    ui_draw_text(s->vg, alr_x+alr_w/2, alr_y+alr_h/2-45, va_text1, 48*2.5, COLOR_WHITE, s->font_sans_bold);
-    ui_draw_text(s->vg, alr_x+alr_w/2, alr_y+alr_h/2+75, va_text2, 36*2.5, COLOR_WHITE, s->font_sans_regular);
+    ui_draw_text(s->vg, alr_x+alr_w/2, alr_y+alr_h/2-45, va_text1, 48*2.5, COLOR_ALERT, s->font_sans_bold);
+    ui_draw_text(s->vg, alr_x+alr_w/2, alr_y+alr_h/2+75, va_text2, 36*2.5, COLOR_ALERT, s->font_sans_regular);
   } else if (va_size == cereal::ControlsState::AlertSize::FULL) {
     nvgFontSize(s->vg, (longAlert1?72:96)*2.5);
     nvgFontFaceId(s->vg, s->font_sans_bold);
@@ -849,33 +857,33 @@ void ui_nvg_init(UIState *s) {
 
   assert(s->vg);
 
-  s->font_sans_regular = nvgCreateFont(s->vg, "sans-regular", "../assets/fonts/opensans_regular.ttf");
+  s->font_sans_regular = nvgCreateFont(s->vg, "sans-regular", FONT_SANS_REGULAR);
   assert(s->font_sans_regular >= 0);
-  s->font_sans_semibold = nvgCreateFont(s->vg, "sans-semibold", "../assets/fonts/opensans_semibold.ttf");
+  s->font_sans_semibold = nvgCreateFont(s->vg, "sans-semibold", FONT_SANS_SEMIBOLD);
   assert(s->font_sans_semibold >= 0);
-  s->font_sans_bold = nvgCreateFont(s->vg, "sans-bold", "../assets/fonts/opensans_bold.ttf");
+  s->font_sans_bold = nvgCreateFont(s->vg, "sans-bold", FONT_SANS_BOLD);
   assert(s->font_sans_bold >= 0);
 
-  s->img_wheel = nvgCreateImage(s->vg, "../assets/img_chffr_wheel.png", 1);
+  s->img_wheel = nvgCreateImage(s->vg, IMG_WHEEL, 1);
   assert(s->img_wheel != 0);
-  s->img_turn = nvgCreateImage(s->vg, "../assets/img_trafficSign_turn.png", 1);
+  s->img_turn = nvgCreateImage(s->vg, IMG_TURN, 1);
   assert(s->img_turn != 0);
-  s->img_face = nvgCreateImage(s->vg, "../assets/img_driver_face.png", 1);
+  s->img_face = nvgCreateImage(s->vg, IMG_FACE, 1);
   assert(s->img_face != 0);
-  s->img_map = nvgCreateImage(s->vg, "../assets/img_map.png", 1);
+  s->img_map = nvgCreateImage(s->vg, IMG_MAP, 1);
   assert(s->img_map != 0);
-  s->img_button_settings = nvgCreateImage(s->vg, "../assets/images/button_settings.png", 1);
+  s->img_button_settings = nvgCreateImage(s->vg, IMG_BUTTON_SETTINGS, 1);
   assert(s->img_button_settings != 0);
-  s->img_button_home = nvgCreateImage(s->vg, "../assets/images/button_home.png", 1);
+  s->img_button_home = nvgCreateImage(s->vg, IMG_BUTTON_HOME, 1);
   assert(s->img_button_home != 0);
-  s->img_battery = nvgCreateImage(s->vg, "../assets/images/battery.png", 1);
+  s->img_battery = nvgCreateImage(s->vg, IMG_BATTERY, 1);
   assert(s->img_battery != 0);
-  s->img_battery_charging = nvgCreateImage(s->vg, "../assets/images/battery_charging.png", 1);
+  s->img_battery_charging = nvgCreateImage(s->vg, IMG_BATTERY_CHARGING, 1);
   assert(s->img_battery_charging != 0);
 
   for(int i=0;i<=5;++i) {
     char network_asset[32];
-    snprintf(network_asset, sizeof(network_asset), "../assets/images/network_%d.png", i);
+    snprintf(network_asset, sizeof(network_asset), IMG_NETWORK, i);
     s->img_network[i] = nvgCreateImage(s->vg, network_asset, 1);
     assert(s->img_network[i] != 0);
   }

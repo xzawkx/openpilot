@@ -52,14 +52,14 @@ assert(font >= 0);
   // background
   nvgBeginPath(vg);
   NVGpaint bg = nvgLinearGradient(vg, fb_w, 0, fb_w, fb_h,
-  nvgRGBA(0, 0, 0, 175), nvgRGBA(0, 0, 0, 255));
+  nvgRGBA(0, 0, 0, 175), nvgRGBA(0, 0, 0, 255));  // text_bg : text_bg_alpha
   nvgFillPaint(vg, bg);
   nvgRect(vg, 0, 0, fb_w, fb_h);
   nvgFill(vg);
 
 
   // Text
-  nvgFillColor(vg, COLOR_WHITE);
+  nvgFillColor(vg, COLOR_WHITE);  // text
   nvgFontSize(vg, 75.0f);
 
   if (argc >= 2) {
@@ -89,16 +89,16 @@ assert(font >= 0);
   int b_h = 150;
 
   nvgBeginPath(vg);
-  nvgFillColor(vg, nvgRGBA(8, 8, 8, 255));
+  nvgFillColor(vg, nvgRGBA(8, 8, 8, 255));  // button_bg
   nvgRoundedRect(vg, b_x, b_y, b_w, b_h, 20);
   nvgFill(vg);
 
-  nvgFillColor(vg, nvgRGBA(255, 255, 255, 255));
+  nvgFillColor(vg, nvgRGBA(255, 255, 255, 255)); // button_label
   nvgTextAlign(vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
   nvgText(vg, b_x+b_w/2, b_y+b_h/2, "Exit", NULL);
 
   nvgBeginPath(vg);
-  nvgStrokeColor(vg, nvgRGBA(255, 255, 255, 50));
+  nvgStrokeColor(vg, nvgRGBA(255, 255, 255, 50)); // button_border
   nvgStrokeWidth(vg, 5);
   nvgRoundedRect(vg, b_x, b_y, b_w, b_h, 20);
   nvgStroke(vg);

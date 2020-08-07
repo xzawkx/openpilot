@@ -13,14 +13,14 @@
   if ((func) != SL_RESULT_SUCCESS) { LOGW(msg); return false; }
 
 static std::map<AudibleAlert, std::pair<const char *, int>> sound_map {
-    {AudibleAlert::CHIME_DISENGAGE, {"../assets/sounds/disengaged.wav", 0}},
-    {AudibleAlert::CHIME_ENGAGE, {"../assets/sounds/engaged.wav", 0}},
-    {AudibleAlert::CHIME_WARNING1, {"../assets/sounds/warning_1.wav", 0}},
-    {AudibleAlert::CHIME_WARNING2, {"../assets/sounds/warning_2.wav", 0}},
-    {AudibleAlert::CHIME_WARNING2_REPEAT, {"../assets/sounds/warning_2.wav", 3}},
-    {AudibleAlert::CHIME_WARNING_REPEAT, {"../assets/sounds/warning_repeat.wav", 3}},
-    {AudibleAlert::CHIME_ERROR, {"../assets/sounds/error.wav", 0}},
-    {AudibleAlert::CHIME_PROMPT, {"../assets/sounds/error.wav", 0}}};
+    {AudibleAlert::CHIME_DISENGAGE, {SOUND_CHIME_DISENGAGE, 0}},  // CHIME_DISENGAGE
+    {AudibleAlert::CHIME_ENGAGE, {SOUND_CHIME_ENGAGE, 0}},  // CHIME_ENGAGE
+    {AudibleAlert::CHIME_WARNING1, {SOUND_CHIME_WARNING1, 0}},  // CHIME_WARNING1
+    {AudibleAlert::CHIME_WARNING2, {SOUND_CHIME_WARNING2, 0}},  // CHIME_WARNING2
+    {AudibleAlert::CHIME_WARNING2_REPEAT, {SOUND_CHIME_WARNING2_REPEAT, 3}},  // CHIME_WARNING2_REPEAT
+    {AudibleAlert::CHIME_WARNING_REPEAT, {SOUND_CHIME_WARNING_REPEAT, 3}},  // CHIME_WARNING_REPEAT
+    {AudibleAlert::CHIME_ERROR, {SOUND_CHIME_ERROR, 0}},  // CHIME_ERROR
+    {AudibleAlert::CHIME_PROMPT, {SOUND_CHIME_PROMPT, 0}}};  // CHIME_PROMPT
 
 struct Sound::Player {
   SLObjectItf player;
