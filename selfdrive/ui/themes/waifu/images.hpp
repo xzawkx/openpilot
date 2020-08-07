@@ -1,0 +1,10 @@
+// paint.cc
+#define IMG_WHEEL "themes/base/images/steering_wheel.png"
+#define IMG_TURN "themes/base/images/traffic_sign_turn.png"
+#define IMG_FACE "themes/base/images/driver_face.png"
+#define IMG_MAP "themes/base/images/map.png"
+#define IMG_BUTTON_SETTINGS "themes/base/images/button_settings.png"
+#define IMG_BUTTON_HOME "themes/base/images/button_home.png"
+#define IMG_BATTERY "themes/base/images/battery.png"
+#define IMG_BATTERY_CHARGING "themes/base/images/battery_charging.png"
+#define IMG_NETWORK "themes/base/images/network_%d.png"
