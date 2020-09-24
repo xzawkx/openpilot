@@ -147,7 +147,7 @@ FW_VERSIONS = {
       b'\x1a\xf6F`\x00',
     ],
     (Ecu.fwdRadar, 0x7d0, None): [
-      b'\xf1\x00\x00\x00\x02',
+      b'\x00\x00\x01',
     ],
   },
   CAR.IMPREZA: {
