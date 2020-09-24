@@ -137,11 +137,17 @@ FW_VERSIONS = {
     (Ecu.fwdCamera, 0x787, None): [
       b'\x00\x00e`\x1f@  ',
     ],
+    (Ecu.fwdCamera, 0x7c4, None): [
+      b'\xf1\x00\xac\x02\x00',
+    ],
     (Ecu.engine, 0x7e0, None): [
-      b'\xcb"`p\x07',
+      b'\xcb\"`p\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\x1a\xf6F`\x00',
+    ],
+    (Ecu.fwdRadar, 0x7d0, None): [
+      b'\xf1\x00\x00\x00\x02',
     ],
   },
   CAR.IMPREZA: {
