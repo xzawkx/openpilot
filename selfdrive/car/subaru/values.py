@@ -274,6 +274,7 @@ FW_VERSIONS = {
       b'\xbc\xf2@\x80\x00',
     ],
   },
+}
 
 STEER_THRESHOLD = {
   CAR.ASCENT: 80,
