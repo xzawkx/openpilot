@@ -51,11 +51,11 @@ segments = {
     'car_brand': "HYUNDAI",
     'carFingerprint': HYUNDAI.SONATA,
   },
-  "7873afaf022d36e2|2019-07-03--18-46-44--0": {
-    'car_brand': "SUBARU",
-    'carFingerprint': SUBARU.IMPREZA,
-    'fingerprintSource': 'fixed',
-  },
+  #"7873afaf022d36e2|2019-07-03--18-46-44--0": {
+  #  'car_brand': "SUBARU",
+  #  'carFingerprint': SUBARU.IMPREZA,
+  #  'fingerprintSource': 'fixed',
+  #},
   "c321c6b697c5a5ff|2020-06-23--11-04-33--12": {
     'car_brand': "SUBARU",
     'carFingerprint': SUBARU.FORESTER,
