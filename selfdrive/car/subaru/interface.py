@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from cereal import car
-from selfdrive.car.subaru.values import CAR, PREGLOBAL_CAR
+from selfdrive.car.subaru.values import CAR, PREGLOBAL_CARS
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
 
@@ -11,13 +11,13 @@ class CarInterface(CarInterfaceBase):
     return float(accel) / 4.0
 
   @staticmethod
-  def get_params(candidate, fingerprint=gen_empty_fingerprint(), has_relay=False, car_fw=None):
-    ret = CarInterfaceBase.get_std_params(candidate, fingerprint, has_relay)
+  def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=None):
+    ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
     ret.carName = "subaru"
     ret.radarOffCan = True
 
-    if candidate in PREGLOBAL_CAR:
+    if candidate in PREGLOBAL_CARS:
       ret.safetyModel = car.CarParams.SafetyModel.subaruLegacy
     elif candidate == CAR.FORESTER_HYBRID:
       ret.safetyModel = car.CarParams.SafetyModel.subaruHybrid
@@ -26,9 +26,8 @@ class CarInterface(CarInterfaceBase):
 
     # Subaru port is a community feature, since we don't own one to test
     ret.communityFeature = True
+    ret.dashcamOnly = candidate in PREGLOBAL_CARS
 
-    # force openpilot to fake the stock camera, since car harness is not supported yet and old style giraffe (with switches)
-    # was never released
     ret.enableCamera = True
 
     ret.steerRateCost = 0.7
@@ -105,9 +104,6 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kf = 0.000039
       ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0., 10., 20.], [0., 10., 20.]]
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.01, 0.05, 0.2], [0.003, 0.018, 0.025]]
-
-    ret.steerControlType = car.CarParams.SteerControlType.torque
-    ret.steerRatioRear = 0.
 
     # TODO: get actual value, for now starting with reasonable value for
     # civic and scaling by mass and wheelbase
