@@ -23,11 +23,11 @@ from selfdrive.car.volkswagen.values import CAR as VOLKSWAGEN
 INJECT_MODEL = 0
 
 segments = {
-  "0375fdf7b1ce594d|2019-06-13--08-32-25--3": {
+  "d83f36766f8012a5|2020-02-05--18-42-21--2": {
     'car_brand': "HONDA",
-    'carFingerprint': HONDA.ACCORD,
+    'carFingerprint': HONDA.CIVIC_BOSCH_DIESEL,
   },
-  "99c94dc769b5d96e|2019-08-03--14-19-59--2": {
+  "a74b011b32b51b56|2020-07-26--17-09-36--6": {
     'car_brand': "HONDA",
     'carFingerprint': HONDA.CIVIC,
   },
@@ -35,11 +35,14 @@ segments = {
     'car_brand': "TOYOTA",
     'carFingerprint': TOYOTA.COROLLA_TSS2,
   },
-  "7cc2a8365b4dd8a9|2018-12-02--12-10-44--2": {
-    'car_brand': "GM",
-    'carFingerprint': GM.ACADIA,
+  "b14c5b4742e6fc85|2020-10-14--11-04-47--4": {
+    'car_brand': "TOYOTA",
+    'carFingerprint': TOYOTA.RAV4,
   },
-  # fixme: verify which PACIFICA
+  "0982d79ebb0de295|2020-10-18--19-11-36--5": {
+    'car_brand': "TOYOTA",
+    'carFingerprint': TOYOTA.PRIUS,
+  },
   "b6849f5cf2c926b1|2020-02-28--07-29-48--13": {
     'car_brand': "CHRYSLER",
     'carFingerprint': CHRYSLER.PACIFICA_2018,
@@ -48,14 +51,14 @@ segments = {
     'car_brand': "HYUNDAI",
     'carFingerprint': HYUNDAI.SONATA,
   },
-  #"b6e1317e1bfbefa6|2020-03-04--13-11-40": {
-  #  'car_brand': "CHRYSLER",
-  #  'carFingerprint': CHRYSLER.JEEP_CHEROKEE,
-  #},
   "7873afaf022d36e2|2019-07-03--18-46-44--0": {
     'car_brand': "SUBARU",
     'carFingerprint': SUBARU.IMPREZA,
     'fingerprintSource': 'fixed',
+  },
+  "c321c6b697c5a5ff|2020-06-23--11-04-33--12": {
+    'car_brand': "SUBARU",
+    'carFingerprint': SUBARU.FORESTER,
   },
   #"5ab784f361e19b78|2020-06-08--16-30-41--25": {
   #  'car_brand': "SUBARU_LEGACY",
@@ -69,11 +72,6 @@ segments = {
     'car_brand': "NISSAN",
     'carFingerprint': NISSAN.XTRAIL,
   },
-  # Enable when port is tested and dascamOnly is no longer set
-  #"32a319f057902bb3|2020-04-27--15-18-58--2": {
-  #  'car_brand': "MAZDA",
-  #  'carFingerprint': MAZDA.CX5,
-  #},
 }
 
 # ford doesn't need to be tested until a full port is done
