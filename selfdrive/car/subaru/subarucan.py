@@ -1,10 +1,10 @@
 import copy
 from cereal import car
-from selfdrive.car.subaru.values import PREGLOBAL_CARS
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 
-def create_steering_control(packer, car_fingerprint, apply_steer, frame, steer_step):
+def create_steering_control(packer, apply_steer, frame, steer_step):
+
   idx = (frame / steer_step) % 16
 
   values = {
