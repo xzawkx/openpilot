@@ -21,19 +21,10 @@
 #include "common/utilpp.h"
 
 
-std::string getenv_default(const char* env_var, const char * suffix, const char* default_val) {
-  const char* env_val = getenv(env_var);
-  if (env_val != NULL){
-    return std::string(env_val) + std::string(suffix);
-  } else{
-    return std::string(default_val);
-  }
-}
-
 #if defined(QCOM) || defined(QCOM2)
 const std::string default_params_path = "/data/params";
 #else
-const std::string default_params_path = getenv_default("HOME", "/.comma/params", "/data/params");
+const std::string default_params_path = util::getenv_default("HOME", "/.comma/params", "/data/params");
 #endif
 
 #if defined(QCOM) || defined(QCOM2)
@@ -49,30 +40,17 @@ void params_sig_handler(int signal) {
 }
 
 static int fsync_dir(const char* path){
-  int result = 0;
   int fd = open(path, O_RDONLY, 0755);
-
   if (fd < 0){
-    result = -1;
-    goto cleanup;
+    return -1;
   }
 
-  result = fsync(fd);
-  if (result < 0) {
-    goto cleanup;
-  }
-
-cleanup:
-  int result_close = 0;
-  if (fd >= 0){
-    result_close = close(fd);
-  }
-
+  int result = fsync(fd);
+  int result_close = close(fd);
   if (result_close < 0) {
-    return result_close;
-  } else {
-    return result;
+    result = result_close;
   }
+  return result;
 }
 
 static int mkdir_p(std::string path) {

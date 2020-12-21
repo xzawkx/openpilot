@@ -3,3 +3,6 @@ moc_*
 
 qt/text
 qt/spinner
+qt/setup/setup
+qt/setup/reset
+qt/setup/installer*

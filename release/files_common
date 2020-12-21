@@ -12,15 +12,12 @@ CONTRIBUTING.md
 README.md
 RELEASES.md
 SAFETY.md
+site_scons/site_tools/cython.py
 
 apk/ai.comma*.apk
 
 common/.gitignore
 common/__init__.py
-common/hardware.py
-common/hardware_android.py
-common/hardware_tici.py
-common/hardware_base.py
 common/gpio.py
 common/realtime.py
 common/clock.pyx
@@ -32,7 +29,6 @@ common/numpy_fast.py
 common/params.py
 common/params_pxd.pxd
 common/params_pyx.pyx
-common/params_pyx_setup.py
 common/xattr.py
 common/profiler.py
 common/basedir.py
@@ -41,9 +37,7 @@ common/stat_live.py
 common/spinner.py
 common/text_window.py
 common/cython_hacks.py
-common/apk.py
 common/SConscript
-common/common_pyx_setup.py
 
 common/kalman/.gitignore
 common/kalman/*
@@ -53,7 +47,6 @@ common/transformations/camera.py
 common/transformations/model.py
 
 common/transformations/SConscript
-common/transformations/setup.py
 common/transformations/coordinates.py
 common/transformations/coordinates.cc
 common/transformations/coordinates.hpp
@@ -95,7 +88,6 @@ selfdrive/boardd/__init__.py
 selfdrive/boardd/boardd.cc
 selfdrive/boardd/boardd.py
 selfdrive/boardd/boardd_api_impl.pyx
-selfdrive/boardd/boardd_setup.py
 selfdrive/boardd/can_list_to_can_capnp.cc
 selfdrive/boardd/panda.cc
 selfdrive/boardd/panda.h
@@ -205,7 +197,8 @@ selfdrive/common/swaglog.cc
 selfdrive/common/util.[c,h]
 selfdrive/common/efd.[c,h]
 selfdrive/common/cqueue.[c,h]
-selfdrive/common/clutil.[c,h]
+selfdrive/common/clutil.cc
+selfdrive/common/clutil.h
 selfdrive/common/params.h
 selfdrive/common/params.cc
 selfdrive/common/mutex.h
@@ -276,12 +269,23 @@ selfdrive/controls/lib/longitudinal_mpc_model/generator.cpp
 selfdrive/controls/lib/longitudinal_mpc_model/libmpc_py.py
 selfdrive/controls/lib/longitudinal_mpc_model/longitudinal_mpc.c
 
+selfdrive/hardware/__init__.py
+selfdrive/hardware/base.py
+selfdrive/hardware/eon/__init__.py
+selfdrive/hardware/eon/apk.py
+selfdrive/hardware/eon/hardware.py
+selfdrive/hardware/tici/__init__.py
+selfdrive/hardware/tici/hardware.py
+selfdrive/hardware/tici/pins.py
+selfdrive/hardware/tici/agnos.py
+selfdrive/hardware/pc/__init__.py
+selfdrive/hardware/pc/hardware.py
+
 selfdrive/locationd/__init__.py
 selfdrive/locationd/.gitignore
 selfdrive/locationd/SConscript
 selfdrive/locationd/ubloxd.cc
 selfdrive/locationd/ubloxd_main.cc
-selfdrive/locationd/ubloxd_test.cc
 selfdrive/locationd/ublox_msg.cc
 selfdrive/locationd/ublox_msg.h
 
@@ -356,6 +360,8 @@ selfdrive/ui/qt/*.cc
 selfdrive/ui/qt/*.hpp
 selfdrive/ui/qt/offroad/*.cc
 selfdrive/ui/qt/offroad/*.hpp
+selfdrive/ui/qt/widgets/*.cc
+selfdrive/ui/qt/widgets/*.hpp
 
 selfdrive/ui/android/*.cc
 selfdrive/ui/android/*.hpp
@@ -374,7 +380,7 @@ selfdrive/camerad/cameras/camera_qcom.h
 selfdrive/camerad/cameras/debayer.cl
 selfdrive/camerad/cameras/sensor_i2c.h
 
-selfdrive/camerad/transforms/rgb_to_yuv.c
+selfdrive/camerad/transforms/rgb_to_yuv.cc
 selfdrive/camerad/transforms/rgb_to_yuv.h
 selfdrive/camerad/transforms/rgb_to_yuv.cl
 selfdrive/camerad/transforms/rgb_to_yuv_test.cc
@@ -391,16 +397,18 @@ selfdrive/modeld/constants.py
 selfdrive/modeld/modeld
 selfdrive/modeld/dmonitoringmodeld
 
-selfdrive/modeld/models/commonmodel.c
+selfdrive/modeld/models/commonmodel.cc
 selfdrive/modeld/models/commonmodel.h
 selfdrive/modeld/models/driving.cc
 selfdrive/modeld/models/driving.h
 selfdrive/modeld/models/dmonitoring.cc
 selfdrive/modeld/models/dmonitoring.h
 
-selfdrive/modeld/transforms/loadyuv.[c,h]
+selfdrive/modeld/transforms/loadyuv.cc
+selfdrive/modeld/transforms/loadyuv.h
 selfdrive/modeld/transforms/loadyuv.cl
-selfdrive/modeld/transforms/transform.[c,h]
+selfdrive/modeld/transforms/transform.cc
+selfdrive/modeld/transforms/transform.h
 selfdrive/modeld/transforms/transform.cl
 
 selfdrive/modeld/thneed/thneed.*
@@ -476,7 +484,6 @@ cereal/messaging/messaging.cc
 cereal/messaging/messaging.hpp
 cereal/messaging/messaging.pxd
 cereal/messaging/messaging_pyx.pyx
-cereal/messaging/messaging_pyx_setup.py
 cereal/messaging/msgq.cc
 cereal/messaging/msgq.hpp
 cereal/messaging/socketmaster.cc
@@ -499,7 +506,6 @@ opendbc/can/common.cc
 opendbc/can/common.h
 opendbc/can/common.pxd
 opendbc/can/common_dbc.h
-opendbc/can/common_pyx_setup.py
 opendbc/can/dbc.cc
 opendbc/can/dbc.py
 opendbc/can/dbc_template.cc
