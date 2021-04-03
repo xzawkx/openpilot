@@ -175,8 +175,6 @@ static void update_sockets(UIState *s) {
   if (sm.updated("deviceState")) {
     scene.deviceState = sm["deviceState"].getDeviceState();
   }
-  if (sm.updated("thermal")) {
-    scene.thermal = sm["thermal"].getThermal();
   if (sm.updated("pandaState")) {
     auto pandaState = sm["pandaState"].getPandaState();
     scene.pandaType = pandaState.getPandaType();

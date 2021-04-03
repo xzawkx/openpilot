@@ -1,5 +1,5 @@
 #include "ui.hpp"
-#include <stdio.h>
+//#include <stdio.h>
 
 #include <assert.h>
 #include "common/util.h"
@@ -311,6 +311,8 @@ static void eng_ui_draw_UI(UIState *s)
 // END ENG UI
 */
 
+/*
+
 // ENG UI START: functions added for the display of various measures
 static int eng_ui_draw_measure(UIState *s,  const char* bb_value, const char* bb_uom, const char* bb_label,
     int bb_x, int bb_y, int bb_uom_dx,
@@ -326,7 +328,7 @@ static int eng_ui_draw_measure(UIState *s,  const char* bb_value, const char* bb
   // print value
   ui_draw_text(s->vg, bb_x-dx/2, bb_y + (int)(bb_valueFontSize*2.5)+5, bb_value, bb_valueFontSize*2.5, bb_valueColor, s->font_sans_semibold);
   // print label
-  ui_draw_text(s->vg, bb_x, bb_y + (int)(bb_valueFontSize*2.5)+5 + (int)(bb_labelFontSize*2.5)+5, bb_label, bb_labelFontSize*2.5, bb_labelColor, s->font_sans_regular);
+  ui_draw_text(s->vg, bb_x, bb_y + (int)(bb_valueFontSize*2.5)+5 + (int)(bb_labelFontSize*2.5)+5, bb_label, bb_labelFontSize*2.5, bb_labelColor, "sans-regular");
   // print uom
   if (strlen(bb_uom) > 0) {
       nvgSave(s->vg);
@@ -334,7 +336,7 @@ static int eng_ui_draw_measure(UIState *s,  const char* bb_value, const char* bb
     int ry = bb_y + (int)(bb_valueFontSize*2.5/2)+25;
     nvgTranslate(s->vg,rx,ry);
     nvgRotate(s->vg, -1.5708); // -90 deg in radians
-    nvgFontFaceId(s->vg, s->font_sans_regular);
+    nvgFontFaceId(s->vg, "sans-regular");
     nvgFontSize(s->vg, (int)(bb_uomFontSize*2.5));
     nvgFillColor(s->vg, bb_uomColor);
     nvgText(s->vg, 0, 0, bb_uom, NULL);
@@ -615,6 +617,8 @@ static void eng_ui_draw_UI(UIState *s)
 
 // ENG UI END: functions added for the display of various items
 
+*/
+
 static void ui_draw_vision_header(UIState *s) {
   NVGpaint gradient = nvgLinearGradient(s->vg, s->viz_rect.x,
                         s->viz_rect.y+(header_h-(header_h/2.5)),
@@ -624,7 +628,7 @@ static void ui_draw_vision_header(UIState *s) {
   ui_fill_rect(s->vg, {s->viz_rect.x, s->viz_rect.y, s->viz_rect.w, header_h}, gradient);
 
   // ENG UI START: add new measures panels
-  eng_ui_draw_UI(s);
+  //eng_ui_draw_UI(s);
   // ENG UI END: add new measures panels
 
   ui_draw_vision_maxspeed(s);
