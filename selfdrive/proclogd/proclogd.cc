@@ -1,10 +1,10 @@
+#include <unistd.h>
+#include <dirent.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <climits>
 #include <cassert>
-
-#include <unistd.h>
-#include <dirent.h>
 #include <memory>
 #include <utility>
 #include <sstream>
@@ -16,10 +16,11 @@
 #include "messaging.hpp"
 
 #include "common/timing.h"
-#include "common/utilpp.h"
+#include "common/util.h"
+
+ExitHandler do_exit;
 
 namespace {
-
 struct ProcCache {
   std::string name;
   std::vector<std::string> cmdline;
@@ -29,7 +30,6 @@ struct ProcCache {
 }
 
 int main() {
-  int err;
   PubMaster publisher({"procLog"});
 
   double jiffy = sysconf(_SC_CLK_TCK);
@@ -37,13 +37,10 @@ int main() {
 
   std::unordered_map<pid_t, ProcCache> proc_cache;
 
-  while (1) {
+  while (!do_exit) {
 
-    capnp::MallocMessageBuilder msg;
-    cereal::Event::Builder event = msg.initRoot<cereal::Event>();
-    event.setLogMonoTime(nanos_since_boot());
-    auto procLog = event.initProcLog();
-
+    MessageBuilder msg;
+    auto procLog = msg.initEvent().initProcLog();
     auto orphanage = msg.getOrphanage();
 
     // stat
@@ -61,8 +58,8 @@ int main() {
           unsigned long utime, ntime, stime, itime;
           unsigned long iowtime, irqtime, sirqtime;
 
-          int count = sscanf(stat_line.data(), "cpu%d %lu %lu %lu %lu %lu %lu %lu",
-            &id, &utime, &ntime, &stime, &itime, &iowtime, &irqtime, &sirqtime);
+          sscanf(stat_line.data(), "cpu%d %lu %lu %lu %lu %lu %lu %lu",
+                 &id, &utime, &ntime, &stime, &itime, &iowtime, &irqtime, &sirqtime);
 
           auto ltimeo = orphanage.newOrphan<cereal::ProcLog::CPUTimes>();
           auto ltime = ltimeo.get();
@@ -227,7 +224,7 @@ int main() {
 
     publisher.send("procLog", msg);
 
-    usleep(2000000); // 2 secs
+    util::sleep_for(2000); // 2 secs
   }
 
   return 0;

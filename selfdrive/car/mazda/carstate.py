@@ -3,7 +3,7 @@ from selfdrive.config import Conversions as CV
 from opendbc.can.can_define import CANDefine
 from opendbc.can.parser import CANParser
 from selfdrive.car.interfaces import CarStateBase
-from selfdrive.car.mazda.values import DBC, LKAS_LIMITS, CAR
+from selfdrive.car.mazda.values import DBC, LKAS_LIMITS, GEN1
 
 class CarState(CarStateBase):
   def __init__(self, CP):
@@ -38,12 +38,12 @@ class CarState(CarStateBase):
     ret.leftBlinker = cp.vl["BLINK_INFO"]['LEFT_BLINK'] == 1
     ret.rightBlinker = cp.vl["BLINK_INFO"]['RIGHT_BLINK'] == 1
 
-    ret.steeringAngle = cp.vl["STEER"]['STEER_ANGLE']
+    ret.steeringAngleDeg = cp.vl["STEER"]['STEER_ANGLE']
     ret.steeringTorque = cp.vl["STEER_TORQUE"]['STEER_TORQUE_SENSOR']
     ret.steeringPressed = abs(ret.steeringTorque) > LKAS_LIMITS.STEER_THRESHOLD
 
     ret.steeringTorqueEps = cp.vl["STEER_TORQUE"]['STEER_TORQUE_MOTOR']
-    ret.steeringRate = cp.vl["STEER_RATE"]['STEER_ANGLE_RATE']
+    ret.steeringRateDeg = cp.vl["STEER_RATE"]['STEER_ANGLE_RATE']
 
     ret.brakePressed = cp.vl["PEDALS"]['BRAKE_ON'] == 1
     ret.brake = cp.vl["BRAKE"]['BRAKE_PRESSURE']
@@ -55,6 +55,9 @@ class CarState(CarStateBase):
 
     ret.gas = cp.vl["ENGINE_DATA"]['PEDAL_GAS']
     ret.gasPressed = ret.gas > 0
+
+    ret.leftBlindspot = cp.vl["BSM"]['LEFT_BS1'] == 1
+    ret.rightBlindspot = cp.vl["BSM"]['RIGHT_BS1'] == 1
 
     # LKAS is enabled at 52kph going up and disabled at 45kph going down
     if speed_kph > LKAS_LIMITS.ENABLE_SPEED:
@@ -118,7 +121,7 @@ class CarState(CarStateBase):
       ("WHEEL_SPEEDS", 100),
     ]
 
-    if CP.carFingerprint == CAR.CX5:
+    if CP.carFingerprint in GEN1:
       signals += [
         ("LKAS_BLOCK", "STEER_RATE", 0),
         ("LKAS_TRACK_STATE", "STEER_RATE", 0),
@@ -139,6 +142,8 @@ class CarState(CarStateBase):
         ("SET_P", "CRZ_BTNS", 0),
         ("SET_M", "CRZ_BTNS", 0),
         ("CTR", "CRZ_BTNS", 0),
+        ("LEFT_BS1", "BSM", 0),
+        ("RIGHT_BS1", "BSM", 0),
       ]
 
       checks += [
@@ -150,16 +155,17 @@ class CarState(CarStateBase):
         ("SEATBELT", 10),
         ("DOORS", 10),
         ("GEAR", 20),
+        ("BSM", 10),
       ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
 
   @staticmethod
   def get_cam_can_parser(CP):
-    signals = [ ]
-    checks = [ ]
+    signals = []
+    checks = []
 
-    if CP.carFingerprint == CAR.CX5:
+    if CP.carFingerprint in GEN1:
       signals += [
         # sig_name, sig_address, default
         ("LKAS_REQUEST",     "CAM_LKAS", 0),

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from cereal import car
-from selfdrive.car.subaru.values import CAR
+from selfdrive.car.subaru.values import CAR, PREGLOBAL_CARS
 from selfdrive.car import STD_CARGO_KG, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
 from selfdrive.car.interfaces import CarInterfaceBase
 
@@ -11,20 +11,22 @@ class CarInterface(CarInterfaceBase):
     return float(accel) / 4.0
 
   @staticmethod
-  def get_params(candidate, fingerprint=gen_empty_fingerprint(), has_relay=False, car_fw=[]):  # pylint: disable=dangerous-default-value
-    ret = CarInterfaceBase.get_std_params(candidate, fingerprint, has_relay)
+  def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=None):
+    ret = CarInterfaceBase.get_std_params(candidate, fingerprint)
 
     ret.carName = "subaru"
     # enable visual radar
     ret.radarOffCan = True
-    ret.safetyModel = car.CarParams.SafetyModel.subaru
-    ret.dashcamOnly = True
+
+    if candidate in PREGLOBAL_CARS:
+      ret.safetyModel = car.CarParams.SafetyModel.subaruLegacy
+    else:
+      ret.safetyModel = car.CarParams.SafetyModel.subaru
 
     # Subaru port is a community feature, since we don't own one to test
     ret.communityFeature = True
+    ret.dashcamOnly = candidate in PREGLOBAL_CARS
 
-    # force openpilot to fake the stock camera, since car harness is not supported yet and old style giraffe (with switches)
-    # was never released
     ret.enableCamera = True
 
     ret.steerRateCost = 0.7
@@ -96,6 +98,37 @@ class CarInterface(CarInterfaceBase):
       ret.brakeMaxV = [0.99]   # max brake allowed
       ret.openpilotLongitudinalControl = True
 
+    if candidate in [CAR.FORESTER_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
+      ret.safetyParam = 1  # Outback 2018-2019 and Forester have reversed driver torque signal
+      ret.mass = 1568 + STD_CARGO_KG
+      ret.wheelbase = 2.67
+      ret.centerToFront = ret.wheelbase * 0.5
+      ret.steerRatio = 20           # learned, 14 stock
+      ret.steerActuatorDelay = 0.1
+      ret.lateralTuning.pid.kf = 0.000039
+      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0., 10., 20.], [0., 10., 20.]]
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.01, 0.05, 0.2], [0.003, 0.018, 0.025]]
+
+    if candidate == CAR.LEGACY_PREGLOBAL:
+      ret.mass = 1568 + STD_CARGO_KG
+      ret.wheelbase = 2.67
+      ret.centerToFront = ret.wheelbase * 0.5
+      ret.steerRatio = 12.5   # 14.5 stock
+      ret.steerActuatorDelay = 0.15
+      ret.lateralTuning.pid.kf = 0.00005
+      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0., 20.], [0., 20.]]
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.1, 0.2], [0.01, 0.02]]
+
+    if candidate == CAR.OUTBACK_PREGLOBAL:
+      ret.mass = 1568 + STD_CARGO_KG
+      ret.wheelbase = 2.67
+      ret.centerToFront = ret.wheelbase * 0.5
+      ret.steerRatio = 20           # learned, 14 stock
+      ret.steerActuatorDelay = 0.1
+      ret.lateralTuning.pid.kf = 0.000039
+      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0., 10., 20.], [0., 10., 20.]]
+      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.01, 0.05, 0.2], [0.003, 0.018, 0.025]]
+
     # TODO: get actual value, for now starting with reasonable value for
     # civic and scaling by mass and wheelbase
     ret.rotationalInertia = scale_rot_inertia(ret.mass, ret.wheelbase)
@@ -115,11 +148,6 @@ class CarInterface(CarInterfaceBase):
 
     ret.canValid = self.cp.can_valid and self.cp_cam.can_valid
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
-
-    buttonEvents = []
-    be = car.CarState.ButtonEvent.new_message()
-    be.type = car.CarState.ButtonEvent.Type.accelCruise
-    buttonEvents.append(be)
 
     ret.events = self.create_common_events(ret).to_msg()
 

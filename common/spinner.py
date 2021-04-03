@@ -8,7 +8,7 @@ class Spinner():
     try:
       self.spinner_proc = subprocess.Popen(["./spinner"],
                                            stdin=subprocess.PIPE,
-                                           cwd=os.path.join(BASEDIR, "selfdrive", "ui", "spinner"),
+                                           cwd=os.path.join(BASEDIR, "selfdrive", "ui"),
                                            close_fds=True)
     except OSError:
       self.spinner_proc = None
@@ -16,13 +16,16 @@ class Spinner():
   def __enter__(self):
     return self
 
-  def update(self, spinner_text):
+  def update(self, spinner_text: str):
     if self.spinner_proc is not None:
       self.spinner_proc.stdin.write(spinner_text.encode('utf8') + b"\n")
       try:
         self.spinner_proc.stdin.flush()
       except BrokenPipeError:
         pass
+
+  def update_progress(self, cur: int, total: int):
+    self.update(str(round(100 * cur / total)))
 
   def close(self):
     if self.spinner_proc is not None:
@@ -38,23 +41,6 @@ class Spinner():
 
   def __exit__(self, exc_type, exc_value, traceback):
     self.close()
-
-
-class FakeSpinner(Spinner):
-  def __init__(self):  # pylint: disable=super-init-not-called
-    pass
-
-  def __enter__(self):
-    return self
-
-  def update(self, _):
-    pass
-
-  def close(self):
-    pass
-
-  def __exit__(self, exc_type, exc_value, traceback):
-    pass
 
 
 if __name__ == "__main__":

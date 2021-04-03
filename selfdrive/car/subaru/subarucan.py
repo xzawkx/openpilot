@@ -5,8 +5,7 @@ VisualAlert = car.CarControl.HUDControl.VisualAlert
 
 def create_steering_control(packer, apply_steer, frame, steer_step):
 
-  # counts from 0 to 15 then back to 0 + 16 for enable bit
-  idx = ((frame // steer_step) % 16)
+  idx = (frame / steer_step) % 16
 
   values = {
     "Counter": idx,
@@ -98,3 +97,32 @@ def create_brake_status(packer, brake_status_msg, es_brake_active):
     values["ES_Brake"] = 0
 
   return packer.make_can_msg("Brake_Status", 2, values)
+
+# *** Subaru Pre-global ***
+
+def subaru_preglobal_checksum(packer, values, addr):
+  dat = packer.make_can_msg(addr, 0, values)[2]
+  return (sum(dat[:7])) % 256
+
+def create_preglobal_steering_control(packer, apply_steer, frame, steer_step):
+
+  idx = (frame / steer_step) % 8
+
+  values = {
+    "Counter": idx,
+    "LKAS_Command": apply_steer,
+    "LKAS_Active": 1 if apply_steer != 0 else 0
+  }
+  values["Checksum"] = subaru_preglobal_checksum(packer, values, "ES_LKAS")
+
+  return packer.make_can_msg("ES_LKAS", 0, values)
+
+def create_es_throttle_control(packer, fake_button, es_accel_msg):
+
+  values = copy.copy(es_accel_msg)
+  values["Button"] = fake_button
+
+  values["Checksum"] = subaru_preglobal_checksum(packer, values, "ES_CruiseThrottle")
+
+  return packer.make_can_msg("ES_CruiseThrottle", 0, values)
+>>>>>>> upstream/master
