@@ -1,7 +1,7 @@
 from common.numpy_fast import clip
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.subaru import subarucan
-from selfdrive.car.subaru.values import DBC, PREGLOBAL_CARS, CarControllerParams
+from selfdrive.car.subaru.values import DBC, PREGLOBAL_CARS, CarControllerParams, CAR
 from opendbc.can.packer import CANPacker
 
 
@@ -66,7 +66,7 @@ class CarController():
 
     ### LONG ###
 
-    if CS.CP.carFingerprint not in PREGLOBAL_CARS:
+    if CS.CP.carFingerprint in CAR.CROSSTREK:
 
       cruise_throttle = 0
       cruise_rpm = 0
