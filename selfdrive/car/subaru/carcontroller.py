@@ -66,13 +66,13 @@ class CarController():
 
     ### LONG ###
 
-    if CS.CP.carFingerprint in CAR.CROSSTREK:
+    cruise_rpm = 0
+    cruise_throttle = 0
 
-      cruise_throttle = 0
-      cruise_rpm = 0
+    brake_cmd = False
+    brake_value = 0
 
-      brake_cmd = False
-      brake_value = 0
+    if CS.CP.openpilotLongitudinalControl:
 
       # Manual trigger using wipers signal
       #if CS.wipers:
