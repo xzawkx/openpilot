@@ -144,13 +144,13 @@ static void update_sockets(UIState *s) {
   UIScene &scene = s->scene;
   if (scene.started && sm.updated("controlsState")) {
     scene.controls_state = sm["controlsState"].getControlsState();
-    s->scene.angleSteers = scene.controls_state.getLateralControlState().getPidState().getSteeringAngleDeg();
-    //s->scene.steerOverride = scene.controls_state.getSteerOverride();
     s->scene.output_scale = scene.controls_state.getLateralControlState().getPidState().getOutput();
     s->scene.angleSteersDes = scene.controls_state.getSteeringAngleDesiredDeg();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
+    s->scene.steerOverride = scene.car_state.getSteeringPressed();
+    s->scene.angleSteers = scene.car_state.getSteeringAngleDeg();
     s->scene.aEgo = scene.car_state.getAEgo();
     s->scene.steeringTorqueEps = scene.car_state.getSteeringTorqueEps();
   }
