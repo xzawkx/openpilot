@@ -519,7 +519,6 @@ static void ui_draw_driver_view(UIState *s) {
      if (scene->controls_state.getEnabled()) {
        //show Orange if more than 6 degrees
        //show red if  more than 12 degrees
-       /*
        if(((int)(s->scene.angleSteersDes) < -6) || ((int)(s->scene.angleSteersDes) > 6)) {
          val_color = nvgRGBA(255, 188, 3, 200);
        }
@@ -528,7 +527,6 @@ static void ui_draw_driver_view(UIState *s) {
        }
        // steering is in degrees
        snprintf(val_str, sizeof(val_str), "%.0f°",(s->scene.angleSteersDes));
-       */
      } else {
         snprintf(val_str, sizeof(val_str), "-");
      }
@@ -540,7 +538,7 @@ static void ui_draw_driver_view(UIState *s) {
      bb_ry = bb_y + bb_h;
    }
      //engineRPM
-   if (true) {
+   if (false) {
      char val_str[16];
      char uom_str[4];
      NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
