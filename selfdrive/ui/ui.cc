@@ -50,7 +50,7 @@ void ui_init(UIState *s) {
   s->sm = new SubMaster({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "liveLocationKalman",
     "pandaState", "carParams", "driverState", "driverMonitoringState", "sensorEvents", "carState", "ubloxGnss",
-    "gpsLocationExternal"
+    "gpsLocationExternal",
 #ifdef QCOM2
     "roadCameraState",
 #endif
@@ -86,6 +86,9 @@ static void update_leads(UIState *s, const cereal::RadarState::Reader &radar_sta
     }
     s->scene.lead_data[i] = lead_data;
   }
+  s->scene.lead_v_rel = s->scene.lead_data[0].getVRel();
+  s->scene.lead_d_rel = s->scene.lead_data[0].getDRel();
+  s->scene.lead_status = s->scene.lead_data[0].getStatus();
 }
 
 static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,
@@ -141,9 +144,15 @@ static void update_sockets(UIState *s) {
   UIScene &scene = s->scene;
   if (scene.started && sm.updated("controlsState")) {
     scene.controls_state = sm["controlsState"].getControlsState();
+    s->scene.angleSteers = scene.controls_state.getLateralControlState().getPidState().getSteeringAngleDeg();
+    //s->scene.steerOverride = scene.controls_state.getSteerOverride();
+    s->scene.output_scale = scene.controls_state.getLateralControlState().getPidState().getOutput();
+    s->scene.angleSteersDes = scene.controls_state.getSteeringAngleDesiredDeg();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
+    s->scene.aEgo = scene.car_state.getAEgo();
+    s->scene.steeringTorqueEps = scene.car_state.getSteeringTorqueEps();
   }
   if (sm.updated("radarState")) {
     std::optional<cereal::ModelDataV2::XYZTData::Reader> line;
@@ -174,6 +183,8 @@ static void update_sockets(UIState *s) {
   }
   if (sm.updated("deviceState")) {
     scene.deviceState = sm["deviceState"].getDeviceState();
+    s->scene.cpuTemp = scene.deviceState.getCpuTempC()[0];
+    s->scene.cpuPerc = scene.deviceState.getCpuUsagePercent();
   }
   if (sm.updated("pandaState")) {
     auto pandaState = sm["pandaState"].getPandaState();
@@ -186,6 +197,7 @@ static void update_sockets(UIState *s) {
     auto data = sm["ubloxGnss"].getUbloxGnss();
     if (data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
       scene.satelliteCount = data.getMeasurementReport().getNumMeas();
+      s->scene.satelliteCount = scene.satelliteCount;
     }
   }
   if (sm.updated("liveLocationKalman")) {
@@ -203,13 +215,10 @@ static void update_sockets(UIState *s) {
   // ENG UI START
   if (sm.updated("gpsLocationExternal")) {
     auto data = sm["gpsLocationExternal"].getGpsLocationExternal();
-    scene.gpsAccuracy = data.getAccuracy();
-    // set default values for display
-    if (scene.gpsAccuracy == 0 || scene.gpsAccuracy > 100)
-    {
-      scene.gpsAccuracy = 99.99;
-    }
+    s->scene.gpsAccuracyUblox = data.getAccuracy();
+    s->scene.altitudeUblox = data.getAltitude();
   }
+  // ENG UI END
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
       if (sensor.which() == cereal::SensorEventData::LIGHT) {

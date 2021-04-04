@@ -52,6 +52,7 @@ typedef struct Rect {
 
 const int sbr_w = 300;
 const int bdr_s = 30;
+const int bdr_is = 30;
 const int header_h = 420;
 const int footer_h = 280;
 const Rect settings_btn = {50, 35, 200, 117};
@@ -115,11 +116,22 @@ typedef struct UIScene {
   cereal::DriverMonitoringState::Reader dmonitoring_state;
 
   // ENG UI START
-  uint16_t maxCpuTemp;
-  uint32_t maxBatTemp;
-  float gpsAccuracy;
+  int lead_status;
+  float lead_d_rel, lead_v_rel;
   float angleSteers;
+  bool brakeLights;
   float angleSteersDes;
+  bool recording;
+  float gpsAccuracyUblox;
+  float altitudeUblox;
+  //bool steerOverride;
+  float output_scale;
+  float steeringTorqueEps;
+  float aEgo;
+  float cpuTemp;
+  int cpuPerc;
+  int engineRPM;
+
   // ENG UI END
 
   // gps
