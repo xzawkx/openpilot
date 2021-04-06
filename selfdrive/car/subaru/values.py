@@ -207,7 +207,7 @@ FW_VERSIONS = {
     # 2018 Subaru Legacy 2.5i Premium - UDM / @kram322
     # 2016 Subaru Legacy - UDM / @nort
     # 2015 Subaru Legacy 3.6R Limited / @chrissantamaria
-    # 2017 Subaru Legacy 2.5i Sport /@bonnysonny
+    # 2017 Subaru Legacy 2.5i Sport / @bonnysonnyandclyde
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x8b\x97D\x00',
