@@ -242,6 +242,7 @@ FW_VERSIONS = {
     # 2016 Outback Premium 2.5 - UDM / @Troy
     # 2017 Subaru Outback 2.5 - UDM / @chewbaru
     # 2017 Subaru Outback - UDM / @the3seashells
+    # 2016 Outback Premium 2.5i - UDM / @G-Wood
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'{\x9a\xac\x00',
@@ -273,6 +274,7 @@ FW_VERSIONS = {
       b'\xab*@@\a',
       b'\xb4"@0\a',
       b'\xb4"@p\a',
+      b'\xab"@s\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xbd\xfb\xe0\x80\x00',
