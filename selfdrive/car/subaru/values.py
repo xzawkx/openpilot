@@ -76,7 +76,7 @@ FINGERPRINTS = {
 }
 
 # Use only FPv2
-IGNORED_FINGERPRINTS = [CAR.IMPREZA, CAR.ASCENT, CAR.FORESTER_HYBRID, CAR.OUTBACK]
+IGNORED_FINGERPRINTS = [CAR.IMPREZA, CAR.ASCENT, CAR.FORESTER, CAR.FORESTER_HYBRID, CAR.OUTBACK]
 
 FW_VERSIONS = {
   CAR.ASCENT: {
@@ -248,9 +248,11 @@ FW_VERSIONS = {
   },
   CAR.OUTBACK: {
     # 2020 Outback Hybrid - UDM / @KingChalupa
+    # 2020 Outback 2.5i Premium - UDM / @ursubpar
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa1  \x06\x01',
+      b'\xa1  \a\x00',
     ],
     (Ecu.eps, 0x746, None): [
       b'\x9b\xc0\x10\x00',
@@ -260,9 +262,11 @@ FW_VERSIONS = {
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xbc,\xa0q\x07',
+      b'\xbc\"`@\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xa5\xfe\xf7@\x00',
+      b'\xa5\xf6D@\x00',
     ],
   },
   CAR.OUTBACK_PREGLOBAL: {

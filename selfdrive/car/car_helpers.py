@@ -104,12 +104,16 @@ def fingerprint(logcan, sendcan):
     else:
       cloudlog.warning("Getting VIN & FW versions")
       _, vin = get_vin(logcan, sendcan, bus)
+     cloudlog.warning("Subaru 10 second ECU init delay")
+     time.sleep(10)
 
+'''
       for wmi in SUBARU_WMI:
         if vin.startswith(wmi):
           cloudlog.warning("Subaru 10 second ECU init delay")
           time.sleep(10)
           break
+'''
       car_fw = get_fw_versions(logcan, sendcan, bus)
 
     fw_candidates = match_fw_to_car(car_fw)

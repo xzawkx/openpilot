@@ -264,7 +264,7 @@ if __name__ == "__main__":
       extra[(Ecu.unknown, 0x750, i)] = []
     extra = {"any": {"debug": extra}}
 
-  time.sleep(1.)
+  time.sleep(10.)
 
   t = time.time()
   print("Getting vin...")
@@ -273,11 +273,13 @@ if __name__ == "__main__":
   print("Getting VIN took %.3f s" % (time.time() - t))
   print()
 
+'''
   for wmi in SUBARU_WMI:
     if vin.startswith(wmi):
       cloudlog.warning("Subaru 10 second ECU init delay")
       time.sleep(10.)
       break
+'''
 
   t = time.time()
   fw_vers = get_fw_versions(logcan, sendcan, 1, extra=extra, debug=args.debug, progress=True)
