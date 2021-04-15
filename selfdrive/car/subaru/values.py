@@ -20,6 +20,7 @@ class CAR:
   FORESTER_HYBRID = "SUBARU FORESTER HYBRID 2020"
   FORESTER_PREGLOBAL = "SUBARU FORESTER 2017 - 2018"
   LEGACY_PREGLOBAL = "SUBARU LEGACY 2015 - 2018"
+  OUTBACK = "SUBARU OUTBACK 2020"
   OUTBACK_PREGLOBAL = "SUBARU OUTBACK 2015 - 2017"
   OUTBACK_PREGLOBAL_2018 = "SUBARU OUTBACK 2018 - 2019"
 
@@ -75,7 +76,7 @@ FINGERPRINTS = {
 }
 
 # Use only FPv2
-IGNORED_FINGERPRINTS = [CAR.IMPREZA, CAR.ASCENT, CAR.FORESTER_HYBRID]
+IGNORED_FINGERPRINTS = [CAR.IMPREZA, CAR.ASCENT, CAR.FORESTER_HYBRID, CAR.OUTBACK]
 
 FW_VERSIONS = {
   CAR.ASCENT: {
@@ -245,6 +246,25 @@ FW_VERSIONS = {
       b'\xbd\xf2\x00`\x00',
     ],
   },
+  CAR.OUTBACK: {
+    # 2020 Outback Hybrid - UDM / @KingChalupa
+    # Ecu, addr, subaddr: ROM ID
+    (Ecu.esp, 0x7b0, None): [
+      b'\xa1  \x06\x01',
+    ],
+    (Ecu.eps, 0x746, None): [
+      b'\x9b\xc0\x10\x00',
+    ],
+    (Ecu.fwdCamera, 0x787, None): [
+      b'\x00\x00eJ\x00\x1f@ \x19\x00',
+    ],
+    (Ecu.engine, 0x7e0, None): [
+      b'\xbc,\xa0q\x07',
+    ],
+    (Ecu.transmission, 0x7e1, None): [
+      b'\xa5\xfe\xf7@\x00',
+    ],
+  },
   CAR.OUTBACK_PREGLOBAL: {
     # 2017 Outback Limited 3.6r - UDM / @Anthony
     # 2016 Outback Limited 2.5 - UDM / @aeiro
@@ -365,6 +385,7 @@ DBC = {
   CAR.FORESTER_HYBRID: dbc_dict('subaru_global_2020_hybrid_generated', None),
   CAR.FORESTER_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
   CAR.LEGACY_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
+  CAR.OUTBACK: dbc_dict('subaru_global_2017_generated', None),
   CAR.OUTBACK_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
   CAR.OUTBACK_PREGLOBAL_2018: dbc_dict('subaru_outback_2019_generated', None),
 }
