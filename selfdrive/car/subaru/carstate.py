@@ -170,6 +170,9 @@ class CarState(CarStateBase):
 
   @staticmethod
   def get_body_can_parser(CP):
+    signals = []
+    checks = []
+
     if CP.carFingerprint == CAR.OUTBACK:
       signals = [
         ("Cruise_On", "CruiseControl", 0),
@@ -180,7 +183,7 @@ class CarState(CarStateBase):
         ("RR", "Wheel_Speeds", 0),
       ]
 
-      checks += [
+      checks = [
         ("CruiseControl", 20),
         ("Wheel_Speeds", 50),
       ]
