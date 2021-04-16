@@ -184,7 +184,7 @@ class CarState(CarStateBase):
     checks = []
 
     if CP.carFingerprint == CAR.OUTBACK:
-      signals = [
+      signals += [
         ("Cruise_On", "CruiseControl", 0),
         ("Cruise_Activated", "CruiseControl", 0),
         ("FL", "Wheel_Speeds", 0),
@@ -193,12 +193,13 @@ class CarState(CarStateBase):
         ("RR", "Wheel_Speeds", 0),
       ]
 
-      checks = [
+      checks += [
         ("CruiseControl", 20),
         ("Wheel_Speeds", 50),
       ]
+      return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
 
-    return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
+    return None
 
   @staticmethod
   def get_cam_can_parser(CP):
