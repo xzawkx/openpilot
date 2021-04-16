@@ -126,13 +126,13 @@ class CarState(CarStateBase):
 
     if CP.carFingerprint == CAR.OUTBACK:
       signals += [
-        ("Brake_Pedal", "Counter", 0),
-        ("Brake_Pedal", "Signal1", 0),
-        ("Brake_Pedal", "Speed", 0),
-        ("Brake_Pedal", "Signal2", 0),
-        ("Brake_Pedal", "Brake_Lights", 0),
-        ("Brake_Pedal", "Signal3", 0),
-        ("Brake_Pedal", "Signal4", 0),
+        ("Counter", "Brake_Pedal", 0),
+        ("Signal1", "Brake_Pedal", 0),
+        ("Signal1", "Brake_Pedal", 0),
+        ("Signal2", "Brake_Pedal", 0),
+        ("Brake_Lights", "Brake_Pedal", 0),
+        ("Signal3", "Brake_Pedal", 0),
+        ("Signal4", "Brake_Pedal", 0),
       ]
     else:
       signals += [
@@ -197,6 +197,7 @@ class CarState(CarStateBase):
         ("CruiseControl", 20),
         ("Wheel_Speeds", 50),
       ]
+
       return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
 
     return None
