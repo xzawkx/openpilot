@@ -1,5 +1,5 @@
 import os
-import time
+#import time
 from common.params import Params
 from common.basedir import BASEDIR
 from selfdrive.version import comma_remote, tested_branch
@@ -104,8 +104,6 @@ def fingerprint(logcan, sendcan):
     else:
       cloudlog.warning("Getting VIN & FW versions")
       _, vin = get_vin(logcan, sendcan, bus)
-      cloudlog.warning("Subaru 10 second ECU init delay")
-      time.sleep(10)
       car_fw = get_fw_versions(logcan, sendcan, bus)
 
     fw_candidates = match_fw_to_car(car_fw)
