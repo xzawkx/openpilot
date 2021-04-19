@@ -17,7 +17,6 @@ class CAR:
   ASCENT = "SUBARU ASCENT LIMITED 2019"
   IMPREZA = "SUBARU IMPREZA LIMITED 2019"
   FORESTER = "SUBARU FORESTER 2019"
-  FORESTER_HYBRID = "SUBARU FORESTER HYBRID 2020"
   FORESTER_PREGLOBAL = "SUBARU FORESTER 2017 - 2018"
   LEGACY_PREGLOBAL = "SUBARU LEGACY 2015 - 2018"
   OUTBACK_PREGLOBAL = "SUBARU OUTBACK 2015 - 2017"
@@ -75,7 +74,7 @@ FINGERPRINTS = {
 }
 
 # Use only FPv2
-IGNORED_FINGERPRINTS = [CAR.IMPREZA, CAR.ASCENT, CAR.FORESTER_HYBRID]
+IGNORED_FINGERPRINTS = [CAR.IMPREZA, CAR.ASCENT]
 
 FW_VERSIONS = {
   CAR.ASCENT: {
@@ -97,25 +96,6 @@ FW_VERSIONS = {
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\x00\xfe\xf7\x00\x00',
-    ],
-  },
-  CAR.FORESTER_HYBRID: {
-    # 2020 Forester Hybrid - UDM / @jaypray
-    # Ecu, addr, subaddr: ROM ID
-    (Ecu.esp, 0x7b0, None): [
-      b'\xa3 \x19\x14\x00',
-    ],
-    (Ecu.eps, 0x746, None): [
-      b'\x8d\xc0\x04\x00',
-    ],
-    (Ecu.fwdCamera, 0x787, None): [
-      b'\x00\x00e`\x1f@  ',
-    ],
-    (Ecu.engine, 0x7e0, None): [
-      b'\xcb"`p\x07',
-    ],
-    (Ecu.transmission, 0x7e1, None): [
-      b'\x1a\xf6F`\x00',
     ],
   },
   CAR.IMPREZA: {
@@ -351,7 +331,6 @@ STEER_THRESHOLD = {
   CAR.ASCENT: 80,
   CAR.IMPREZA: 80,
   CAR.FORESTER: 80,
-  CAR.FORESTER_HYBRID: 80,
   CAR.FORESTER_PREGLOBAL: 75,
   CAR.LEGACY_PREGLOBAL: 75,
   CAR.OUTBACK_PREGLOBAL: 75,
@@ -362,7 +341,6 @@ DBC = {
   CAR.ASCENT: dbc_dict('subaru_global_2017_generated', None),
   CAR.IMPREZA: dbc_dict('subaru_global_2017_generated', None),
   CAR.FORESTER: dbc_dict('subaru_global_2017_generated', None),
-  CAR.FORESTER_HYBRID: dbc_dict('subaru_global_2020_hybrid_generated', None),
   CAR.FORESTER_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
   CAR.LEGACY_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
   CAR.OUTBACK_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
