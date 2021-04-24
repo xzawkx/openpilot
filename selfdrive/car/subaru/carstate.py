@@ -120,7 +120,6 @@ class CarState(CarStateBase):
 
     if CP.carFingerprint not in PREGLOBAL_CARS:
       signals += [
-        ("Steer_Error_1", "Steering_Torque", 0),
         ("Steer_Warning", "Steering_Torque", 0),
       ]
 

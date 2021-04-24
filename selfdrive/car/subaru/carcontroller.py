@@ -1,6 +1,6 @@
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.subaru import subarucan
-from selfdrive.car.subaru.values import DBC, PREGLOBAL_CARS, CarControllerParams
+from selfdrive.car.subaru.values import DBC, CAR, PREGLOBAL_CARS, CarControllerParams
 from opendbc.can.packer import CANPacker
 
 
@@ -22,7 +22,10 @@ class CarController():
     # *** steering ***
     if (frame % CarControllerParams.STEER_STEP) == 0:
 
-      apply_steer = int(round(actuators.steer * CarControllerParams.STEER_MAX))
+      if CS.CP.carFingerprint == CAR.IMPREZA_2020:
+        apply_steer = int(round(actuators.steer * CarControllerParams.STEER_MAX_2020))
+      else:
+        apply_steer = int(round(actuators.steer * CarControllerParams.STEER_MAX))
 
       # limits due to driver torque
 
@@ -31,6 +34,9 @@ class CarController():
       self.steer_rate_limited = new_steer != apply_steer
 
       if not enabled:
+        apply_steer = 0
+
+      if CS.CP.carFingerprint == CAR.IMPREZA_2020 and CS.out.steerWarning:
         apply_steer = 0
 
       if CS.CP.carFingerprint in PREGLOBAL_CARS:
