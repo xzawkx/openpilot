@@ -19,6 +19,8 @@ class CarInterface(CarInterfaceBase):
 
     if candidate in PREGLOBAL_CARS:
       ret.safetyModel = car.CarParams.SafetyModel.subaruLegacy
+    elif candidate == CAR.OUTBACK:
+      ret.safetyModel = car.CarParams.SafetyModel.subaruGen2
     else:
       ret.safetyModel = car.CarParams.SafetyModel.subaru
 
