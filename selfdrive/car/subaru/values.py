@@ -205,20 +205,24 @@ FW_VERSIONS = {
   CAR.OUTBACK: {
     # 2020 Outback Hybrid - UDM / @KingChalupa
     # 2020 Outback 2.5i Premium - UDM / @ursubpar
+    # 2021 Outback / @Frye - FL
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa1  \x06\x01',
       b'\xa1  \a\x00',
+      b'\xa1  \b\001',
     ],
     (Ecu.eps, 0x746, None): [
       b'\x9b\xc0\x10\x00',
     ],
     (Ecu.fwdCamera, 0x787, None): [
       b'\x00\x00eJ\x00\x1f@ \x19\x00',
+      b'\000\000e\x80\000\037@ \031\000',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xbc,\xa0q\x07',
       b'\xbc\"`@\a',
+      b'\xde"`0\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xa5\xfe\xf7@\x00',
