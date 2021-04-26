@@ -111,7 +111,6 @@ class CarState(CarStateBase):
     checks = [
       # sig_address, frequency
       ("Throttle", 100),
-      ("Dashlights", 10),
       ("Brake_Pedal", 50),
       ("Wheel_Speeds", 50),
       ("Transmission", 100),
@@ -120,7 +119,6 @@ class CarState(CarStateBase):
 
     if CP.carFingerprint not in PREGLOBAL_CARS:
       signals += [
-        ("Steer_Error_1", "Steering_Torque", 0),
         ("Steer_Warning", "Steering_Torque", 0),
       ]
 
