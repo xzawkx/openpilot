@@ -325,6 +325,25 @@ FW_VERSIONS = {
       b'\xbc\xaf\xe0`\x00',
     ],
   },
+  CAR.WRX_PREGLOBAL: {
+    # 2018 Subaru WRX / @cferra
+    # Ecu, addr, subaddr: ROM ID
+    (Ecu.esp, 0x7b0, None): [
+      b'\x8a\x95R\x01'
+    ],
+    (Ecu.eps, 0x746, None): [
+      b'z\xb0\x00\x00'
+    ],
+    (Ecu.fwdCamera, 0x787, None): [
+      b'\x00\x00d\xae\x1f@ \r'
+    ],
+    (Ecu.engine, 0x7e0, None): [
+      b'\xb2)\xa0P\x97'
+    ],
+    (Ecu.transmission, 0x7e1, None): [
+      b'\xcd\xfd\xd0\x80\x00'
+    ],
+  },
 }
 
 
