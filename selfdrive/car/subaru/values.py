@@ -194,12 +194,14 @@ FW_VERSIONS = {
     # 2016 Subaru Legacy - UDM / @nort
     # 2015 Subaru Legacy 3.6R Limited / @chrissantamaria
     # 2017 Subaru Legacy 2.5i Sport / @bonnysonnyandclyde
+    # 2015 Subaru Legacy Premium 2.5i / @Wanting.RA1N
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x8b\x97D\x00',
       b'k\x97D\x00',
       b'[\xba\xc4\x03',
       b'{\x97D\x00',
+      b'[\x97D\000',
     ],
     (Ecu.eps, 0x746, None): [
       b'{\xb0\x00\x00',
@@ -218,12 +220,14 @@ FW_VERSIONS = {
       b'\xab*@r\a',
       b'\xa0+@p\x07',
       b'\xb4"@0\x07',
+      b'\xa0"@q\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xbc\xf2\x00\x81\x00',
       b'\xbe\xf2\x00p\x00',
       b'\xbf\xfb\xc0\x80\x00',
       b'\xbd\xf2\x00`\x00',
+      b'\xbf\xf2\000\x80\000',
     ],
   },
   CAR.OUTBACK_PREGLOBAL: {
