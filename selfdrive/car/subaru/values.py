@@ -239,6 +239,7 @@ FW_VERSIONS = {
     # 2017 Subaru Outback 2.5 - UDM / @chewbaru
     # 2017 Subaru Outback - UDM / @the3seashells
     # 2016 Outback Premium 2.5i - UDM / @G-Wood
+    # 2016 Outback 3.6R - UDM / @KingSlayer
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'{\x9a\xac\x00',
@@ -246,6 +247,7 @@ FW_VERSIONS = {
       b'\x5b\xf7\xbc\x03',
       b'[\xf7\xac\x03',
       b'{\x97\xac\x00',
+      b'k\x9a\xac\000',
     ],
     (Ecu.eps, 0x746, None): [
       b'k\xb0\x00\x00',
@@ -261,6 +263,7 @@ FW_VERSIONS = {
       b'\x00\x00c\x94\x00\x00\x00\x00',
       b'\x00\x00c\x94\x1f@\x10\b',
       b'\x00\x00c\xb7\x1f@\x10\x16',
+      b'\000\000c\x90\037@\020\016',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xb4+@p\a',
@@ -271,6 +274,7 @@ FW_VERSIONS = {
       b'\xb4"@0\a',
       b'\xb4"@p\a',
       b'\xab"@s\a',
+      b'\xab+@@\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xbd\xfb\xe0\x80\x00',
@@ -280,6 +284,7 @@ FW_VERSIONS = {
       b'\xbe\xf2@p\x00',
       b'\xbd\xf2@`\x00',
       b'\xbd\xf2@\x81\000',
+      b'\xbe\xfb\xe0p\000',
     ],
   },
   # Outback with reversed driver torque signal
