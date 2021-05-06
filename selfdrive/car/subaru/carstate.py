@@ -20,6 +20,8 @@ class CarState(CarStateBase):
     ret.gasPressed = ret.gas > 1e-5
     if self.car_fingerprint in PREGLOBAL_CARS:
       ret.brakePressed = cp.vl["Brake_Pedal"]['Brake_Pedal'] > 2
+    elif self.car_fingerprint == CAR.OUTBACK:
+      ret.brakePressed = cp.vl["Brake_Status"]['Brake'] == 1
     else:
       ret.brakePressed = cp.vl["Brake_Pedal"]['Brake_Pedal'] > 1e-5
     ret.brakeLights = ret.brakePressed
@@ -126,6 +128,7 @@ class CarState(CarStateBase):
 
     if CP.carFingerprint == CAR.OUTBACK:
       signals += [
+        ("Brake", "Brake_Status", 0),
         ("Counter", "Brake_Pedal", 0),
         ("Signal1", "Brake_Pedal", 0),
         ("Signal1", "Brake_Pedal", 0),
@@ -133,6 +136,10 @@ class CarState(CarStateBase):
         ("Brake_Lights", "Brake_Pedal", 0),
         ("Signal3", "Brake_Pedal", 0),
         ("Signal4", "Brake_Pedal", 0),
+      ]
+
+      checks += [
+        ("Brake_Status", 50),
       ]
     else:
       signals += [
