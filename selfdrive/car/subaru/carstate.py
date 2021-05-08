@@ -37,8 +37,9 @@ class CarState(CarStateBase):
     ret.leftBlinker, ret.rightBlinker = self.update_blinker(50, cp.vl["Dashlights"]['LEFT_BLINKER'],
                                                             cp.vl["Dashlights"]['RIGHT_BLINKER'])
 
-    ret.leftBlindspot = (cp.vl["BSD_RCTA"]['L_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['L_APPROACHING'] == 1)
-    ret.rightBlindspot = (cp.vl["BSD_RCTA"]['R_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['R_APPROACHING'] == 1)
+    if self.CP.enableBsm:
+      ret.leftBlindspot = (cp.vl["BSD_RCTA"]['L_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['L_APPROACHING'] == 1)
+      ret.rightBlindspot = (cp.vl["BSD_RCTA"]['R_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['R_APPROACHING'] == 1)
 
     can_gear = int(cp.vl["Transmission"]['Gear'])
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(can_gear, None))
@@ -101,10 +102,6 @@ class CarState(CarStateBase):
       ("DOOR_OPEN_RL", "BodyInfo", 1),
       ("Units", "Dash_State", 1),
       ("Gear", "Transmission", 0),
-      ("L_ADJACENT", "BSD_RCTA", 0),
-      ("R_ADJACENT", "BSD_RCTA", 0),
-      ("L_APPROACHING", "BSD_RCTA", 0),
-      ("R_APPROACHING", "BSD_RCTA", 0),
       ("Steer_Error_1", "Steering_Torque", 0),
     ]
 
@@ -115,9 +112,36 @@ class CarState(CarStateBase):
       ("Wheel_Speeds", 50),
       ("Transmission", 100),
       ("Steering_Torque", 50),
+      ("Dash_State", 1),
     ]
 
-    if CP.carFingerprint not in PREGLOBAL_CARS:
+    if CP.enableBsm:
+      signals += [
+        ("L_ADJACENT", "BSD_RCTA", 0),
+        ("R_ADJACENT", "BSD_RCTA", 0),
+        ("L_APPROACHING", "BSD_RCTA", 0),
+        ("R_APPROACHING", "BSD_RCTA", 0),
+      ]
+      checks += [
+        ("BSD_RCTA", 17),
+      ]
+
+    if CP.carFingerprint in PREGLOBAL_CARS:
+      checks += [
+        ("BodyInfo", 1),
+        ("CruiseControl", 50),
+      ]
+
+      if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
+        checks += [
+          ("Dashlights", 20),
+        ]
+      elif CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
+        checks += [
+          ("Dashlights", 10),
+        ]
+
+    else:
       signals += [
         ("Steer_Warning", "Steering_Torque", 0),
       ]
@@ -126,19 +150,6 @@ class CarState(CarStateBase):
         ("Dashlights", 10),
         ("BodyInfo", 10),
         ("CruiseControl", 20),
-      ]
-
-    if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
-      checks += [
-        ("Dashlights", 20),
-        ("BodyInfo", 1),
-        ("CruiseControl", 50),
-      ]
-
-    if CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
-      checks += [
-        ("Dashlights", 10),
-        ("CruiseControl", 50),
       ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
