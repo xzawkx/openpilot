@@ -98,6 +98,7 @@ class CarState(CarStateBase):
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
       ("Steering_Angle", "Steering_Torque", 0),
       ("Brake_Pedal", "Brake_Pedal", 0),
+      ("Throttle_Pedal", "Throttle", 0),
       ("LEFT_BLINKER", "Dashlights", 0),
       ("RIGHT_BLINKER", "Dashlights", 0),
       ("SEATBELT_FL", "Dashlights", 0),
@@ -110,6 +111,7 @@ class CarState(CarStateBase):
       ("DOOR_OPEN_RR", "BodyInfo", 1),
       ("DOOR_OPEN_RL", "BodyInfo", 1),
       ("Units", "Dash_State", 1),
+      ("Gear", "Transmission", 0),
       ("L_ADJACENT", "BSD_RCTA", 0),
       ("R_ADJACENT", "BSD_RCTA", 0),
       ("L_APPROACHING", "BSD_RCTA", 0),
@@ -122,6 +124,7 @@ class CarState(CarStateBase):
       ("Wheel_Speeds", 50),
       ("Brake_Pedal", 50),
       ("Steering_Torque", 50),
+      ("Throttle", 100),
     ]
 
     if CP.carFingerprint == CAR.CROSSTREK_2020H:
@@ -134,15 +137,15 @@ class CarState(CarStateBase):
         ("Signal3", "Brake_Pedal", 0),
         ("Signal4", "Brake_Pedal", 0),
       ]
+      checks += [
+        ("Transmission", 50),
+      ]
     else:
       signals += [
-        ("Throttle_Pedal", "Throttle", 0),
         ("Cruise_On", "CruiseControl", 0),
         ("Cruise_Activated", "CruiseControl", 0),
-        ("Gear", "Transmission", 0),
       ]
       checks += [
-        ("Throttle", 100),
         ("Transmission", 100),
       ]
 
@@ -156,7 +159,6 @@ class CarState(CarStateBase):
         ("Brake_Status", 50),
         ("Dashlights", 10),
         ("BodyInfo", 10),
-        ("CruiseControl", 20),
       ]
 
     if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
