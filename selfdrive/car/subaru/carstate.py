@@ -192,7 +192,7 @@ class CarState(CarStateBase):
 
       return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
 
-  return None
+    return None
 
   @staticmethod
   def get_cam_can_parser(CP):
