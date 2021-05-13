@@ -1,6 +1,6 @@
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.subaru import subarucan
-from selfdrive.car.subaru.values import DBC, PREGLOBAL_CARS, CarControllerParams
+from selfdrive.car.subaru.values import DBC, CAR, PREGLOBAL_CARS, CarControllerParams
 from opendbc.can.packer import CANPacker
 
 
@@ -10,6 +10,7 @@ class CarController():
     self.es_distance_cnt = -1
     self.es_accel_cnt = -1
     self.es_lkas_cnt = -1
+    self.brake_cnt = -1
     self.fake_button_prev = 0
     self.steer_rate_limited = False
 
@@ -64,9 +65,14 @@ class CarController():
         self.es_accel_cnt = CS.es_accel_msg["Counter"]
 
     else:
-      if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
-        can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, pcm_cancel_cmd))
-        self.es_distance_cnt = CS.es_distance_msg["Counter"]
+      if CS.CP.carFingerprint == CAR.CROSSTREK_2020H:
+         if self.brake_cnt != CS.brake_msg["Counter"]:
+            can_sends.append(subarucan.create_brake(self.packer, CS.brake_msg, pcm_cancel_cmd))
+            self.brake_cnt = CS.brake_msg["Counter"]
+      else:
+        if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
+          can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, pcm_cancel_cmd))
+          self.es_distance_cnt = CS.es_distance_msg["Counter"]
 
       if self.es_lkas_cnt != CS.es_lkas_msg["Counter"]:
         can_sends.append(subarucan.create_es_lkas(self.packer, CS.es_lkas_msg, visual_alert, left_line, right_line))

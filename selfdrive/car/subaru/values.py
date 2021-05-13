@@ -16,6 +16,7 @@ class CarControllerParams:
 class CAR:
   ASCENT = "SUBARU ASCENT LIMITED 2019"
   IMPREZA = "SUBARU IMPREZA LIMITED 2019"
+  CROSSTREK_2020H = "SUBARU CROSSTREK LIMITED 2020 HYBRID"
   FORESTER = "SUBARU FORESTER 2019"
   FORESTER_PREGLOBAL = "SUBARU FORESTER 2017 - 2018"
   LEGACY_PREGLOBAL = "SUBARU LEGACY 2015 - 2018"
@@ -71,6 +72,10 @@ FINGERPRINTS = {
   # LEGACY 2018
   {
     2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 316: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 352: 8, 353: 8, 354: 8, 356: 8, 358: 8, 359: 8, 392: 8, 554: 8, 604: 8, 640: 8, 642: 8, 805: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 977: 8, 1614: 8, 1632: 8, 1640: 8, 1657: 8, 1658: 8, 1672: 8, 1722: 8, 1743: 8, 1745: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8, 2015: 8, 2016: 8, 2024: 8
+  }],
+  CAR.CROSSTREK_2020H: [{
+    # Crosstrek 2020 Plugin Hybrid (revity)
+    2: 8, 64: 8, 175: 8, 280: 8, 281: 8, 290: 8, 295: 8, 312: 8, 313: 8, 314: 8, 315: 8, 316: 8, 326: 8, 327: 3, 344: 8, 505: 8, 544: 8, 552: 8, 554: 8, 557: 8, 577: 8, 580: 8, 600: 8, 722: 8, 801: 8, 802: 8, 805: 8, 808: 8, 811: 8, 826: 8, 837: 8, 839: 8, 865: 8, 877: 8, 912: 8, 915: 8, 940: 8, 945: 8, 956: 8, 1031: 8, 1614: 8, 1617: 8, 1632: 8, 1657: 8, 1658: 8, 1677: 8, 1722: 8, 1750: 8, 1786: 5, 1787: 5, 1788: 8, 1813: 8, 1821: 8, 1840: 8, 1848: 8, 1924: 8, 1932: 8, 1952: 8, 1960: 8,
   }],
 }
 
@@ -161,6 +166,25 @@ FW_VERSIONS = {
       b'\xe5\xf5B\x00\x00',
       b'\xe5\xf5$\000\000',
       b'\xe4\xf5\a\000\000',
+    ],
+  },
+  CAR.CROSSTREK_2020H: {
+    # 2020 Crosstrek Hybrid UDM / @revity
+    # Ecu, addr, subaddr: ROM ID
+    (Ecu.esp, 0x7b0, None): [
+      b'\xa2 \x19e\x01',
+    ],
+    (Ecu.eps, 0x746, None): [
+      b'\x9a\xc2\x01\x00',
+    ],
+    (Ecu.fwdCamera, 0x787, None): [
+      b'\x00\x00el\x1f@ #',
+    ],
+    (Ecu.engine, 0x7e0, None): [
+      b'\xd7!`@\x07',
+    ],
+    (Ecu.electricBrakeBooster, 0x717, None): [
+      b'\xb2 \x19\x01\x00',
     ],
   },
   CAR.FORESTER_PREGLOBAL: {
@@ -359,6 +383,7 @@ FW_VERSIONS = {
 STEER_THRESHOLD = {
   CAR.ASCENT: 80,
   CAR.IMPREZA: 80,
+  CAR.CROSSTREK_2020H: 80,
   CAR.FORESTER: 80,
   CAR.FORESTER_PREGLOBAL: 75,
   CAR.LEGACY_PREGLOBAL: 75,
@@ -370,6 +395,7 @@ STEER_THRESHOLD = {
 DBC = {
   CAR.ASCENT: dbc_dict('subaru_global_2017_generated', None),
   CAR.IMPREZA: dbc_dict('subaru_global_2017_generated', None),
+  CAR.CROSSTREK_2020H: dbc_dict('subaru_global_2020_hybrid_generated', None),
   CAR.FORESTER: dbc_dict('subaru_global_2017_generated', None),
   CAR.FORESTER_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
   CAR.LEGACY_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
