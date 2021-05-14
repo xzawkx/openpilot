@@ -149,7 +149,12 @@ class CarState(CarStateBase):
         ("Transmission", 100),
       ]
 
-    if CP.carFingerprint not in PREGLOBAL_CARS:
+    if CP.carFingerprint in PREGLOBAL_CARS:
+      checks += [
+        ("BodyInfo", 1),
+        ("CruiseControl", 50),
+      ]
+    else:
       signals += [
         ("Steer_Warning", "Steering_Torque", 0),
         ("Brake", "Brake_Status", 0),
@@ -161,17 +166,19 @@ class CarState(CarStateBase):
         ("BodyInfo", 10),
       ]
 
+      if CP.carFingerprint != CAR.CROSSTREK_2020H:
+        checks += [
+          ("CruiseControl", 20),
+        ]
+
     if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
       checks += [
         ("Dashlights", 20),
-        ("BodyInfo", 1),
-        ("CruiseControl", 50),
       ]
 
     if CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
       checks += [
         ("Dashlights", 10),
-        ("CruiseControl", 50),
       ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
@@ -190,6 +197,7 @@ class CarState(CarStateBase):
       checks = [
         # sig_address, frequency
         ("Throttle_Hybrid", 50),
+        ("Transmission", 50),
       ]
 
       return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
