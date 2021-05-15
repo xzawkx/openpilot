@@ -23,6 +23,8 @@ class CarState(CarStateBase):
     ret.gasPressed = ret.gas > 1e-5
     if self.car_fingerprint in PREGLOBAL_CARS:
       ret.brakePressed = cp.vl["Brake_Pedal"]['Brake_Pedal'] > 2
+    elif self.car_fingerprint == CAR.CROSSTREK_2020H:
+      ret.brakePressed = cp.vl["Brake_Hybrid"]['Brake'] == 1
     else:
       ret.brakePressed = cp.vl["Brake_Status"]['Brake'] == 1
     ret.brakeLights = ret.brakePressed
@@ -44,7 +46,7 @@ class CarState(CarStateBase):
     ret.rightBlindspot = (cp.vl["BSD_RCTA"]['R_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['R_APPROACHING'] == 1)
 
     if self.car_fingerprint == CAR.CROSSTREK_2020H:
-      can_gear = int(cp_body.vl["Transmission"]['Gear'])
+      can_gear = int(cp_body.vl["Transmission_Hybrid"]['Gear'])
     else:
       can_gear = int(cp.vl["Transmission"]['Gear'])
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(can_gear, None))
@@ -111,7 +113,6 @@ class CarState(CarStateBase):
       ("DOOR_OPEN_RR", "BodyInfo", 1),
       ("DOOR_OPEN_RL", "BodyInfo", 1),
       ("Units", "Dash_State", 1),
-      ("Gear", "Transmission", 0),
       ("L_ADJACENT", "BSD_RCTA", 0),
       ("R_ADJACENT", "BSD_RCTA", 0),
       ("L_APPROACHING", "BSD_RCTA", 0),
@@ -137,13 +138,11 @@ class CarState(CarStateBase):
         ("Signal3", "Brake_Pedal", 0),
         ("Signal4", "Brake_Pedal", 0),
       ]
-      checks += [
-        ("Transmission", 50),
-      ]
     else:
       signals += [
         ("Cruise_On", "CruiseControl", 0),
         ("Cruise_Activated", "CruiseControl", 0),
+        ("Gear", "Transmission", 0),
       ]
       checks += [
         ("Transmission", 100),
@@ -191,13 +190,15 @@ class CarState(CarStateBase):
     if CP.carFingerprint == CAR.CROSSTREK_2020H:
       signals = [
         ("Throttle_Pedal", "Throttle_Hybrid", 0),
-        ("Gear", "Transmission", 0),
+        ("Brake", "Brake_Hybrid", 0),
+        ("Gear", "Transmission_Hybrid", 0),
       ]
 
       checks = [
         # sig_address, frequency
         ("Throttle_Hybrid", 50),
-        ("Transmission", 50),
+        ("Brake_Hybrid", 40),
+        ("Transmission_Hybrid", 50),
       ]
 
       return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
