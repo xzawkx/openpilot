@@ -46,7 +46,7 @@ class CarState(CarStateBase):
     ret.rightBlindspot = (cp.vl["BSD_RCTA"]['R_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['R_APPROACHING'] == 1)
 
     if self.car_fingerprint == CAR.CROSSTREK_2020H:
-      can_gear = int(cp_body.vl["Transmission_Hybrid"]['Gear'])
+      can_gear = int(cp_body.vl["Transmission"]['Gear'])
     else:
       can_gear = int(cp.vl["Transmission"]['Gear'])
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(can_gear, None))
@@ -191,14 +191,14 @@ class CarState(CarStateBase):
       signals = [
         ("Throttle_Pedal", "Throttle_Hybrid", 0),
         ("Brake", "Brake_Hybrid", 0),
-        ("Gear", "Transmission_Hybrid", 0),
+        ("Gear", "Transmission", 0),
       ]
 
       checks = [
         # sig_address, frequency
         ("Throttle_Hybrid", 50),
         ("Brake_Hybrid", 40),
-        ("Transmission_Hybrid", 50),
+        ("Transmission", 50),
       ]
 
       return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 1)
