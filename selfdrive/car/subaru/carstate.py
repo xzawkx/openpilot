@@ -24,7 +24,7 @@ class CarState(CarStateBase):
     if self.car_fingerprint in PREGLOBAL_CARS:
       ret.brakePressed = cp.vl["Brake_Pedal"]['Brake_Pedal'] > 2
     elif self.car_fingerprint == CAR.CROSSTREK_2020H:
-      ret.brakePressed = cp.vl["Brake_Hybrid"]['Brake'] == 1
+      ret.brakePressed = cp_body.vl["Brake_Hybrid"]['Brake'] == 1
     else:
       ret.brakePressed = cp.vl["Brake_Status"]['Brake'] == 1
     ret.brakeLights = ret.brakePressed
