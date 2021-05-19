@@ -22,7 +22,6 @@ class CarState(CarStateBase):
       ret.brakePressed = cp.vl["Brake_Pedal"]['Brake_Pedal'] > 2
     else:
       ret.brakePressed = cp.vl["Brake_Pedal"]['Brake_Pedal'] > 1e-5
-    ret.brakeLights = ret.brakePressed
 
     ret.wheelSpeeds.fl = cp.vl["Wheel_Speeds"]['FL'] * CV.KPH_TO_MS
     ret.wheelSpeeds.fr = cp.vl["Wheel_Speeds"]['FR'] * CV.KPH_TO_MS
@@ -67,7 +66,7 @@ class CarState(CarStateBase):
     ret.steerError = cp.vl["Steering_Torque"]['Steer_Error_1'] == 1
 
     if self.car_fingerprint in PREGLOBAL_CARS:
-      self.button = cp_cam.vl["ES_CruiseThrottle"]["Cruise_Button"]
+      self.cruise_button = cp_cam.vl["ES_CruiseThrottle"]["Cruise_Button"]
       self.ready = not cp_cam.vl["ES_DashStatus"]["Not_Ready_Startup"]
       self.es_accel_msg = copy.copy(cp_cam.vl["ES_CruiseThrottle"])
     else:
@@ -85,6 +84,7 @@ class CarState(CarStateBase):
       # sig_name, sig_address, default
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
       ("Steering_Angle", "Steering_Torque", 0),
+      ("Steer_Error_1", "Steering_Torque", 0),
       ("Cruise_On", "CruiseControl", 0),
       ("Cruise_Activated", "CruiseControl", 0),
       ("Brake_Pedal", "Brake_Pedal", 0),
@@ -166,13 +166,13 @@ class CarState(CarStateBase):
         ("Cruise_Activated", "ES_CruiseThrottle", 0),
         ("Signal2", "ES_CruiseThrottle", 0),
         ("Brake_On", "ES_CruiseThrottle", 0),
-        ("DistanceSwap", "ES_CruiseThrottle", 0),
+        ("Distance_Swap", "ES_CruiseThrottle", 0),
         ("Standstill", "ES_CruiseThrottle", 0),
         ("Signal3", "ES_CruiseThrottle", 0),
-        ("CloseDistance", "ES_CruiseThrottle", 0),
+        ("Close_Distance", "ES_CruiseThrottle", 0),
         ("Signal4", "ES_CruiseThrottle", 0),
         ("Standstill_2", "ES_CruiseThrottle", 0),
-        ("ES_Error", "ES_CruiseThrottle", 0),
+        ("Cruise_Fault", "ES_CruiseThrottle", 0),
         ("Signal5", "ES_CruiseThrottle", 0),
         ("Counter", "ES_CruiseThrottle", 0),
         ("Signal6", "ES_CruiseThrottle", 0),
