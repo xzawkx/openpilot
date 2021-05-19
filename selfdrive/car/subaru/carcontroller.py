@@ -13,6 +13,7 @@ class CarController():
     self.fake_button_prev = 0
     self.steer_rate_limited = False
 
+    self.p = CarControllerParams(CP)
     self.packer = CANPacker(DBC[CP.carFingerprint]['pt'])
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert, left_line, right_line):
@@ -20,17 +21,14 @@ class CarController():
     can_sends = []
 
     # *** steering ***
-    if (frame % CarControllerParams.STEER_STEP) == 0:
+    if (frame % self.p.STEER_STEP) == 0:
 
-      if CS.CP.carFingerprint == CAR.IMPREZA_2020:
-        apply_steer = int(round(actuators.steer * CarControllerParams.STEER_MAX_2020))
-      else:
-        apply_steer = int(round(actuators.steer * CarControllerParams.STEER_MAX))
+      apply_steer = int(round(actuators.steer * self.p.STEER_MAX))
 
       # limits due to driver torque
 
       new_steer = int(round(apply_steer))
-      apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, CarControllerParams)
+      apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
       self.steer_rate_limited = new_steer != apply_steer
 
       if not enabled:
@@ -40,9 +38,9 @@ class CarController():
         apply_steer = 0
 
       if CS.CP.carFingerprint in PREGLOBAL_CARS:
-        can_sends.append(subarucan.create_preglobal_steering_control(self.packer, apply_steer, frame, CarControllerParams.STEER_STEP))
+        can_sends.append(subarucan.create_preglobal_steering_control(self.packer, apply_steer, frame, self.p.STEER_STEP))
       else:
-        can_sends.append(subarucan.create_steering_control(self.packer, apply_steer, frame, CarControllerParams.STEER_STEP))
+        can_sends.append(subarucan.create_steering_control(self.packer, apply_steer, frame, self.p.STEER_STEP))
 
       self.apply_steer_last = apply_steer
 
