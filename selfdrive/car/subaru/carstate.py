@@ -27,7 +27,6 @@ class CarState(CarStateBase):
       ret.brakePressed = cp_body.vl["Brake_Hybrid"]['Brake'] == 1
     else:
       ret.brakePressed = cp.vl["Brake_Status"]['Brake'] == 1
-    ret.brakeLights = ret.brakePressed
 
     ret.wheelSpeeds.fl = cp.vl["Wheel_Speeds"]['FL'] * CV.KPH_TO_MS
     ret.wheelSpeeds.fr = cp.vl["Wheel_Speeds"]['FR'] * CV.KPH_TO_MS
@@ -42,8 +41,9 @@ class CarState(CarStateBase):
     ret.leftBlinker, ret.rightBlinker = self.update_blinker(50, cp.vl["Dashlights"]['LEFT_BLINKER'],
                                                             cp.vl["Dashlights"]['RIGHT_BLINKER'])
 
-    ret.leftBlindspot = (cp.vl["BSD_RCTA"]['L_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['L_APPROACHING'] == 1)
-    ret.rightBlindspot = (cp.vl["BSD_RCTA"]['R_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['R_APPROACHING'] == 1)
+    if self.CP.enableBsm:
+      ret.leftBlindspot = (cp.vl["BSD_RCTA"]['L_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['L_APPROACHING'] == 1)
+      ret.rightBlindspot = (cp.vl["BSD_RCTA"]['R_ADJACENT'] == 1) or (cp.vl["BSD_RCTA"]['R_APPROACHING'] == 1)
 
     if self.car_fingerprint == CAR.CROSSTREK_2020H:
       can_gear = int(cp_body.vl["Transmission"]['Gear'])
@@ -78,7 +78,7 @@ class CarState(CarStateBase):
     ret.steerError = cp.vl["Steering_Torque"]['Steer_Error_1'] == 1
 
     if self.car_fingerprint in PREGLOBAL_CARS:
-      self.button = cp_cam.vl["ES_CruiseThrottle"]["Cruise_Button"]
+      self.cruise_button = cp_cam.vl["ES_CruiseThrottle"]["Cruise_Button"]
       self.ready = not cp_cam.vl["ES_DashStatus"]["Not_Ready_Startup"]
       self.es_accel_msg = copy.copy(cp_cam.vl["ES_CruiseThrottle"])
     else:
@@ -99,6 +99,7 @@ class CarState(CarStateBase):
       # sig_name, sig_address, default
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
       ("Steering_Angle", "Steering_Torque", 0),
+      ("Steer_Error_1", "Steering_Torque", 0),
       ("Brake_Pedal", "Brake_Pedal", 0),
       ("Throttle_Pedal", "Throttle", 0),
       ("LEFT_BLINKER", "Dashlights", 0),
@@ -113,19 +114,15 @@ class CarState(CarStateBase):
       ("DOOR_OPEN_RR", "BodyInfo", 1),
       ("DOOR_OPEN_RL", "BodyInfo", 1),
       ("Units", "Dash_State", 1),
-      ("L_ADJACENT", "BSD_RCTA", 0),
-      ("R_ADJACENT", "BSD_RCTA", 0),
-      ("L_APPROACHING", "BSD_RCTA", 0),
-      ("R_APPROACHING", "BSD_RCTA", 0),
-      ("Steer_Error_1", "Steering_Torque", 0),
     ]
 
     checks = [
       # sig_address, frequency
-      ("Wheel_Speeds", 50),
-      ("Brake_Pedal", 50),
-      ("Steering_Torque", 50),
       ("Throttle", 100),
+      ("Brake_Pedal", 50),
+      ("Wheel_Speeds", 50),
+      ("Steering_Torque", 50),
+      ("Dash_State", 1),
     ]
 
     if CP.carFingerprint == CAR.CROSSTREK_2020H:
@@ -153,6 +150,17 @@ class CarState(CarStateBase):
         ("BodyInfo", 1),
         ("CruiseControl", 50),
       ]
+
+      if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
+        checks += [
+          ("Dashlights", 20),
+        ]
+
+      if CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
+        checks += [
+          ("Dashlights", 10),
+        ]
+
     else:
       signals += [
         ("Steer_Warning", "Steering_Torque", 0),
@@ -170,14 +178,15 @@ class CarState(CarStateBase):
           ("CruiseControl", 20),
         ]
 
-    if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
-      checks += [
-        ("Dashlights", 20),
+    if CP.enableBsm:
+      signals += [
+        ("L_ADJACENT", "BSD_RCTA", 0),
+        ("R_ADJACENT", "BSD_RCTA", 0),
+        ("L_APPROACHING", "BSD_RCTA", 0),
+        ("R_APPROACHING", "BSD_RCTA", 0),
       ]
-
-    if CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
       checks += [
-        ("Dashlights", 10),
+        ("BSD_RCTA", 17),
       ]
 
     return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, 0)
@@ -217,13 +226,13 @@ class CarState(CarStateBase):
         ("Cruise_Activated", "ES_CruiseThrottle", 0),
         ("Signal2", "ES_CruiseThrottle", 0),
         ("Brake_On", "ES_CruiseThrottle", 0),
-        ("DistanceSwap", "ES_CruiseThrottle", 0),
+        ("Distance_Swap", "ES_CruiseThrottle", 0),
         ("Standstill", "ES_CruiseThrottle", 0),
         ("Signal3", "ES_CruiseThrottle", 0),
-        ("CloseDistance", "ES_CruiseThrottle", 0),
+        ("Close_Distance", "ES_CruiseThrottle", 0),
         ("Signal4", "ES_CruiseThrottle", 0),
         ("Standstill_2", "ES_CruiseThrottle", 0),
-        ("ES_Error", "ES_CruiseThrottle", 0),
+        ("Cruise_Fault", "ES_CruiseThrottle", 0),
         ("Signal5", "ES_CruiseThrottle", 0),
         ("Counter", "ES_CruiseThrottle", 0),
         ("Signal6", "ES_CruiseThrottle", 0),
@@ -239,6 +248,8 @@ class CarState(CarStateBase):
       signals = [
         ("Cruise_Set_Speed", "ES_DashStatus", 0),
         ("Conventional_Cruise", "ES_DashStatus", 0),
+        ("Cruise_Activated", "ES_DashStatus", 0),
+        ("Cruise_On", "ES_DashStatus", 0),
 
         ("Counter", "ES_LKAS_State", 0),
         ("Keep_Hands_On_Wheel", "ES_LKAS_State", 0),
@@ -264,12 +275,7 @@ class CarState(CarStateBase):
         ("ES_LKAS_State", 10),
       ]
 
-      if CP.carFingerprint == CAR.CROSSTREK_2020H:
-        signals += [
-          ("Cruise_Activated", "ES_DashStatus", 0),
-          ("Cruise_On", "ES_DashStatus", 0),
-        ]
-      else:
+      if CP.carFingerprint != CAR.CROSSTREK_2020H:
         signals += [
           ("Counter", "ES_Distance", 0),
           ("Signal1", "ES_Distance", 0),

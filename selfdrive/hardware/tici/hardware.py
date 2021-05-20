@@ -1,6 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
+from smbus2 import SMBus
 
 from cereal import log
 from selfdrive.hardware.base import HardwareBase, ThermalConfig
@@ -27,6 +28,14 @@ NetworkStrength = log.DeviceState.NetworkStrength
 MM_MODEM_ACCESS_TECHNOLOGY_UMTS = 1 << 5
 MM_MODEM_ACCESS_TECHNOLOGY_LTE = 1 << 14
 
+AMP_I2C_BUS = 0
+AMP_ADDRESS = 0x10
+
+def write_amplifier_reg(reg, val, offset, mask):
+  with SMBus(AMP_I2C_BUS) as bus:
+    v = bus.read_byte_data(AMP_ADDRESS, reg, force=True)
+    v = (v & (~mask)) | ((val << offset) & mask)
+    bus.write_byte_data(AMP_ADDRESS, reg, v, force=True)
 
 class Tici(HardwareBase):
   def __init__(self):
@@ -120,6 +129,33 @@ class Tici(HardwareBase):
 
     return str(self.get_modem().Get(MM_MODEM, 'EquipmentIdentifier', dbus_interface=DBUS_PROPS, timeout=TIMEOUT))
 
+  def get_network_info(self):
+    modem = self.get_modem()
+    try:
+      info = modem.Command("AT+QNWINFO", int(TIMEOUT * 1000), dbus_interface=MM_MODEM, timeout=TIMEOUT)
+      extra = modem.Command('AT+QENG="servingcell"', int(TIMEOUT * 1000), dbus_interface=MM_MODEM, timeout=TIMEOUT)
+    except Exception:
+      return None
+
+    if info and info.startswith('+QNWINFO: '):
+      info = info.replace('+QNWINFO: ', '').replace('"', '').split(',')
+      extra = "" if extra is None else extra.replace('+QENG: "servingcell",', '').replace('"', '')
+
+      if len(info) != 4:
+        return None
+
+      technology, operator, band, channel = info 
+
+      return({
+        'technology': technology,
+        'operator': operator,
+        'band': band,
+        'channel': int(channel),
+        'extra': extra,
+      })
+    else:
+      return None
+
   def parse_strength(self, percentage):
       if percentage < 25:
         return NetworkStrength.poor
@@ -191,3 +227,17 @@ class Tici(HardwareBase):
         f.write(str(int(percentage * 10.23)))
     except Exception:
       pass
+
+  def set_power_save(self, enabled):
+    # amplifier, 100mW at idle
+    write_amplifier_reg(0x51, 0b0 if enabled else 0b1, 7, 0b10000000)
+
+    # offline big cluster, leave core 4 online for boardd
+    for i in range(5, 8):
+      # TODO: fix permissions with udev
+      val = "0" if enabled else "1"
+      os.system(f"sudo su -c 'echo {val} > /sys/devices/system/cpu/cpu{i}/online'")
+
+if __name__ == "__main__":
+  import sys
+  Tici().set_power_save(bool(int(sys.argv[1])))
