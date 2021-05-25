@@ -164,6 +164,7 @@ class CarState(CarStateBase):
         ("Dashlights", 10),
         ("BodyInfo", 10),
         ("CruiseControl", 20),
+        ("Brake_Status", 50),
       ]
 
     if CP.carFingerprint == CAR.FORESTER_PREGLOBAL:
@@ -296,6 +297,7 @@ class CarState(CarStateBase):
       checks = [
         ("ES_DashStatus", 10),
         ("ES_Distance", 20),
+        ("ES_Status", 20),
         ("ES_Brake", 20),
         ("ES_LKAS_State", 10),
       ]
