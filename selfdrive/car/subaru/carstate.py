@@ -45,6 +45,7 @@ class CarState(CarStateBase):
 
     ret.steeringAngleDeg = cp.vl["Steering_Torque"]['Steering_Angle']
     ret.steeringTorque = cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
+    ret.steeringTorqueEps = cp.vl["Steering_Torque"]['Steer_Torque_Output']
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD[self.car_fingerprint]
 
     ret.cruiseState.enabled = cp.vl["CruiseControl"]['Cruise_Activated'] != 0
