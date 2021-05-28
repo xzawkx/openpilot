@@ -46,7 +46,7 @@ Replay::Replay(QString route, SubMaster *sm_, QObject *parent) : sm(sm_), QObjec
   }
 
   const QString url = "https://api.commadotai.com/v1/route/" + route + "/files";
-  http = new HttpRequest(this, url, "", Hardware::PC());
+  http = new HttpRequest(this, url, "", !Hardware::PC());
   QObject::connect(http, &HttpRequest::receivedResponse, this, &Replay::parseResponse);
 }
 
@@ -76,7 +76,15 @@ void Replay::addSegment(int n) {
   QObject::connect(t, &QThread::started, lrs[n], &LogReader::process);
   t->start();
 
-  frs.insert(n, new FrameReader(qPrintable(camera_paths.at(n).toString())));
+  QThread *frame_thread = QThread::create([=]{
+    FrameReader *frame_reader = new FrameReader(qPrintable(camera_paths.at(n).toString()));
+    frame_reader->process();
+    frs.insert(n, frame_reader);
+  });
+  QObject::connect(frame_thread, &QThread::finished, frame_thread, &QThread::deleteLater);
+  frame_thread->start();
+  
+  
 }
 
 void Replay::removeSegment(int n) {
@@ -85,10 +93,6 @@ void Replay::removeSegment(int n) {
   if (lrs.contains(n)) {
     auto lr = lrs.take(n);
     delete lr;
-  }
-  if (frs.contains(n)) {
-    auto fr = frs.take(n);
-    delete fr;
   }
 
   events_lock.lockForWrite();
@@ -102,6 +106,10 @@ void Replay::removeSegment(int n) {
   }
   events_lock.unlock();
   */
+  if (frs.contains(n)) {
+    auto fr = frs.take(n);
+    delete fr;
+  }
 }
 
 void Replay::start(){
