@@ -57,7 +57,12 @@ class CarInterface(CarInterfaceBase):
 
     # Per-chassis tuning values, override tuning defaults here if desired
 
-    if candidate == CAR.GOLF_MK7:
+    if candidate == CAR.ATLAS_MK1:
+      # Averages of all CA Atlas variants
+      ret.mass = 2011 + STD_CARGO_KG
+      ret.wheelbase = 2.98
+
+    elif candidate == CAR.GOLF_MK7:
       # Averages of all AU Golf variants
       ret.mass = 1397 + STD_CARGO_KG
       ret.wheelbase = 2.62
@@ -92,6 +97,11 @@ class CarInterface(CarInterfaceBase):
       ret.mass = 1569 + STD_CARGO_KG
       ret.wheelbase = 2.79
 
+    elif candidate == CAR.SKODA_OCTAVIA_MK3:
+      # Averages of all 5E/NE Octavia variants
+      ret.mass = 1388 + STD_CARGO_KG
+      ret.wheelbase = 2.68
+
     elif candidate == CAR.SKODA_SCALA_MK1:
       # Averages of all NW Scala variants
       ret.mass = 1192 + STD_CARGO_KG
@@ -104,7 +114,8 @@ class CarInterface(CarInterfaceBase):
 
     ret.centerToFront = ret.wheelbase * 0.45
 
-    ret.enableCamera = True  # Stock camera detection doesn't apply to VW
+    ret.enableCamera = True
+    ret.enableBsm = 0x30F in fingerprint[0]
 
     # TODO: get actual value, for now starting with reasonable value for
     # civic and scaling by mass and wheelbase
@@ -146,7 +157,7 @@ class CarInterface(CarInterfaceBase):
         be.pressed = self.CS.buttonStates[button]
         buttonEvents.append(be)
 
-    events = self.create_common_events(ret, extra_gears=[GearShifter.eco, GearShifter.sport])
+    events = self.create_common_events(ret, extra_gears=[GearShifter.eco, GearShifter.sport, GearShifter.manumatic])
 
     # Vehicle health and operation safety checks
     if self.CS.parkingBrakeSet:
@@ -168,6 +179,8 @@ class CarInterface(CarInterfaceBase):
     can_sends = self.CC.update(c.enabled, self.CS, self.frame, c.actuators,
                    c.hudControl.visualAlert,
                    c.hudControl.leftLaneVisible,
-                   c.hudControl.rightLaneVisible)
+                   c.hudControl.rightLaneVisible,
+                   c.hudControl.leftLaneDepart,
+                   c.hudControl.rightLaneDepart)
     self.frame += 1
     return can_sends

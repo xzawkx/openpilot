@@ -1,11 +1,20 @@
 #pragma once
 
 #include <stddef.h>
+
 #include <map>
-#include <string>
 #include <sstream>
+#include <string>
 
 #define ERR_NO_VALUE -33
+
+enum ParamKeyType {
+  PERSISTENT = 0x02,
+  CLEAR_ON_MANAGER_START = 0x04,
+  CLEAR_ON_PANDA_DISCONNECT = 0x08,
+  CLEAR_ON_IGNITION = 0x10,
+  ALL = 0x02 | 0x04 | 0x08 | 0x10
+};
 
 class Params {
 private:
@@ -15,16 +24,19 @@ public:
   Params(bool persistent_param = false);
   Params(const std::string &path);
 
+  bool checkKey(const std::string &key);
+
   // Delete a value
   int remove(const char *key);
   inline int remove(const std::string &key) {
     return remove (key.c_str());
   }
+  void clearAll(ParamKeyType type);
 
   // read all values
-  int read_db_all(std::map<std::string, std::string> *params);
+  int readAll(std::map<std::string, std::string> *params);
 
-  // read a value
+  // helpers for reading values
   std::string get(const char *key, bool block = false);
 
   inline std::string get(const std::string &key, bool block = false) {
@@ -39,11 +51,15 @@ public:
     return iss.fail() ? std::nullopt : std::optional(value);
   }
 
+  inline bool getBool(const std::string &key) {
+    return getBool(key.c_str());
+  }
+
   inline bool getBool(const char *key) {
     return get(key) == "1";
   }
 
-  // write a value
+  // helpers for writing values
   int put(const char* key, const char* val, size_t value_size);
 
   inline int put(const std::string &key, const std::string &val) {
@@ -52,5 +68,9 @@ public:
 
   inline int putBool(const char *key, bool val) {
     return put(key, val ? "1" : "0", 1);
+  }
+
+  inline int putBool(const std::string &key, bool val) {
+    return putBool(key.c_str(), val);
   }
 };
