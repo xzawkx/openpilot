@@ -68,9 +68,9 @@ static void update_leads(UIState *s, const cereal::ModelDataV2::LeadDataV3::Read
     float z = line ? (*line).getZ()[get_path_length_idx(*line, lead_data.getX()[0])] : 0.0;
     calib_frame_to_full_frame(s, lead_data.getX()[0], -lead_data.getY()[0], z + 1.22, &s->scene.lead_vertices[0]);
   }
-  s->scene.lead_v_rel = lead_data.getV();
-  s->scene.lead_d_rel = lead_data.getX();
-  s->scene.lead_status = lead_data.getStatus();
+  s->scene.lead_v_rel = lead_data.getV()[0];
+  s->scene.lead_d_rel = lead_data.getX()[0];
+  s->scene.lead_status = lead_data.getProb() > 0.5;
 }
 
 static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,
