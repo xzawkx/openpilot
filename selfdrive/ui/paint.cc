@@ -562,6 +562,7 @@ static void ui_draw_vision_frame(UIState *s) {
 }
 
 static void ui_draw_vision(UIState *s) {
+  const UIScene *scene = &s->scene;
   // Draw augmented elements
   if (scene->world_objects_visible) {
     ui_draw_world(s);
