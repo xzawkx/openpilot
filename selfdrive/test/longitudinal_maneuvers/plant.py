@@ -13,6 +13,7 @@ from selfdrive.car.honda.values import CAR
 from selfdrive.car.honda.interface import CarInterface
 from selfdrive.controls.lib.longcontrol import LongCtrlState
 from opendbc.can.dbc import dbc
+from selfdrive.modeld.constants import T_IDXS
 honda = dbc(os.path.join(DBC_PATH, "honda_civic_touring_2016_can_generated.dbc"))
 
 # Trick: set 0x201 (interceptor) in fingerprints for gas is controlled like if there was an interceptor
@@ -46,7 +47,7 @@ class Plant():
     # lead car
     self.distance_lead = distance_lead
 
-    self.rk = Ratekeeper(rate, print_delay_threshold=100)
+    self.rk = Ratekeeper(rate, print_delay_threshold=100.0)
     self.ts = 1./rate
     time.sleep(1)
     self.sm = messaging.SubMaster(['longitudinalPlan'], poll=['longitudinalPlan'])
@@ -74,6 +75,7 @@ class Plant():
       v_rel = 0.
       prob = 0.0
 
+    md.modelV2.position.t = [float(t) for t in T_IDXS]
     lead = log.ModelDataV2.LeadDataV3.new_message()
     lead_x = [float(d_rel),]
     for i in range(5):

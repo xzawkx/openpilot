@@ -252,7 +252,7 @@ CONFIGS = [
   ProcessConfig(
     proc_name="plannerd",
     pub_sub={
-      "modelV2": ["lateralPlan"], "radarState": ["longitudinalPlan"],
+      "modelV2": ["lateralPlan", "longitudinalPlan"],
       "carState": [], "controlsState": [],
     },
     ignore=["logMonoTime", "valid", "longitudinalPlan.processingDelay"],
@@ -355,7 +355,8 @@ def python_replay_process(cfg, lr, fingerprint=None):
   # TODO: remove after getting new route for civic & accord
   migration = {
     "HONDA CIVIC 2016 TOURING": "HONDA CIVIC 2016",
-    "HONDA ACCORD 2018 SPORT 2T": "HONDA ACCORD 2T 2018",
+    "HONDA ACCORD 2018 SPORT 2T": "HONDA ACCORD 2018",
+    "HONDA ACCORD 2T 2018": "HONDA ACCORD 2018",
   }
 
   if fingerprint is not None:
