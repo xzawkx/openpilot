@@ -33,8 +33,8 @@ int main( )
   Function h;
   h << exp(0.3 * NORM_RW_ERROR(v_ego, v_l, d_l)) - 1;
   h << (d_l - desired) / (0.05 * v_ego + 0.5);
-  h << a_ego;
-  h << j_ego;
+  h << a_ego * (0.1 * v_ego + 1.0);
+  h << j_ego * (0.1 * v_ego + 1.0);
 
   // Weights are defined in mpc.
   BMatrix Q(4,4); Q.setAll(true);
@@ -57,7 +57,7 @@ int main( )
   ocp.minimizeLSQ(Q, h);
   ocp.minimizeLSQEndTerm(QN, hN);
 
-  ocp.subjectTo( 1e-3 <= v_ego);
+  ocp.subjectTo( 0.0 <= v_ego);
   ocp.setNOD(2);
 
   OCPexport mpc(ocp);
