@@ -81,6 +81,7 @@ FW_VERSIONS = {
   CAR.ASCENT: {
     # 2019 Ascent - UDM / @Adminiuga
     # 2019 Ascent - UDM / @tvo
+    # 2019 Ascent - UDM / @RCoaster
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa5 \x19\x02\x00',
@@ -94,6 +95,7 @@ FW_VERSIONS = {
     (Ecu.engine, 0x7e0, None): [
       b'\xbb,\xa0t\a',
       b'\xf1\x82\xbb,\xa0t\x87',
+      b'\xf1\x82\xbb,\xa0t\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\x00\xfe\xf7\x00\x00',
