@@ -144,12 +144,14 @@ class CarState(CarStateBase):
     else:
       signals += [
         ("Steer_Warning", "Steering_Torque", 0),
+        ("Brake", "Brake_Status", 0),
       ]
 
       checks += [
         ("Dashlights", 10),
         ("BodyInfo", 10),
         ("CruiseControl", 20),
+        ("Brake_Status", 50),
       ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0)
