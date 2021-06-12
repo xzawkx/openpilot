@@ -116,13 +116,22 @@ class CarState(CarStateBase):
     checks = [
       # sig_address, frequency
       ("Throttle", 100),
-      ("Dashlights", 10),
       ("Brake_Pedal", 50),
       ("Transmission", 100),
       ("Steering_Torque", 50),
       ("Dash_State", 1),
-      ("BodyInfo", 1),
     ]
+
+    if CP.enableBsm:
+      signals += [
+        ("L_ADJACENT", "BSD_RCTA", 0),
+        ("R_ADJACENT", "BSD_RCTA", 0),
+        ("L_APPROACHING", "BSD_RCTA", 0),
+        ("R_APPROACHING", "BSD_RCTA", 0),
+      ]
+      checks += [
+        ("BSD_RCTA", 17),
+      ]
 
     if CP.carFingerprint == CAR.OUTBACK:
       signals += [
@@ -135,7 +144,7 @@ class CarState(CarStateBase):
         ("Signal4", "Brake_Pedal", 0),
       ]
 
-    if CP.carFingerprint not in PREGLOBAL_CARS:
+    else:
       signals += [
         ("Cruise_On", "CruiseControl", 0),
         ("Cruise_Activated", "CruiseControl", 0),
@@ -149,7 +158,22 @@ class CarState(CarStateBase):
         ("Wheel_Speeds", 50),
       ]
 
-    if CP.carFingerprint not in PREGLOBAL_CARS:
+    if CP.carFingerprint in PREGLOBAL_CARS:
+      checks += [
+        ("BodyInfo", 1),
+        ("CruiseControl", 50),
+      ]
+
+      if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
+        checks += [
+          ("Dashlights", 20),
+        ]
+
+      elif CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
+        checks += [
+          ("Dashlights", 10),
+        ]
+    else:
       signals += [
         ("Steer_Warning", "Steering_Torque", 0),
       ]
@@ -168,30 +192,6 @@ class CarState(CarStateBase):
          ("CruiseControl", 20),
          ("Brake_Status", 50),
         ]
-
-    if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
-      checks += [
-        ("Dashlights", 20),
-        ("BodyInfo", 1),
-        ("CruiseControl", 50),
-      ]
-
-    if CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
-      checks += [
-        ("Dashlights", 10),
-        ("CruiseControl", 50),
-      ]
-
-    if CP.enableBsm:
-      signals += [
-        ("L_ADJACENT", "BSD_RCTA", 0),
-        ("R_ADJACENT", "BSD_RCTA", 0),
-        ("L_APPROACHING", "BSD_RCTA", 0),
-        ("R_APPROACHING", "BSD_RCTA", 0),
-      ]
-      checks += [
-        ("BSD_RCTA", 17),
-      ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0)
 
