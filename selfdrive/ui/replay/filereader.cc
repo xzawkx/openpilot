@@ -2,8 +2,6 @@
 
 #include <QtNetwork>
 
-#include "tools/clib/framereader.h"
-
 FileReader::FileReader(const QString& file_) : file(file_) {
 }
 
@@ -69,7 +67,7 @@ LogReader::LogReader(const QString& file, Events *events_, QReadWriteLock* event
   event_offset = 0;
 
   parser = new std::thread([&]() {
-    while (1) {
+    while (true) {
       mergeEvents(cdled.get());
     }
   });

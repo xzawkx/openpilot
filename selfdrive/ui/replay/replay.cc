@@ -46,7 +46,7 @@ Replay::Replay(QString route, SubMaster *sm_, QObject *parent) : sm(sm_), QObjec
   }
 
   const QString url = "https://api.commadotai.com/v1/route/" + route + "/files";
-  http = new HttpRequest(this, url, "", Hardware::PC());
+  http = new HttpRequest(this, url, "", !Hardware::PC());
   QObject::connect(http, &HttpRequest::receivedResponse, this, &Replay::parseResponse);
 }
 
@@ -76,19 +76,15 @@ void Replay::addSegment(int n) {
   QObject::connect(t, &QThread::started, lrs[n], &LogReader::process);
   t->start();
 
-  frs.insert(n, new FrameReader(qPrintable(camera_paths.at(n).toString())));
+  frs[n] = new FrameReader(qPrintable(camera_paths.at(n).toString()), this);
 }
 
 void Replay::removeSegment(int n) {
-  // TODO: fix FrameReader and LogReader destructors
+  // TODO: fix LogReader destructors
   /*
   if (lrs.contains(n)) {
     auto lr = lrs.take(n);
     delete lr;
-  }
-  if (frs.contains(n)) {
-    auto fr = frs.take(n);
-    delete fr;
   }
 
   events_lock.lockForWrite();
@@ -102,6 +98,10 @@ void Replay::removeSegment(int n) {
   }
   events_lock.unlock();
   */
+  if (frs.contains(n)) {
+    auto fr = frs.take(n);
+    delete fr;
+  }
 }
 
 void Replay::start(){
@@ -247,8 +247,6 @@ void Replay::stream() {
             auto pp = *it_;
             if (frs.find(pp.first) != frs.end()) {
               auto frm = frs[pp.first];
-              auto data = frm->get(pp.second);
-
               if (vipc_server == nullptr) {
                 cl_device_id device_id = cl_get_device_id(CL_DEVICE_TYPE_DEFAULT);
                 cl_context context = CL_CHECK_ERR(clCreateContext(NULL, 1, &device_id, NULL, NULL, &err));
@@ -259,10 +257,13 @@ void Replay::stream() {
                 vipc_server->start_listener();
               }
 
-              VisionIpcBufExtra extra = {};
-              VisionBuf *buf = vipc_server->get_buffer(VisionStreamType::VISION_STREAM_RGB_BACK);
-              memcpy(buf->addr, data, frm->getRGBSize());
-              vipc_server->send(buf, &extra, false);
+              uint8_t *dat = frm->get(pp.second);
+              if (dat) {
+                VisionIpcBufExtra extra = {};
+                VisionBuf *buf = vipc_server->get_buffer(VisionStreamType::VISION_STREAM_RGB_BACK);
+                memcpy(buf->addr, dat, frm->getRGBSize());
+                vipc_server->send(buf, &extra, false);
+              }
             }
           }
         }
