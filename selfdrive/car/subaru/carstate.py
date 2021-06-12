@@ -128,11 +128,12 @@ class CarState(CarStateBase):
       signals += [
         ("Counter", "Brake_Pedal", 0),
         ("Signal1", "Brake_Pedal", 0),
-        ("Signal1", "Brake_Pedal", 0),
+        ("Speed", "Brake_Pedal", 0),
         ("Signal2", "Brake_Pedal", 0),
         ("Brake_Lights", "Brake_Pedal", 0),
         ("Signal3", "Brake_Pedal", 0),
         ("Signal4", "Brake_Pedal", 0),
+      ]
 
     if CP.carFingerprint not in PREGLOBAL_CARS:
       signals += [
