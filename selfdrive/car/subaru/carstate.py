@@ -160,8 +160,13 @@ class CarState(CarStateBase):
       ]
 
       if CP.carFingerprint != CAR.OUTBACK:
+        signals += [
+          ("Brake", "Brake_Status", 0),
+        ]
+
         checks += [
          ("CruiseControl", 20),
+         ("Brake_Status", 50),
         ]
 
     if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
