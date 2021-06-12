@@ -102,7 +102,6 @@ class CarState(CarStateBase):
       ("DOOR_OPEN_RL", "BodyInfo", 1),
       ("Units", "Dash_State", 1),
       ("Gear", "Transmission", 0),
-      ("Steer_Error_1", "Steering_Torque", 0),
     ]
 
     checks = [
