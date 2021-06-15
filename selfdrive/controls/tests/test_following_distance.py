@@ -10,10 +10,13 @@ from selfdrive.controls.lib.lead_mpc import LeadMpc
 
 
 def RW(v_ego, v_l):
-  TR = 1.8
-  G = 9.81
-  return (v_ego * TR - (v_l - v_ego) * TR + v_ego * v_ego / (2 * G) - v_l * v_l / (2 * G))
-
+  TR = 2.
+  MAX_BRAKE = 7.
+  lead_stop_time = v_l/MAX_BRAKE
+  ego_stop_time = v_ego/(MAX_BRAKE)
+  lead_stop_dist = v_l*lead_stop_time - (MAX_BRAKE * lead_stop_time**2)/2
+  ego_stop_dist = v_ego*ego_stop_time - (MAX_BRAKE * ego_stop_time**2)/2
+  return v_ego*TR - lead_stop_dist + ego_stop_dist
 
 class FakePubMaster():
   def send(self, s, data):
@@ -88,7 +91,8 @@ class TestFollowingDistance(unittest.TestCase):
       simulation_steady_state = run_following_distance_simulation(v_lead)
       correct_steady_state = RW(v_lead, v_lead) + 4.0
 
-      self.assertAlmostEqual(simulation_steady_state, correct_steady_state, delta=0.1)
+      self.assertAlmostEqual(simulation_steady_state, correct_steady_state, delta=.2*simulation_steady_state)
+      self.assertGreater(simulation_steady_state, correct_steady_state)
 
 
 if __name__ == "__main__":
