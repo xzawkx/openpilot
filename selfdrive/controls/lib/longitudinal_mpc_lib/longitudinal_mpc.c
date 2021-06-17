@@ -89,12 +89,12 @@ int run_mpc(state_t * x0, log_t * solution,
   acado_preparationStep();
   acado_feedbackStep();
 
-  for (i = 0; i <= N; i++){
+  for (i = 0; i <= N; i++) {
     solution->x_ego[i] = acadoVariables.x[i*NX];
     solution->v_ego[i] = acadoVariables.x[i*NX+1];
     solution->a_ego[i] = acadoVariables.x[i*NX+2];
 
-    if (i < N){
+    if (i < N) {
       solution->j_ego[i] = acadoVariables.u[i];
     }
   }
