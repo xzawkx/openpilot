@@ -54,26 +54,25 @@ int set_core_affinity(int core) {
 namespace util {
 
 std::string read_file(const std::string& fn) {
-  std::ifstream ifs(fn, std::ios::binary | std::ios::ate);
-  if (ifs) {
-    std::ifstream::pos_type pos = ifs.tellg();
-    if (pos != std::ios::beg) {
+  std::ifstream f(fn, std::ios::binary | std::ios::in);
+  if (f) {
+    f.seekg(0, std::ios::end);
+    int pos = f.tellg();
+    if (pos > 0) {
       std::string result;
       result.resize(pos);
-      ifs.seekg(0, std::ios::beg);
-      ifs.read(result.data(), pos);
-      if (ifs) {
+      f.seekg(0, std::ios::beg);
+      if (f.read(result.data(), pos)) {
         return result;
       }
+    } else {
+      // fallback for files created on read, e.g. procfs
+      std::stringstream buffer;
+      buffer << f.rdbuf();
+      return buffer.str();
     }
   }
-  ifs.close();
-
-  // fallback for files created on read, e.g. procfs
-  std::ifstream f(fn);
-  std::stringstream buffer;
-  buffer << f.rdbuf();
-  return buffer.str();
+  return std::string();
 }
 
 int read_files_in_dir(const std::string &path, std::map<std::string, std::string> *contents) {
@@ -153,6 +152,10 @@ std::string dir_name(std::string const &path) {
   size_t pos = path.find_last_of("/");
   if (pos == std::string::npos) return "";
   return path.substr(0, pos);
+}
+
+bool is_valid_dongle_id(std::string const& dongle_id) {
+  return !dongle_id.empty() && dongle_id != "UnregisteredDevice";
 }
 
 struct tm get_time() {
