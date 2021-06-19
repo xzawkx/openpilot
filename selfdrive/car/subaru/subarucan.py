@@ -30,6 +30,15 @@ def create_es_distance(packer, es_distance_msg, pcm_cancel_cmd):
 def create_es_lkas(packer, es_lkas_msg, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
 
   values = copy.copy(es_lkas_msg)
+
+  # Remove the Stock LKAS "Keep hands on wheel" alert
+  if values["Keep_Hands_On_Wheel"] == 1:
+    values["Keep_Hands_On_Wheel"] = 0
+
+  # Prevent Stock LKAS sending an audible tone when it turns off LKAS
+  if values["LKAS_Alert"] == 27:
+    values["LKAS_Alert"] = 0
+
   if visual_alert == VisualAlert.steerRequired:
     values["Keep_Hands_On_Wheel"] = 1
 
@@ -45,6 +54,15 @@ def create_es_lkas(packer, es_lkas_msg, visual_alert, left_line, right_line, lef
   values["LKAS_Right_Line_Visible"] = int(right_line)
 
   return packer.make_can_msg("ES_LKAS_State", 0, values)
+
+def create_es_dashstatus(packer, dashstatus_msg):
+  values = copy.copy(dashstatus_msg)
+
+  # Prevent stock showing an LKAS disabled message
+  if values["LKAS_State_Msg"] == 3:
+    values["LKAS_State_Msg"] = 0
+
+  return packer.make_can_msg("ES_DashStatus", 0, values)
 
 # *** Subaru Pre-global ***
 
