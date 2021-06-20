@@ -147,13 +147,16 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
     resetCalibBtn->setDescription(desc);
   });
 
-  auto retrainingBtn = new ButtonControl("Review Training Guide", "REVIEW", "Review the rules, features, and limitations of openpilot");
-  connect(retrainingBtn, &ButtonControl::released, [=]() {
-    if (ConfirmationDialog::confirm("Are you sure you want to review the training guide?", this)) {
-      Params().remove("CompletedTrainingVersion");
-      emit reviewTrainingGuide();
-    }
-  });
+  ButtonControl *retrainingBtn = nullptr;
+  if (!params.getBool("Passive")) {
+    retrainingBtn = new ButtonControl("Review Training Guide", "REVIEW", "Review the rules, features, and limitations of openpilot");
+    connect(retrainingBtn, &ButtonControl::released, [=]() {
+      if (ConfirmationDialog::confirm("Are you sure you want to review the training guide?", this)) {
+        Params().remove("CompletedTrainingVersion");
+        emit reviewTrainingGuide();
+      }
+    });
+  }
 
   auto uninstallBtn = new ButtonControl("Uninstall " + getBrand(), "UNINSTALL");
   connect(uninstallBtn, &ButtonControl::released, [=]() {
@@ -163,9 +166,11 @@ DevicePanel::DevicePanel(QWidget* parent) : QWidget(parent) {
   });
 
   for (auto btn : {dcamBtn, resetCalibBtn, retrainingBtn, uninstallBtn}) {
-    main_layout->addWidget(horizontal_line());
-    connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
-    main_layout->addWidget(btn);
+    if (btn) {
+      main_layout->addWidget(horizontal_line());
+      connect(parent, SIGNAL(offroadTransition(bool)), btn, SLOT(setEnabled(bool)));
+      main_layout->addWidget(btn);
+    }
   }
 
   // power buttons
@@ -270,12 +275,14 @@ QWidget * network_panel(QWidget * parent) {
   layout->setSpacing(30);
 
   // wifi + tethering buttons
-  layout->addWidget(new ButtonControl("WiFi Settings", "OPEN", "",
-                                      [=]() { HardwareEon::launch_wifi(); }));
+  auto wifiBtn = new ButtonControl("WiFi Settings", "OPEN");
+  QObject::connect(wifiBtn, &ButtonControl::released, [=]() { HardwareEon::launch_wifi(); });
+  layout->addWidget(wifiBtn);
   layout->addWidget(horizontal_line());
 
-  layout->addWidget(new ButtonControl("Tethering Settings", "OPEN", "",
-                                      [=]() { HardwareEon::launch_tethering(); }));
+  auto tetheringBtn = new ButtonControl("Tethering Settings", "OPEN");
+  QObject::connect(tetheringBtn, &ButtonControl::released, [=]() { HardwareEon::launch_tethering(); });
+  layout->addWidget(tetheringBtn);
   layout->addWidget(horizontal_line());
 
   // SSH key management
