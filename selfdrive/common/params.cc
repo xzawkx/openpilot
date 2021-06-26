@@ -162,6 +162,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"DisableRadar", PERSISTENT}, // WARNING: THIS DISABLES AEB
     {"EndToEndToggle", PERSISTENT},
     {"CompletedTrainingVersion", PERSISTENT},
+    {"DisableDisengageOnGasToggle", PERSISTENT},
     {"DisablePowerDown", PERSISTENT},
     {"DisableUpdates", PERSISTENT},
     {"EnableWideCamera", PERSISTENT},
