@@ -1,6 +1,12 @@
 #pragma once
 
-#include <QtWidgets>
+#include <QDateTime>
+#include <QLayout>
+#include <QLayoutItem>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QSurfaceFormat>
+#include <QWidget>
 
 #include "selfdrive/common/params.h"
 
@@ -65,3 +71,18 @@ inline void setQtSurfaceFormat() {
 #endif
   QSurfaceFormat::setDefaultFormat(fmt);
 }
+
+class ClickableWidget : public QWidget
+{
+  Q_OBJECT
+
+public:
+  ClickableWidget(QWidget *parent = nullptr);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event) override;
+  void paintEvent(QPaintEvent *) override;
+
+signals:
+  void clicked();
+};

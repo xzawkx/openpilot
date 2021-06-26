@@ -78,7 +78,7 @@ int mkdir_p(std::string path) {
   return 0;
 }
 
-bool ensure_params_path(const std::string &param_path, const std::string &key_path) {
+static bool create_params_path(const std::string &param_path, const std::string &key_path) {
   // Make sure params path exists
   if (!util::file_exists(param_path) && mkdir_p(param_path) != 0) {
     return false;
@@ -117,6 +117,12 @@ bool ensure_params_path(const std::string &param_path, const std::string &key_pa
   return chmod(key_path.c_str(), 0777) == 0;
 }
 
+static void ensure_params_path(const std::string &params_path) {
+  if (!create_params_path(params_path, params_path + "/d")) {
+    throw std::runtime_error(util::string_format("Failed to ensure params path, errno=%d", errno));
+  }
+}
+
 class FileLock {
  public:
   FileLock(const std::string& file_name, int op) : fn_(file_name), op_(op) {}
@@ -128,7 +134,6 @@ class FileLock {
       return;
     }
     if (HANDLE_EINTR(flock(fd_, op_)) < 0) {
-      close(fd_);
       LOGE("Failed to lock file %s, errno=%d", fn_.c_str(), errno);
     }
   }
@@ -145,6 +150,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"ApiCache_DriveStats", PERSISTENT},
     {"ApiCache_Device", PERSISTENT},
     {"ApiCache_Owner", PERSISTENT},
+    {"ApiCache_NavDestinations", PERSISTENT},
     {"AthenadPid", PERSISTENT},
     {"CalibrationParams", PERSISTENT},
     {"CarBatteryCapacity", PERSISTENT},
@@ -153,7 +159,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CarVin", CLEAR_ON_MANAGER_START | CLEAR_ON_PANDA_DISCONNECT | CLEAR_ON_IGNITION_ON},
     {"CommunityFeaturesToggle", PERSISTENT},
     {"ControlsReady", CLEAR_ON_MANAGER_START | CLEAR_ON_PANDA_DISCONNECT | CLEAR_ON_IGNITION_ON},
-    {"EnableLteOnroad", PERSISTENT},
+    {"DisableRadar", PERSISTENT}, // WARNING: THIS DISABLES AEB
     {"EndToEndToggle", PERSISTENT},
     {"CompletedTrainingVersion", PERSISTENT},
     {"DisablePowerDown", PERSISTENT},
@@ -225,9 +231,12 @@ std::unordered_map<std::string, uint32_t> keys = {
 
 Params::Params(bool persistent_param) : Params(persistent_param ? persistent_params_path : default_params_path) {}
 
+std::once_flag default_params_path_ensured;
 Params::Params(const std::string &path) : params_path(path) {
-  if (!ensure_params_path(params_path, params_path + "/d")) {
-    throw std::runtime_error(util::string_format("Failed to ensure params path, errno=%d", errno));
+  if (path == default_params_path) {
+    std::call_once(default_params_path_ensured, ensure_params_path, path);
+  } else {
+    ensure_params_path(path);
   }
 }
 

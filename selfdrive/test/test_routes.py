@@ -11,6 +11,7 @@ from selfdrive.car.mazda.values import CAR as MAZDA
 from selfdrive.car.subaru.values import CAR as SUBARU
 from selfdrive.car.toyota.values import CAR as TOYOTA
 from selfdrive.car.volkswagen.values import CAR as VOLKSWAGEN
+from selfdrive.car.tesla.values import CAR as TESLA
 
 # TODO: add routes for these cars
 non_tested_cars = [
@@ -87,7 +88,9 @@ routes = [
   TestRoute("50a2212c41f65c7b|2021-05-24--16-22-06", HYUNDAI.KIA_FORTE),
   TestRoute("c5ac319aa9583f83|2021-06-01--18-18-31", HYUNDAI.ELANTRA),
   TestRoute("82e9cdd3f43bf83e|2021-05-15--02-42-51", HYUNDAI.ELANTRA_2021),
+  TestRoute("715ac05b594e9c59|2021-06-20--16-21-07", HYUNDAI.ELANTRA_HEV_2021),
 
+  TestRoute("00c829b1b7613dea|2021-06-24--09-10-10", TOYOTA.ALPHARD_TSS2),
   TestRoute("000cf3730200c71c|2021-05-24--10-42-05", TOYOTA.AVALON),
   TestRoute("0bb588106852abb7|2021-05-26--12-22-01", TOYOTA.AVALON_2019),
   TestRoute("87bef2930af86592|2021-05-30--09-40-54", TOYOTA.AVALONH_2019),
@@ -133,6 +136,7 @@ routes = [
   TestRoute("58a7d3b707987d65|2021-03-25--17-26-37", VOLKSWAGEN.JETTA_MK7),
   TestRoute("4d134e099430fba2|2021-03-26--00-26-06", VOLKSWAGEN.PASSAT_MK8),
   TestRoute("2cef8a0b898f331a|2021-03-25--20-13-57", VOLKSWAGEN.TIGUAN_MK2),
+  TestRoute("a589dcc642fdb10a|2021-06-14--20-54-26", VOLKSWAGEN.TOURAN_MK2),
   TestRoute("07667b885add75fd|2021-01-23--19-48-42", VOLKSWAGEN.AUDI_A3_MK3),
   TestRoute("6c6b466346192818|2021-06-06--14-17-47", VOLKSWAGEN.AUDI_Q2_MK1),
   TestRoute("8f205bdd11bcbb65|2021-03-26--01-00-17", VOLKSWAGEN.SEAT_ATECA_MK1),
@@ -164,6 +168,8 @@ routes = [
   TestRoute("10b5a4b380434151|2020-08-26--17-11-45", MAZDA.CX9),
   TestRoute("74f1038827005090|2020-08-26--20-05-50", MAZDA.MAZDA3),
   TestRoute("fb53c640f499b73d|2021-06-01--04-17-56", MAZDA.MAZDA6),
+
+  TestRoute("bb50caf5f0945ab1|2021-06-19--17-20-18", TESLA.AP2_MODELS),
 ]
 
 forced_dashcam_routes = [
