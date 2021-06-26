@@ -24,6 +24,7 @@ class CAR:
   FORESTER = "SUBARU FORESTER 2019"
   FORESTER_PREGLOBAL = "SUBARU FORESTER 2017 - 2018"
   LEGACY_PREGLOBAL = "SUBARU LEGACY 2015 - 2018"
+  OUTBACK = "SUBARU OUTBACK 2020"
   OUTBACK_PREGLOBAL = "SUBARU OUTBACK 2015 - 2017"
   OUTBACK_PREGLOBAL_2018 = "SUBARU OUTBACK 2018 - 2019"
   WRX_PREGLOBAL = "SUBARU WRX 2018"
@@ -85,10 +86,14 @@ FINGERPRINTS = {
   {
     2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 316: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 352: 8, 353: 8, 354: 8, 356: 8, 358: 8, 359: 8, 392: 8, 554: 8, 604: 8, 640: 8, 642: 8, 805: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 977: 8, 1614: 8, 1632: 8, 1640: 8, 1657: 8, 1658: 8, 1672: 8, 1722: 8, 1743: 8, 1745: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8, 2015: 8, 2016: 8, 2024: 8
   }],
+  CAR.OUTBACK: [{
+  # OUTBACK 2020 2.5i
+    2: 8, 64: 8, 72: 8, 272: 8, 273: 8, 274: 8, 280: 8, 281: 8, 282: 8, 289: 8, 290: 8, 312: 8, 313: 8, 372: 8, 552: 8, 554: 8, 801: 8, 802: 8, 803: 8, 805: 8, 808: 8, 811: 8, 912: 8, 915: 8, 940: 8, 941: 8, 1350: 8, 1361: 8, 1617: 8, 1632: 8, 1677: 8, 1713: 8, 1723: 8
+  }],
 }
 
 # Use only FPv2
-IGNORED_FINGERPRINTS = [CAR.ASCENT, CAR.IMPREZA, CAR.WRX_PREGLOBAL]
+IGNORED_FINGERPRINTS = [CAR.ASCENT, CAR.IMPREZA, CAR.OUTBACK, CAR.WRX_PREGLOBAL]
 
 FW_VERSIONS = {
   CAR.ASCENT: {
@@ -274,6 +279,33 @@ FW_VERSIONS = {
       b'\xbf\xf2\000\x80\000',
     ],
   },
+  CAR.OUTBACK: {
+    # 2020 Outback Hybrid - UDM / @KingChalupa
+    # 2020 Outback 2.5i Premium - UDM / @ursubpar
+    # 2021 Outback / @Frye - FL
+    # Ecu, addr, subaddr: ROM ID
+    (Ecu.esp, 0x7b0, None): [
+      b'\xa1  \x06\x01',
+      b'\xa1  \a\x00',
+      b'\xa1  \b\001',
+    ],
+    (Ecu.eps, 0x746, None): [
+      b'\x9b\xc0\x10\x00',
+    ],
+    (Ecu.fwdCamera, 0x787, None): [
+      b'\x00\x00eJ\x00\x1f@ \x19\x00',
+      b'\000\000e\x80\000\037@ \031\000',
+    ],
+    (Ecu.engine, 0x7e0, None): [
+      b'\xbc,\xa0q\x07',
+      b'\xbc\"`@\a',
+      b'\xde"`0\a',
+    ],
+    (Ecu.transmission, 0x7e1, None): [
+      b'\xa5\xfe\xf7@\x00',
+      b'\xa5\xf6D@\x00',
+    ],
+  },
   CAR.OUTBACK_PREGLOBAL: {
     # 2017 Outback Limited 3.6r - UDM / @Anthony
     # 2016 Outback Limited 2.5 - UDM / @aeiro
@@ -410,6 +442,7 @@ STEER_THRESHOLD = {
   CAR.FORESTER: 80,
   CAR.FORESTER_PREGLOBAL: 75,
   CAR.LEGACY_PREGLOBAL: 75,
+  CAR.OUTBACK: 80,
   CAR.OUTBACK_PREGLOBAL: 75,
   CAR.OUTBACK_PREGLOBAL_2018: 75,
   CAR.WRX_PREGLOBAL: 75,
@@ -422,6 +455,7 @@ DBC = {
   CAR.FORESTER: dbc_dict('subaru_global_2017_generated', None),
   CAR.FORESTER_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
   CAR.LEGACY_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
+  CAR.OUTBACK: dbc_dict('subaru_global_2017_generated', None),
   CAR.OUTBACK_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
   CAR.OUTBACK_PREGLOBAL_2018: dbc_dict('subaru_outback_2019_generated', None),
   CAR.WRX_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),

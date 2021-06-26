@@ -124,9 +124,12 @@ class CarController():
          self.throttle_cnt = CS.throttle_msg["Counter"]
 
     else:
-      if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
-        can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, pcm_cancel_cmd))
-        self.es_distance_cnt = CS.es_distance_msg["Counter"]
+      if CS.CP.carFingerprint != CAR.OUTBACK:
+        if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
+          can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, pcm_cancel_cmd))
+          self.es_distance_cnt = CS.es_distance_msg["Counter"]
+        # do not send duplicate acc cancel using create_brake_pedal for cars that support ES_Distance
+        pcm_cancel_cmd = False
 
       if self.es_lkas_cnt != CS.es_lkas_msg["Counter"]:
         can_sends.append(subarucan.create_es_lkas(self.packer, CS.es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart))
@@ -141,7 +144,7 @@ class CarController():
          self.throttle_cnt = CS.throttle_msg["Counter"]
 
       if self.brake_pedal_cnt != CS.brake_pedal_msg["Counter"]:
-         can_sends.append(subarucan.create_brake_pedal(self.packer, CS.brake_pedal_msg, speed_cmd))
+         can_sends.append(subarucan.create_brake_pedal(self.packer, CS.brake_pedal_msg, speed_cmd, pcm_cancel_cmd))
          self.brake_pedal_cnt = CS.brake_pedal_msg["Counter"]
 
     return can_sends
