@@ -23,6 +23,7 @@ non_tested_cars = [
   HYUNDAI.KIA_OPTIMA_H,
   SUBARU.IMPREZA_2020,
   SUBARU.WRX_PREGLOBAL,
+  SUBARU.OUTBACK,
 ]
 
 TestRoute = namedtuple('TestRoute', ['route', 'car_fingerprint'])
