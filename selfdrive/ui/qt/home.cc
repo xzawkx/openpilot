@@ -16,17 +16,17 @@
 // HomeWindow: the container for the offroad and onroad UIs
 
 HomeWindow::HomeWindow(QWidget* parent) : QWidget(parent) {
-  QHBoxLayout *layout = new QHBoxLayout(this);
-  layout->setMargin(0);
-  layout->setSpacing(0);
+  QHBoxLayout *main_layout = new QHBoxLayout(this);
+  main_layout->setMargin(0);
+  main_layout->setSpacing(0);
 
   sidebar = new Sidebar(this);
-  layout->addWidget(sidebar);
+  main_layout->addWidget(sidebar);
   QObject::connect(this, &HomeWindow::update, sidebar, &Sidebar::updateState);
   QObject::connect(sidebar, &Sidebar::openSettings, this, &HomeWindow::openSettings);
 
   slayout = new QStackedLayout();
-  layout->addLayout(slayout);
+  main_layout->addLayout(slayout);
 
   onroad = new OnroadWindow(this);
   slayout->addWidget(onroad);
@@ -36,15 +36,12 @@ HomeWindow::HomeWindow(QWidget* parent) : QWidget(parent) {
 
   home = new OffroadHome();
   slayout->addWidget(home);
-  QObject::connect(this, &HomeWindow::openSettings, home, &OffroadHome::refresh);
 
   driver_view = new DriverViewWindow(this);
   connect(driver_view, &DriverViewWindow::done, [=] {
     showDriverView(false);
   });
   slayout->addWidget(driver_view);
-
-  setLayout(layout);
 }
 
 void HomeWindow::offroadTransition(bool offroad) {
@@ -88,23 +85,22 @@ void HomeWindow::mousePressEvent(QMouseEvent* e) {
 // OffroadHome: the offroad home page
 
 OffroadHome::OffroadHome(QWidget* parent) : QFrame(parent) {
-  QVBoxLayout* main_layout = new QVBoxLayout();
+  QVBoxLayout* main_layout = new QVBoxLayout(this);
   main_layout->setMargin(50);
 
   // top header
   QHBoxLayout* header_layout = new QHBoxLayout();
 
   date = new QLabel();
-  date->setStyleSheet(R"(font-size: 55px;)");
   header_layout->addWidget(date, 0, Qt::AlignHCenter | Qt::AlignLeft);
 
   alert_notification = new QPushButton();
+  alert_notification->setObjectName("alert_notification");
   alert_notification->setVisible(false);
   QObject::connect(alert_notification, &QPushButton::released, this, &OffroadHome::openAlerts);
   header_layout->addWidget(alert_notification, 0, Qt::AlignHCenter | Qt::AlignRight);
 
   QLabel* version = new QLabel(getBrandVersion());
-  version->setStyleSheet(R"(font-size: 55px;)");
   header_layout->addWidget(version, 0, Qt::AlignHCenter | Qt::AlignRight);
 
   main_layout->addLayout(header_layout);
@@ -140,13 +136,24 @@ OffroadHome::OffroadHome(QWidget* parent) : QFrame(parent) {
   QObject::connect(timer, &QTimer::timeout, this, &OffroadHome::refresh);
   timer->start(10 * 1000);
 
-  setLayout(main_layout);
   setStyleSheet(R"(
+    * {
+     color: white;
+    }
     OffroadHome {
       background-color: black;
     }
-    * {
-     color: white;
+    #alert_notification {
+      padding: 15px;
+      padding-left: 30px;
+      padding-right: 30px;
+      border: 1px solid;
+      border-radius: 5px;
+      font-size: 40px;
+      font-weight: 500;
+    }
+    OffroadHome>QLabel {
+      font-size: 55px;
     }
   )");
 }
@@ -191,20 +198,6 @@ void OffroadHome::refresh() {
     openAlerts();
   }
   alert_notification->setVisible(true);
-
   // Red background for alerts, blue for update available
-  QString style = QString(R"(
-    padding: 15px;
-    padding-left: 30px;
-    padding-right: 30px;
-    border: 1px solid;
-    border-radius: 5px;
-    font-size: 40px;
-    font-weight: 500;
-    background-color: #E22C2C;
-  )");
-  if (alerts_widget->updateAvailable) {
-    style.replace("#E22C2C", "#364DEF");
-  }
-  alert_notification->setStyleSheet(style);
+  alert_notification->setStyleSheet(alerts_widget->updateAvailable ? "background-color: #364DEF" : "background-color: #E22C2C");
 }
