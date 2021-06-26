@@ -27,9 +27,18 @@ def create_es_distance(packer, es_distance_msg, pcm_cancel_cmd):
 
   return packer.make_can_msg("ES_Distance", 0, values)
 
-def create_es_lkas(packer, es_lkas_msg, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
+def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
 
   values = copy.copy(es_lkas_msg)
+
+  # Filter the Stock LKAS "Keep hands on wheel" alert
+  if values["Keep_Hands_On_Wheel"] == 1:
+    values["Keep_Hands_On_Wheel"] = 0
+
+  # Filter the Stock LKAS sending an audible tone when it turns off LKAS
+  if values["LKAS_Alert"] == 27:
+    values["LKAS_Alert"] = 0
+
   if visual_alert == VisualAlert.steerRequired:
     values["Keep_Hands_On_Wheel"] = 1
 
@@ -41,10 +50,23 @@ def create_es_lkas(packer, es_lkas_msg, visual_alert, left_line, right_line, lef
     elif right_lane_depart:
       values["LKAS_Alert"] = 11 # Right lane departure dash alert
 
+  if enabled:
+    values["LKAS_ACTIVE"] = 1 # Show LKAS lane lines
+    values["LKAS_Dash_State"] = 2 # Green enabled indicator
+
   values["LKAS_Left_Line_Visible"] = int(left_line)
   values["LKAS_Right_Line_Visible"] = int(right_line)
 
   return packer.make_can_msg("ES_LKAS_State", 0, values)
+
+def create_es_dashstatus(packer, dashstatus_msg):
+  values = copy.copy(dashstatus_msg)
+
+  # Filter stock LKAS disabled message
+  if values["LKAS_State_Msg"] == 3:
+    values["LKAS_State_Msg"] = 0
+
+  return packer.make_can_msg("ES_DashStatus", 0, values)
 
 # *** Subaru Pre-global ***
 
