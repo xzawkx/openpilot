@@ -31,11 +31,11 @@ def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_
 
   values = copy.copy(es_lkas_msg)
 
-  # Filter the Stock LKAS "Keep hands on wheel" alert
+  # Filter the stock LKAS "Keep hands on wheel" alert
   if values["Keep_Hands_On_Wheel"] == 1:
     values["Keep_Hands_On_Wheel"] = 0
 
-  # Filter the Stock LKAS sending an audible tone when it turns off LKAS
+  # Filter the stock LKAS sending an audible tone when it turns off LKAS
   if values["LKAS_Alert"] == 27:
     values["LKAS_Alert"] = 0
 
@@ -68,6 +68,22 @@ def create_es_dashstatus(packer, dashstatus_msg):
 
   return packer.make_can_msg("ES_DashStatus", 0, values)
 
+def create_throttle(packer, throttle_msg, throttle_cmd):
+
+  values = copy.copy(throttle_msg)
+  if throttle_cmd:
+    values["Throttle_Pedal"] = 5
+
+  return packer.make_can_msg("Throttle", 2, values)
+
+def create_brake_pedal(packer, brake_pedal_msg, speed_cmd):
+
+   values = copy.copy(brake_pedal_msg)
+   if speed_cmd:
+     values["Speed"] = 3
+
+   return packer.make_can_msg("Brake_Pedal", 2, values)
+
 # *** Subaru Pre-global ***
 
 def subaru_preglobal_checksum(packer, values, addr):
@@ -95,3 +111,13 @@ def create_es_throttle_control(packer, cruise_button, es_accel_msg):
   values["Checksum"] = subaru_preglobal_checksum(packer, values, "ES_CruiseThrottle")
 
   return packer.make_can_msg("ES_CruiseThrottle", 0, values)
+
+def create_preglobal_throttle(packer, throttle_msg, throttle_cmd):
+
+  values = copy.copy(throttle_msg)
+  if throttle_cmd:
+    values["Throttle_Pedal"] = 5
+
+  values["Checksum"] = subaru_preglobal_checksum(packer, values, "Throttle")
+
+  return packer.make_can_msg("Throttle", 2, values)

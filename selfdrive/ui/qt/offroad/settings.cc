@@ -72,6 +72,11 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                    "In this mode openpilot will ignore lanelines and just drive how it thinks a human would.",
                                    "../assets/offroad/icon_road.png",
                                    this));
+  toggles.append(new ParamControl("ManualParkingBrakeSNGToggle",
+                                  "Subaru Manual Parking Brake stop and go",
+                                  "Experimental feature to enable stop and go for Subaru Global models with manual handbrake. Models with electric parking brake should keep this disabled.",
+                                  "../assets/offroad/icon_speed_limit.png"));
+
 
   if (Hardware::TICI()) {
     toggles.append(new ParamControl("EnableWideCamera",
@@ -83,6 +88,7 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
       Params().remove("CalibrationParams");
     });
   }
+
 
   bool record_lock = Params().getBool("RecordFrontLock");
   record_toggle->setEnabled(!record_lock);
