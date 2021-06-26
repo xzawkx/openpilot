@@ -29,6 +29,7 @@ class CarInterfaceBase():
 
     self.frame = 0
     self.low_speed_alert = False
+    params = Params()
     self.disengage_on_gas = params.get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
 
     if CarState is not None:
