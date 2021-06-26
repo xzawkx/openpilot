@@ -73,6 +73,11 @@ SUBARU_VERSION_RESPONSE = b'\x62\xf1\x82'
 DEFAULT_RX_OFFSET = 0x8
 VOLKSWAGEN_RX_OFFSET = 0x6a
 
+MAZDA_VERSION_REQUEST = bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER]) + \
+  p16(uds.DATA_IDENTIFIER_TYPE.VEHICLE_MANUFACTURER_ECU_SOFTWARE_NUMBER)
+MAZDA_VERSION_RESPONSE =  bytes([uds.SERVICE_TYPE.READ_DATA_BY_IDENTIFIER + 0x40]) + \
+  p16(uds.DATA_IDENTIFIER_TYPE.VEHICLE_MANUFACTURER_ECU_SOFTWARE_NUMBER)
+
 # brand, request, response, response offset
 REQUESTS = [
   # Hyundai
@@ -140,6 +145,13 @@ REQUESTS = [
     [VOLKSWAGEN_VERSION_RESPONSE],
     DEFAULT_RX_OFFSET,
   ),
+  # Mazda
+  (
+    "mazda",
+    [MAZDA_VERSION_REQUEST],
+    [MAZDA_VERSION_RESPONSE],
+    DEFAULT_RX_OFFSET,
+  )
 ]
 
 
@@ -220,7 +232,7 @@ def match_fw_to_car_exact(fw_versions_dict):
         continue
 
       # On some Toyota models, the engine can show on two different addresses
-      if ecu_type == Ecu.engine and candidate in [TOYOTA.CAMRY, TOYOTA.COROLLA_TSS2, TOYOTA.CHR, TOYOTA.LEXUS_IS, TOYOTA.AVALON] and found_version is None:
+      if ecu_type == Ecu.engine and candidate in [TOYOTA.CAMRY, TOYOTA.COROLLA_TSS2, TOYOTA.CHR, TOYOTA.LEXUS_IS] and found_version is None:
         continue
 
       # Ignore non essential ecus
