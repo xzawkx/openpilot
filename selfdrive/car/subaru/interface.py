@@ -25,9 +25,9 @@ class CarInterface(CarInterfaceBase):
       ret.safetyModel = car.CarParams.SafetyModel.subaru
 
     if candidate in PREGLOBAL_CARS:
-      ret.enableBsm = 0x228 in fingerprint[0]
-    else:
       ret.enableBsm = 0x25c in fingerprint[0]
+    else:
+      ret.enableBsm = 0x228 in fingerprint[0]
 
     # Subaru port is a community feature, since we don't own one to test
     ret.communityFeature = True
