@@ -60,11 +60,11 @@ class CarState(CarStateBase):
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD[self.car_fingerprint]
 
     if self.car_fingerprint == CAR.OUTBACK:
-      ret.cruiseState.enabled = cp_body.vl["CruiseControl"]['Cruise_Activated'] != 0
-      ret.cruiseState.available = cp_body.vl["CruiseControl"]['Cruise_On'] != 0
+      ret.cruiseState.enabled = cp_body.vl["CruiseControl"]["Cruise_Activated"] != 0
+      ret.cruiseState.available = cp_body.vl["CruiseControl"]["Cruise_On"] != 0
     else:
-      ret.cruiseState.enabled = cp.vl["CruiseControl"]['Cruise_Activated'] != 0
-      ret.cruiseState.available = cp.vl["CruiseControl"]['Cruise_On'] != 0
+      ret.cruiseState.enabled = cp.vl["CruiseControl"]["Cruise_Activated"] != 0
+      ret.cruiseState.available = cp.vl["CruiseControl"]["Cruise_On"] != 0
     ret.cruiseState.speed = cp_cam.vl["ES_DashStatus"]["Cruise_Set_Speed"] * CV.KPH_TO_MS
 
     if self.car_fingerprint not in PREGLOBAL_CARS and cp.vl["Dashlights"]["UNITS"] == 1:
@@ -86,8 +86,8 @@ class CarState(CarStateBase):
       self.es_accel_msg = copy.copy(cp_cam.vl["ES_CruiseThrottle"])
       # FIXME: find Car_Follow signal for FORESTER_PREGLOBAL and WRX_PREGLOBAL
       if self.car_fingerprint not in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
-        self.car_follow = cp_cam.vl["ES_DashStatus"]['Car_Follow']
-      self.close_distance = cp_cam.vl["ES_CruiseThrottle"]['Close_Distance']
+        self.car_follow = cp_cam.vl["ES_DashStatus"]["Car_Follow"]
+      self.close_distance = cp_cam.vl["ES_CruiseThrottle"]["Close_Distance"]
     else:
       ret.steerWarning = cp.vl["Steering_Torque"]["Steer_Warning"] == 1
       ret.cruiseState.nonAdaptive = cp_cam.vl["ES_DashStatus"]["Conventional_Cruise"] == 1
@@ -95,11 +95,11 @@ class CarState(CarStateBase):
       self.brake_pedal_msg = copy.copy(cp.vl["Brake_Pedal"])
       self.es_lkas_msg = copy.copy(cp_cam.vl["ES_LKAS_State"])
       if self.car_fingerprint == CAR.OUTBACK:
-        self.car_follow = cp_body.vl["ES_Distance"]['Car_Follow']
-        self.close_distance = cp_body.vl["ES_Distance"]['Close_Distance']
+        self.car_follow = cp_body.vl["ES_Distance"]["Car_Follow"]
+        self.close_distance = cp_body.vl["ES_Distance"]["Close_Distance"]
       else:
-        self.car_follow = cp_cam.vl["ES_Distance"]['Car_Follow']
-        self.close_distance = cp_cam.vl["ES_Distance"]['Close_Distance']
+        self.car_follow = cp_cam.vl["ES_Distance"]["Car_Follow"]
+        self.close_distance = cp_cam.vl["ES_Distance"]["Close_Distance"]
         self.es_distance_msg = copy.copy(cp_cam.vl["ES_Distance"])
       self.es_dashstatus_msg = copy.copy(cp_cam.vl["ES_DashStatus"])
 
