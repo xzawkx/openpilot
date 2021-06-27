@@ -128,7 +128,6 @@ class CarState(CarStateBase):
       # sig_address, frequency
       ("Throttle", 100),
       ("Brake_Pedal", 50),
-      ("Wheel_Speeds", 50),
       ("Transmission", 100),
       ("Steering_Torque", 50),
     ]
