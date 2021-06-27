@@ -74,7 +74,7 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                    this));
 
   toggles.append(new ParamControl("ManualParkingBrakeSNGToggle",
-                                  "Subaru Manual Parking Brake Stop and Go",
+                                  "Subaru Manual PB Stop and Go",
                                   "Experimental feature to enable stop and go for Subaru Global models with manual handbrake. Models with electric parking brake should keep this disabled.",
                                   "../assets/offroad/icon_speed_limit.png"));
 
