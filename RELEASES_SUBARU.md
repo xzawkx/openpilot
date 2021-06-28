@@ -1,5 +1,8 @@
+2021-06-28
+- Crosstrek Hybrid 2020 support (WIP) (@martinl)
+
 2021-06-27
-- Outback 2020 support (wip) (@martinl)
+- Outback 2020 support (WIP) (@martinl)
 - Disable Openpilot disengage on gas press via toggle (@sshane)
 
 2021-06-26

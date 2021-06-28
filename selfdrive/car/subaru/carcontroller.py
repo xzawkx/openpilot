@@ -1,6 +1,6 @@
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.subaru import subarucan
-from selfdrive.car.subaru.values import DBC, CAR, PREGLOBAL_CARS, CarControllerParams
+from selfdrive.car.subaru.values import DBC, CAR, PREGLOBAL_CARS, PREGLOBAL_CARS_SNG, GLOBAL_CARS_SNG, CarControllerParams
 from opendbc.can.packer import CANPacker
 
 
@@ -55,7 +55,7 @@ class CarController():
     throttle_cmd = False
     speed_cmd = False
 
-    if CS.CP.carFingerprint in PREGLOBAL_CARS and CS.CP.carFingerprint not in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
+    if CS.CP.carFingerprint in PREGLOBAL_CARS_SNG:
       if (enabled                                            # ACC active
           and CS.car_follow == 1                             # lead car
           and CS.out.standstill                              # must be standing still
@@ -63,7 +63,7 @@ class CarController():
           and CS.close_distance < 4.5                        # max operating distance to filter false positives
           and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
         self.sng_acc_resume = True
-    elif CS.CP.carFingerprint not in PREGLOBAL_CARS:
+    elif CS.CP.carFingerprint in GLOBAL_CARS_SNG:
       if CS.has_epb:
         if (enabled                                            # ACC active
             and CS.car_follow == 1                             # lead car
@@ -95,7 +95,8 @@ class CarController():
     if enabled and CS.out.brakePressed and CS.car_follow == 0 and CS.out.standstill:
       pcm_cancel_cmd = True
 
-    self.prev_close_distance = CS.close_distance
+    if CS.CP.carFingerprint != CAR.CROSSTREK_2020H:
+      self.prev_close_distance = CS.close_distance
 
     # *** alerts and pcm cancel ***
 
@@ -124,7 +125,7 @@ class CarController():
          self.throttle_cnt = CS.throttle_msg["Counter"]
 
     else:
-      if CS.CP.carFingerprint != CAR.OUTBACK:
+      if CS.CP.carFingerprint not in [CAR.CROSSTREK_2020H, CAR.OUTBACK]:
         if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
           can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, pcm_cancel_cmd))
           self.es_distance_cnt = CS.es_distance_msg["Counter"]
