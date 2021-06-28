@@ -170,6 +170,7 @@ FW_VERSIONS = {
   },
   CAR.CROSSTREK_2020H: {
     # 2020 Crosstrek Hybrid UDM / @revity
+    # 2020 Crosstrek Hybrid UDM / @Dave32
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa2 \x19e\x01',
@@ -182,9 +183,7 @@ FW_VERSIONS = {
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xd7!`@\x07',
-    ],
-    (Ecu.electricBrakeBooster, 0x717, None): [
-      b'\xb2 \x19\x01\x00',
+      b'\xd7!`p\a',
     ],
   },
   CAR.FORESTER_PREGLOBAL: {
