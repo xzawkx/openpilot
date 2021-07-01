@@ -235,6 +235,25 @@ FW_VERSIONS = {
       b'\xd7!`p\a',
     ],
   },
+  CAR.FORESTER: {
+    # 2021 Subaru Forester - UDM / @gotham
+    # Ecu, addr, subaddr: ROM ID
+    (Ecu.esp, 0x7b0, None): [
+      b'\xa3  \024\000',
+    ],
+    (Ecu.eps, 0x746, None): [
+      b'\x8d\xc0\004\000',
+    ],
+    (Ecu.fwdCamera, 0x787, None): [
+      b'\000\000e\x97\037@ 0',
+    ],
+    (Ecu.engine, 0x7e0, None): [
+      b'\xcf"`0\a',
+    ],
+    (Ecu.transmission, 0x7e1, None): [
+      b'\032\xf6F`\000',
+    ],
+  },
   CAR.FORESTER_PREGLOBAL: {
     # 2018 Subaru Forester 2.5i Touring - UDM / @Oreo
     # 2018 Subaru Forester 2.5 Limited - Canada / @litobro
