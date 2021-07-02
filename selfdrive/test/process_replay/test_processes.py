@@ -5,7 +5,6 @@ import sys
 from typing import Any
 
 from selfdrive.car.car_helpers import interface_names
-from selfdrive.test.openpilotci import get_url
 from selfdrive.test.process_replay.compare_logs import compare_logs
 from selfdrive.test.process_replay.process_replay import CONFIGS, replay_process
 from tools.lib.logreader import LogReader
@@ -36,6 +35,12 @@ BASE_URL = "https://github.com/martinl/openpilot-ci/raw/master/"
 # run the full test (including checks) when no args given
 FULL_TEST = len(sys.argv) <= 1
 
+
+def get_segment(segment_name):
+  route_name, segment_num = segment_name.rsplit("--", 1)
+  rlog_url = BASE_URL + "%s/%s/rlog.bz2" % (route_name.replace("|", "/"), segment_num)
+
+  return rlog_url
 
 def test_process(cfg, lr, cmp_log_fn, ignore_fields=None, ignore_msgs=None):
   if ignore_fields is None:
@@ -141,8 +146,7 @@ if __name__ == "__main__":
 
     results[segment] = {}
 
-    r, n = segment.rsplit("--", 1)
-    lr = LogReader(get_url(r, n))
+    lr = LogReader(get_segment(segment))
 
     for cfg in CONFIGS:
       if (procs_whitelisted and cfg.proc_name not in args.whitelist_procs) or \
