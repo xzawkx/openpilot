@@ -9,7 +9,6 @@ from selfdrive.test.process_replay.compare_logs import compare_logs
 from selfdrive.test.process_replay.process_replay import CONFIGS, replay_process
 from tools.lib.logreader import LogReader
 
-INJECT_MODEL = 0
 
 segments = [
   ("HYUNDAI", "02c45f73a2e5c6e9|2021-01-01--19-08-22--1"),     # HYUNDAI.SONATA
@@ -18,7 +17,7 @@ segments = [
   ("HONDA", "0982d79ebb0de295|2021-01-08--10-13-10--6"),       # HONDA.CIVIC (NIDEC)
   ("HONDA2", "a8e8bf6a3864361b|2021-01-04--03-01-18--2"),      # HONDA.ACCORD (BOSCH)
   ("CHRYSLER", "52d86230ee29aa84|2021-01-10--17-16-34--30"),   # CHRYSLER.PACIFICA
-  ("SUBARU", "4d70bc5e608678be|2021-01-15--17-02-04--5"),      # SUBARU.IMPREZA
+  ("SUBARU", "05bca04dfbdca165|2021-07-01--21-54-54--1"),      # SUBARU.IMPREZA
   ("GM", "ae3ed0eb20960a20|2021-01-15--15-04-06--8"),          # GM.VOLT
   ("NISSAN", "e4d79cf6b8b19a0d|2021-01-17--14-48-08--7"),      # NISSAN.XTRAIL
   ("VOLKSWAGEN", "ef895f46af5fd73f|2021-05-22--14-06-35--6"),  # VW.AUDI_A3_MK3
@@ -31,23 +30,17 @@ segments = [
 # dashcamOnly makes don't need to be tested until a full port is done
 excluded_interfaces = ["mock", "ford", "mazda", "tesla"]
 
-BASE_URL = "https://commadataci.blob.core.windows.net/openpilotci/"
+BASE_URL = "https://github.com/martinl/openpilot-ci/raw/master/"
 
 # run the full test (including checks) when no args given
 FULL_TEST = len(sys.argv) <= 1
 
 
-def get_segment(segment_name, original=True):
+def get_segment(segment_name):
   route_name, segment_num = segment_name.rsplit("--", 1)
-  if original:
-    rlog_url = BASE_URL + "%s/%s/rlog.bz2" % (route_name.replace("|", "/"), segment_num)
-  else:
-    process_replay_dir = os.path.dirname(os.path.abspath(__file__))
-    model_ref_commit = open(os.path.join(process_replay_dir, "model_ref_commit")).read().strip()
-    rlog_url = BASE_URL + "%s/%s/rlog_%s.bz2" % (route_name.replace("|", "/"), segment_num, model_ref_commit)
+  rlog_url = BASE_URL + "%s/%s/rlog.bz2" % (route_name.replace("|", "/"), segment_num)
 
   return rlog_url
-
 
 def test_process(cfg, lr, cmp_log_fn, ignore_fields=None, ignore_msgs=None):
   if ignore_fields is None:
@@ -153,8 +146,7 @@ if __name__ == "__main__":
 
     results[segment] = {}
 
-    rlog_fn = get_segment(segment)
-    lr = LogReader(rlog_fn)
+    lr = LogReader(get_segment(segment))
 
     for cfg in CONFIGS:
       if (procs_whitelisted and cfg.proc_name not in args.whitelist_procs) or \
