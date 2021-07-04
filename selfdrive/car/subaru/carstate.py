@@ -195,7 +195,7 @@ class CarState(CarStateBase):
         ("Dash_State2", 1),
       ]
 
-      if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.WRX_PREGLOBAL]:
+      if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.LEVORG_PREGLOBAL, CAR.WRX_PREGLOBAL]:
         checks += [
           ("Dashlights", 20),
         ]
