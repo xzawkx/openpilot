@@ -191,6 +191,7 @@ Community Maintained Cars and Features
 | Subaru    | Crosstrek 2018-19             | EyeSight          | Stock            | 0mph               | 0mph         |
 | Subaru    | Forester 2017-21              | EyeSight          | Stock            | 0mph               | 0mph         |
 | Subaru    | Impreza 2017-19               | EyeSight          | Stock            | 0mph               | 0mph         |
+| Subaru    | Levorg 2016                   | EyeSight          | Stock            | 0mph               | 0mph         |
 | Subaru    | Legacy 2015-18                | EyeSight          | Stock            | 0mph               | 0mph         |
 | Subaru    | Outback 2015-19               | EyeSight          | Stock            | 0mph               | 0mph         |
 | Volkswagen| Atlas 2018-19                 | Driver Assistance | Stock            | 0mph               | 0mph         |
