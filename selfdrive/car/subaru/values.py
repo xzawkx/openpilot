@@ -24,6 +24,7 @@ class CAR:
   FORESTER = "SUBARU FORESTER 2019"
   FORESTER_PREGLOBAL = "SUBARU FORESTER 2017 - 2018"
   LEGACY_PREGLOBAL = "SUBARU LEGACY 2015 - 2018"
+  LEVORG_PREGLOBAL = "SUBARU LEVORG 2016"
   OUTBACK_PREGLOBAL = "SUBARU OUTBACK 2015 - 2017"
   OUTBACK_PREGLOBAL_2018 = "SUBARU OUTBACK 2018 - 2019"
   WRX_PREGLOBAL = "SUBARU WRX 2018"
@@ -236,6 +237,25 @@ FW_VERSIONS = {
       b'\xbf\xf2\000\x80\000',
     ],
   },
+  CAR.LEVORG_PREGLOBAL: {
+     # 2016 Subaru Levorg / @jpgnz
+     # Ecu, addr, subaddr: ROM ID
+     (Ecu.esp, 0x7b0, None): [
+       b'j\x9c\x92\002'
+     ],
+     (Ecu.eps, 0x746, None): [
+       b'Z\xb0\000\000'
+     ],
+     (Ecu.fwdCamera, 0x787, None): [
+       b'\000\000c\xd3\000\000\000\000',
+     ],
+     (Ecu.engine, 0x7e0, None): [
+       b'\xf1\x82\xa6\000\xa1t\a'
+     ],
+     (Ecu.transmission, 0x7e1, None): [
+       b'\xcb\xd9\000p\000'
+     ],
+  },
   CAR.OUTBACK_PREGLOBAL: {
     # 2017 Outback Limited 3.6r - UDM / @Anthony
     # 2016 Outback Limited 2.5 - UDM / @aeiro
@@ -372,6 +392,7 @@ STEER_THRESHOLD = {
   CAR.FORESTER: 80,
   CAR.FORESTER_PREGLOBAL: 75,
   CAR.LEGACY_PREGLOBAL: 75,
+  CAR.LEVORG_PREGLOBAL: 75,
   CAR.OUTBACK_PREGLOBAL: 75,
   CAR.OUTBACK_PREGLOBAL_2018: 75,
   CAR.WRX_PREGLOBAL: 75,
@@ -384,10 +405,11 @@ DBC = {
   CAR.FORESTER: dbc_dict('subaru_global_2017_generated', None),
   CAR.FORESTER_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
   CAR.LEGACY_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
+  CAR.LEVORG_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
   CAR.OUTBACK_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
   CAR.OUTBACK_PREGLOBAL_2018: dbc_dict('subaru_outback_2019_generated', None),
   CAR.WRX_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
 }
 
-PREGLOBAL_CARS = [CAR.FORESTER_PREGLOBAL, CAR.LEGACY_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018, CAR.WRX_PREGLOBAL]
+PREGLOBAL_CARS = [CAR.FORESTER_PREGLOBAL, CAR.LEGACY_PREGLOBAL, CAR.LEVORG_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018, CAR.WRX_PREGLOBAL]
 SUBARU_WMI = ['JF1', 'JF2', '4S3', '4S4', '000']
