@@ -38,7 +38,7 @@ FULL_TEST = len(sys.argv) <= 1
 
 def get_segment(segment_name):
   route_name, segment_num = segment_name.rsplit("--", 1)
-  rlog_url = BASE_URL + "%s/%s/rlog.bz2" % (route_name.replace("|", "/"), segment_num)
+  rlog_url = BASE_URL + "routes/%s/%s/rlog.bz2" % (route_name.replace("|", "/"), segment_num)
 
   return rlog_url
 
