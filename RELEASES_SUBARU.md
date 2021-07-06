@@ -1,3 +1,9 @@
+2021-07-06
+- Stop and go support for preglobal Forester, Levorg and WRX
+
+2021-07-04
+- Levorg 2016 support (@jpgnz)
+
 2021-06-28
 - Crosstrek Hybrid 2020 support (WIP) (@martinl)
 

@@ -1,6 +1,6 @@
 from selfdrive.car import apply_std_steer_torque_limits
 from selfdrive.car.subaru import subarucan
-from selfdrive.car.subaru.values import DBC, CAR, PREGLOBAL_CARS, PREGLOBAL_CARS_SNG, GLOBAL_CARS_SNG, CarControllerParams
+from selfdrive.car.subaru.values import DBC, CAR, PREGLOBAL_CARS, GLOBAL_CARS_SNG, CarControllerParams
 from opendbc.can.packer import CANPacker
 
 
@@ -55,7 +55,7 @@ class CarController():
     throttle_cmd = False
     speed_cmd = False
 
-    if CS.CP.carFingerprint in PREGLOBAL_CARS_SNG:
+    if CS.CP.carFingerprint in PREGLOBAL_CARS:
       if (enabled                                            # ACC active
           and CS.car_follow == 1                             # lead car
           and CS.out.standstill                              # must be standing still
