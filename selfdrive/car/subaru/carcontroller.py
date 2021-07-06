@@ -8,7 +8,6 @@ class CarController():
   def __init__(self, dbc_name, CP, VM):
     self.apply_steer_last = 0
     self.es_distance_cnt = -1
-    self.es_accel_cnt = -1
     self.es_lkas_cnt = -1
     self.es_dashstatus_cnt = -1
     self.throttle_cnt = -1
@@ -101,7 +100,7 @@ class CarController():
     # *** alerts and pcm cancel ***
 
     if CS.CP.carFingerprint in PREGLOBAL_CARS:
-      if self.es_accel_cnt != CS.es_accel_msg["Counter"]:
+      if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
         # 1 = main, 2 = set shallow, 3 = set deep, 4 = resume shallow, 5 = resume deep
         # disengage ACC when OP is disengaged
         if pcm_cancel_cmd:
@@ -117,8 +116,8 @@ class CarController():
           cruise_button = 0
         self.cruise_button_prev = cruise_button
 
-        can_sends.append(subarucan.create_es_throttle_control(self.packer, cruise_button, CS.es_accel_msg))
-        self.es_accel_cnt = CS.es_accel_msg["Counter"]
+        can_sends.append(subarucan.create_preglobal_es_distance(self.packer, cruise_button, CS.es_distance_msg))
+        self.es_distance_cnt = CS.es_distance_msg["Counter"]
 
       if self.throttle_cnt != CS.throttle_msg["Counter"]:
          can_sends.append(subarucan.create_preglobal_throttle(self.packer, CS.throttle_msg, throttle_cmd))
