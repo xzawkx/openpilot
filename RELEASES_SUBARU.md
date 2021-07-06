@@ -1,5 +1,5 @@
 2021-07-06
-- Stop and go support for preglobal Forester, Levorg and WRX
+- Stop and go support for preglobal Forester, Levorg and WRX (@martinl)
 
 2021-07-04
 - Levorg 2016 support (@jpgnz)
