@@ -181,6 +181,7 @@ FW_VERSIONS = {
     # 2020 Impreza Sport - UDM @CrispinFlowerday
     # 2020 Impreza Hatchback Premium - UDM @davidvatz
     # 2020 Impreza Hatchback - UDM @GPT-3
+    # 2020 Impreza Premium - UDM @KeetsScrimalittle
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa2 \0314\000',
@@ -195,6 +196,7 @@ FW_VERSIONS = {
     (Ecu.engine, 0x7e0, None): [
       b'\xca!ap\a',
       b'\xca!`p\a',
+      b'\xca!`0\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xe6\xf5\004\000\000',
