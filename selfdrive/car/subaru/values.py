@@ -224,10 +224,12 @@ FW_VERSIONS = {
   CAR.FORESTER: {
     # 2021 Subaru Forester - UDM / @gotham
     # 2019 Subaru Forester - UDM / @clockenessmnstr
+    # 2020 Subaru Forester - UDM / @TH156UY
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa3 \030\024\000',
       b'\xa3  \024\000',
+      b'\xa3 \031\024\000',
     ],
     (Ecu.eps, 0x746, None): [
       b'\x8d\xc0\004\000',
@@ -235,14 +237,17 @@ FW_VERSIONS = {
     (Ecu.fwdCamera, 0x787, None): [
       b'\000\000e!\037@ \021',
       b'\000\000e\x97\037@ 0',
+      b'\000\000e`\037@  ',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xb6\"`A\a',
       b'\xcf"`0\a',
+      b'\xcb\"`@\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\032\xf6B0\000',
       b'\032\xf6F`\000',
+      b'\032\xf6b`\000',
     ],
   },
   CAR.FORESTER_PREGLOBAL: {

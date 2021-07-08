@@ -4,6 +4,7 @@
   * 2017 Impreza - UDM (@Fidel)
   * 2019 Outback Touring 3.6R - UDM (@danyo)
   * 2020 Impreza Premium - UDM (@KeetsScrimalittle)
+  * 2020 Subaru Forester - UDM / (@TH156UY)
 
 2021-07-06
 ==========
