@@ -27,28 +27,29 @@ def create_es_distance(packer, es_distance_msg, pcm_cancel_cmd):
 
   return packer.make_can_msg("ES_Distance", 0, values)
 
-def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
+def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart, filter_alerts):
 
   values = copy.copy(es_lkas_msg)
 
-  # Filter the stock LKAS "Keep hands on wheel" alert
-  if values["Keep_Hands_On_Wheel"] == 1:
-    values["Keep_Hands_On_Wheel"] = 0
+  if filter_alerts:
+    # Filter the stock LKAS "Keep hands on wheel" alert
+    if values["Keep_Hands_On_Wheel"] == 1:
+      values["Keep_Hands_On_Wheel"] = 0
 
-  # Filter the stock LKAS sending an audible tone when it turns off LKAS
-  if values["LKAS_Alert"] == 27:
-    values["LKAS_Alert"] = 0
+    # Filter the stock LKAS sending an audible tone when it turns off LKAS
+    if values["LKAS_Alert"] == 27:
+      values["LKAS_Alert"] = 0
 
   if visual_alert == VisualAlert.steerRequired:
     values["Keep_Hands_On_Wheel"] = 1
 
-  # Ensure we don't overwrite potentially more important alerts from stock (e.g. FCW)
-  if visual_alert == VisualAlert.ldw and values["LKAS_Alert"] == 0:
-    if left_lane_depart:
-      values["LKAS_Alert"] = 12 # Left lane departure dash alert
-
-    elif right_lane_depart:
-      values["LKAS_Alert"] = 11 # Right lane departure dash alert
+  if filter_alerts:
+    # Ensure we don't overwrite potentially more important alerts from stock (e.g. FCW)
+    if visual_alert == VisualAlert.ldw and values["LKAS_Alert"] == 0:
+      if left_lane_depart:
+        values["LKAS_Alert"] = 12 # Left lane departure dash alert
+      elif right_lane_depart:
+        values["LKAS_Alert"] = 11 # Right lane departure dash alert
 
   if enabled:
     values["LKAS_ACTIVE"] = 1 # Show LKAS lane lines
@@ -59,12 +60,13 @@ def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_
 
   return packer.make_can_msg("ES_LKAS_State", 0, values)
 
-def create_es_dashstatus(packer, dashstatus_msg):
+def create_es_dashstatus(packer, dashstatus_msg, filter_alerts):
   values = copy.copy(dashstatus_msg)
 
-  # Filter stock LKAS disabled message
-  if values["LKAS_State_Msg"] == 3:
-    values["LKAS_State_Msg"] = 0
+  if filter_alerts:
+    # Filter stock LKAS disabled message
+    if values["LKAS_State_Msg"] == 3:
+      values["LKAS_State_Msg"] = 0
 
   return packer.make_can_msg("ES_DashStatus", 0, values)
 

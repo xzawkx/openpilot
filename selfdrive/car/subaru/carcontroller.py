@@ -132,12 +132,18 @@ class CarController():
         # do not send duplicate acc cancel using create_brake_pedal for cars that support ES_Distance
         pcm_cancel_cmd = False
 
+      # FIXME: LKAS alerts filtering triggers PCB alerts on Outback 2020
+      if CS.CP.carFingerprint == CAR.OUTBACK:
+        filter_alerts = False
+      else:
+        filter_alerts = True
+
       if self.es_lkas_cnt != CS.es_lkas_msg["Counter"]:
-        can_sends.append(subarucan.create_es_lkas(self.packer, CS.es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart))
+        can_sends.append(subarucan.create_es_lkas(self.packer, CS.es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart, filter_alerts))
         self.es_lkas_cnt = CS.es_lkas_msg["Counter"]
 
       if self.es_dashstatus_cnt != CS.es_dashstatus_msg["Counter"]:
-         can_sends.append(subarucan.create_es_dashstatus(self.packer, CS.es_dashstatus_msg))
+         can_sends.append(subarucan.create_es_dashstatus(self.packer, CS.es_dashstatus_msg, filter_alerts))
          self.es_dashstatus_cnt = CS.es_dashstatus_msg["Counter"]
 
       if self.throttle_cnt != CS.throttle_msg["Counter"]:

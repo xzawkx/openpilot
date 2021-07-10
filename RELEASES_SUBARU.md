@@ -2,6 +2,7 @@
 ==========
 * FPv2 updates
   * 2020 Outback 2.4 XT Limited - UDM / @KingChalupa
+* Disable LKAS alert filtering for Outback 2020
 
 2021-07-07
 ==========
