@@ -1,3 +1,8 @@
+2021-07-10
+==========
+* FPv2 updates
+  * 2020 Outback 2.4 XT Limited - UDM / @KingChalupa
+
 2021-07-07
 ==========
 * FPv2 updates
