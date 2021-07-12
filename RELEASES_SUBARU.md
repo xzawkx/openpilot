@@ -1,3 +1,8 @@
+2021-07-12
+==========
+* FPv2 updates
+  * 2020 Outback 2.4 Touring XT  - UDM / @chrissantamaria
+
 2021-07-10
 ==========
 * FPv2 updates
