@@ -1,3 +1,8 @@
+2021-07-14
+==========
+* FPv2 updates
+  * 2015 Outback 3.6R - UDM / @bitwaster
+
 2021-07-12
 ==========
 * FPv2 updates
