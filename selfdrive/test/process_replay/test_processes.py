@@ -5,6 +5,7 @@ import sys
 from typing import Any
 
 from selfdrive.car.car_helpers import interface_names
+from selfdrive.test.openpilotci import get_url
 from selfdrive.test.process_replay.compare_logs import compare_logs
 from selfdrive.test.process_replay.process_replay import CONFIGS, replay_process
 from tools.lib.logreader import LogReader
@@ -17,7 +18,7 @@ original_segments = [
   ("HONDA", "eb140f119469d9ab|2021-06-12--10-46-24--27"),       # HONDA.CIVIC (NIDEC)
   ("HONDA2", "7d2244f34d1bbcda|2021-06-25--12-25-37--26"),      # HONDA.ACCORD (BOSCH)
   ("CHRYSLER", "4deb27de11bee626|2021-02-20--11-28-55--8"),   # CHRYSLER.PACIFICA
-  ("SUBARU", "05bca04dfbdca165|2021-07-01--21-54-54--1"),      # SUBARU.IMPREZA
+  ("SUBARU", "4d70bc5e608678be|2021-01-15--17-02-04--5"),      # SUBARU.IMPREZA
   ("GM", "0c58b6a25109da2b|2021-02-23--16-35-50--11"),          # GM.VOLT
   ("NISSAN", "35336926920f3571|2021-02-12--18-38-48--46"),      # NISSAN.XTRAIL
   ("VOLKSWAGEN", "de9592456ad7d144|2021-06-29--11-00-15--6"),  # VOLKSWAGEN.GOLF
@@ -43,17 +44,11 @@ segments = [
 # dashcamOnly makes don't need to be tested until a full port is done
 excluded_interfaces = ["mock", "ford", "mazda", "tesla"]
 
-BASE_URL = "https://github.com/martinl/openpilot-ci/raw/master/"
+BASE_URL = "https://commadataci.blob.core.windows.net/openpilotci/"
 
 # run the full test (including checks) when no args given
 FULL_TEST = len(sys.argv) <= 1
 
-
-def get_segment(segment_name):
-  route_name, segment_num = segment_name.rsplit("--", 1)
-  rlog_url = BASE_URL + "routes/%s/%s/rlog.bz2" % (route_name.replace("|", "/"), segment_num)
-
-  return rlog_url
 
 def test_process(cfg, lr, cmp_log_fn, ignore_fields=None, ignore_msgs=None):
   if ignore_fields is None:
@@ -159,7 +154,8 @@ if __name__ == "__main__":
 
     results[segment] = {}
 
-    lr = LogReader(get_segment(segment))
+    r, n = segment.rsplit("--", 1)
+    lr = LogReader(get_url(r, n))
 
     for cfg in CONFIGS:
       if (procs_whitelisted and cfg.proc_name not in args.whitelist_procs) or \
