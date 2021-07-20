@@ -105,10 +105,6 @@ class CarController():
         self.sng_acc_resume = False
         self.sng_acc_resume_cnt = -1
 
-    # Cancel ACC if stopped, brake pressed and not stopped behind another car
-    if enabled and CS.out.brakePressed and CS.car_follow == 0 and CS.out.standstill:
-      pcm_cancel_cmd = True
-
     if CS.CP.carFingerprint != CAR.CROSSTREK_2020H:
       self.prev_close_distance = CS.close_distance
 
