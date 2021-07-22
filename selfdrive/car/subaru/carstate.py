@@ -126,7 +126,6 @@ class CarState(CarStateBase):
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
       ("Steering_Angle", "Steering_Torque", 0),
       ("Steer_Error_1", "Steering_Torque", 0),
-      ("Steering_Angle", "Steering", 0),
       ("Brake_Pedal", "Brake_Pedal", 0),
       ("LEFT_BLINKER", "Dashlights", 0),
       ("RIGHT_BLINKER", "Dashlights", 0),
@@ -141,7 +140,6 @@ class CarState(CarStateBase):
       ("Throttle", 100),
       ("Brake_Pedal", 50),
       ("Steering_Torque", 50),
-      ("Steering", 50),
     ]
 
     # Wheel_Speeds is on can1 for OUTBACK
@@ -190,12 +188,14 @@ class CarState(CarStateBase):
         ("Signal4", "Throttle", 0),
 
         ("Units", "Dash_State2", 0),
+        ("Steering_Angle", "Steering", 0),
       ]
 
       checks += [
         ("BodyInfo", 1),
         ("CruiseControl", 50),
         ("Dash_State2", 1),
+        ("Steering", 50),
       ]
 
       if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.LEVORG_PREGLOBAL, CAR.WRX_PREGLOBAL]:
