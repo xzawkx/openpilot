@@ -510,7 +510,7 @@ DBC = {
   CAR.OUTBACK: dbc_dict('subaru_global_2017_generated', None),
   CAR.OUTBACK_PREGLOBAL: dbc_dict('subaru_outback_2015_generated', None),
   CAR.OUTBACK_PREGLOBAL_2018: dbc_dict('subaru_outback_2019_generated', None),
-  CAR.WRX_PREGLOBAL: dbc_dict('subaru_wrx_2018_generated', None),
+  CAR.WRX_PREGLOBAL: dbc_dict('subaru_forester_2017_generated', None),
 }
 
 PREGLOBAL_CARS = [CAR.FORESTER_PREGLOBAL, CAR.LEGACY_PREGLOBAL, CAR.LEVORG_PREGLOBAL, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018, CAR.WRX_PREGLOBAL]
