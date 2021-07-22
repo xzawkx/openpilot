@@ -63,7 +63,10 @@ class CarState(CarStateBase):
       can_gear = int(cp.vl["Transmission"]["Gear"])
     ret.gearShifter = self.parse_gear_shifter(self.shifter_values.get(can_gear, None))
 
-    ret.steeringAngleDeg = cp.vl["Steering_Torque"]["Steering_Angle"]
+    if self.car_fingerprint == CAR.WRX_PREGLOBAL:
+      ret.steeringAngleDeg = cp.vl["Steering"]["Steering_Angle"]
+    else:
+      ret.steeringAngleDeg = cp.vl["Steering_Torque"]["Steering_Angle"]
     ret.steeringTorque = cp.vl["Steering_Torque"]["Steer_Torque_Sensor"]
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD[self.car_fingerprint]
 
@@ -123,6 +126,7 @@ class CarState(CarStateBase):
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
       ("Steering_Angle", "Steering_Torque", 0),
       ("Steer_Error_1", "Steering_Torque", 0),
+      ("Steering_Angle", "Steering", 0),
       ("Brake_Pedal", "Brake_Pedal", 0),
       ("LEFT_BLINKER", "Dashlights", 0),
       ("RIGHT_BLINKER", "Dashlights", 0),
@@ -137,6 +141,7 @@ class CarState(CarStateBase):
       ("Throttle", 100),
       ("Brake_Pedal", 50),
       ("Steering_Torque", 50),
+      ("Steering", 50),
     ]
 
     # Wheel_Speeds is on can1 for OUTBACK
