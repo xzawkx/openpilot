@@ -8,7 +8,6 @@ class CarController():
   def __init__(self, dbc_name, CP, VM):
     self.apply_steer_last = 0
     self.es_distance_cnt = -1
-    self.es_accel_cnt = -1
     self.es_lkas_cnt = -1
     self.es_dashstatus_cnt = -1
     self.throttle_cnt = -1
@@ -20,6 +19,8 @@ class CarController():
     self.steer_rate_limited = False
     self.sng_acc_resume = False
     self.sng_acc_resume_cnt = -1
+    self.manual_hold = False
+    self.prev_cruise_state = 0
 
 
     self.p = CarControllerParams(CP)
@@ -56,6 +57,7 @@ class CarController():
     speed_cmd = False
 
     if CS.CP.carFingerprint in PREGLOBAL_CARS:
+      # Initiate the ACC resume sequence if conditions are met
       if (enabled                                            # ACC active
           and CS.car_follow == 1                             # lead car
           and CS.out.standstill                              # must be standing still
@@ -63,9 +65,20 @@ class CarController():
           and CS.close_distance < 4.5                        # max operating distance to filter false positives
           and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
         self.sng_acc_resume = True
+      # Cancel ACC if stopped, brake pressed and not stopped behind another car
+      if enabled and CS.out.brakePressed and CS.car_follow == 0 and CS.out.standstill:
+        pcm_cancel_cmd = True
     elif CS.CP.carFingerprint in GLOBAL_CARS_SNG:
       if CS.has_epb:
+        # Record manual hold set while in standstill and no car in front
+        if CS.out.standstill and self.prev_cruise_state == 1 and CS.cruise_state == 3 and CS.car_follow == 0:
+          self.manual_hold = True
+        # Cancel manual hold when car starts moving
+        if not CS.out.standstill:
+          self.manual_hold = False
+        # Initiate the ACC resume sequence if conditions are met
         if (enabled                                            # ACC active
+            and not self.manual_hold
             and CS.car_follow == 1                             # lead car
             and CS.cruise_state == 3                           # ACC HOLD (only with EPB)
             and CS.close_distance > 150                        # acc resume trigger threshold
@@ -82,6 +95,7 @@ class CarController():
       if CS.out.standstill and not self.prev_standstill:
         self.standstill_start = frame
       self.prev_standstill = CS.out.standstill
+      self.prev_cruise_state = CS.cruise_state
 
     if self.sng_acc_resume:
       if self.sng_acc_resume_cnt < 5:
@@ -91,17 +105,13 @@ class CarController():
         self.sng_acc_resume = False
         self.sng_acc_resume_cnt = -1
 
-    # Cancel ACC if stopped, brake pressed and not stopped behind another car
-    if enabled and CS.out.brakePressed and CS.car_follow == 0 and CS.out.standstill:
-      pcm_cancel_cmd = True
-
     if CS.CP.carFingerprint != CAR.CROSSTREK_2020H:
       self.prev_close_distance = CS.close_distance
 
     # *** alerts and pcm cancel ***
 
     if CS.CP.carFingerprint in PREGLOBAL_CARS:
-      if self.es_accel_cnt != CS.es_accel_msg["Counter"]:
+      if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
         # 1 = main, 2 = set shallow, 3 = set deep, 4 = resume shallow, 5 = resume deep
         # disengage ACC when OP is disengaged
         if pcm_cancel_cmd:
@@ -117,8 +127,8 @@ class CarController():
           cruise_button = 0
         self.cruise_button_prev = cruise_button
 
-        can_sends.append(subarucan.create_es_throttle_control(self.packer, cruise_button, CS.es_accel_msg))
-        self.es_accel_cnt = CS.es_accel_msg["Counter"]
+        can_sends.append(subarucan.create_preglobal_es_distance(self.packer, cruise_button, CS.es_distance_msg))
+        self.es_distance_cnt = CS.es_distance_msg["Counter"]
 
       if self.throttle_cnt != CS.throttle_msg["Counter"]:
          can_sends.append(subarucan.create_preglobal_throttle(self.packer, CS.throttle_msg, throttle_cmd))
@@ -129,8 +139,9 @@ class CarController():
         if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
           can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, pcm_cancel_cmd))
           self.es_distance_cnt = CS.es_distance_msg["Counter"]
-        # do not send duplicate acc cancel using create_brake_pedal for cars that support ES_Distance
-        pcm_cancel_cmd = False
+        # Only cancel ACC using brake_pedal for models that do not support ES_Distance
+        if pcm_cancel_cmd:
+          pcm_cancel_cmd = False
 
       # FIXME: LKAS alerts filtering triggers PCB alerts on Outback 2020
       if CS.CP.carFingerprint == CAR.OUTBACK:
