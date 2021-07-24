@@ -1,5 +1,8 @@
 2021-07-24
 ==========
+* Merge upstream (0.8.6) / @martinl
+* Stop and go manual hold support for Global EPB models / @martinl
+* Use alternative steering signal for WRX / @martinl
 * FPv2 updates
   * 2015 Outback - UDM / @chk_null
 
