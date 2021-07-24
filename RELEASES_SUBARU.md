@@ -1,7 +1,12 @@
+2021-07-24
+==========
+* FPv2 updates
+  * 2015 Outback - UDM / @chk_null
+
 2021-07-21
 ==========
 * FPv2 updates
-  * 2021 Subaru Forester - UDM / @umby24
+  * 2021 Forester - UDM / @umby24
 
 2021-07-14
 ==========
@@ -26,7 +31,7 @@
   * 2017 Impreza - UDM (@Fidel)
   * 2019 Outback Touring 3.6R - UDM (@danyo)
   * 2020 Impreza Premium - UDM (@KeetsScrimalittle)
-  * 2020 Subaru Forester - UDM / (@TH156UY)
+  * 2020 Forester - UDM / (@TH156UY)
 
 2021-07-06
 ==========
@@ -43,8 +48,8 @@
 2021-07-01
 ==========
 * FPv2 updates
-  * 2019 Subaru Forester - UDM (@clockenessmnstr)
-  * 2021 Subaru Forester - UDM (@gotham)
+  * 2019 Forester - UDM (@clockenessmnstr)
+  * 2021 Forester - UDM (@gotham)
 
 2021-06-28
 ==========
