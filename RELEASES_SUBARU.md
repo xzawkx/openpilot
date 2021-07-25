@@ -1,3 +1,8 @@
+2021-07-25
+==========
+* FPv2 updates
+  * 2019 Outback - UDM / @Steven C
+
 2021-07-24
 ==========
 * Merge upstream (0.8.6) / @martinl
