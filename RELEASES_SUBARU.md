@@ -1,3 +1,8 @@
+2021-07-26
+==========
+* FPv2 updates
+  * 2018 Crosstrek - UDM / @dnewstat
+
 2021-07-25
 ==========
 * FPv2 updates
