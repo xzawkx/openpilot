@@ -130,10 +130,10 @@ static void update_state(UIState *s) {
   UIScene &scene = s->scene;
 
   // ENG UI START
-  if (scene.started && sm.updated("controlsState")) {
-    scene.controls_state = sm["controlsState"].getControlsState();
-    s->scene.output_scale = scene.controls_state.getLateralControlState().getPidState().getOutput();
-    s->scene.curvature = scene.controls_state.getCurvature();
+  if (scene.started && sm.updated("carControl")) {
+    scene.car_control = sm["carControl"].getCarControl();
+    s->scene.actuators = scene.car_control.getActuators();
+    s->scene.angleSteersDes = scene.actuators.getSteeringAngleDeg();
   }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
@@ -308,7 +308,7 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState", "roadCameraState",
     "pandaState", "carParams", "driverMonitoringState", "sensorEvents", "carState", "liveLocationKalman",
-    "gpsLocationExternal", "ubloxGnss",
+    "gpsLocationExternal", "ubloxGnss", "carControl",
   });
 
   ui_state.fb_w = vwp_w;

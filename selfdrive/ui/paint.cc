@@ -372,7 +372,6 @@ static void ui_draw_vision_face(UIState *s) {
  }
 
  static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w ) {
-   const UIScene *scene = &s->scene;
    int bb_rx = bb_x + (int)(bb_w/2);
    int bb_ry = bb_y;
    int bb_h = 5;
@@ -469,27 +468,27 @@ static void ui_draw_vision_face(UIState *s) {
      bb_ry = bb_y + bb_h;
    }
 
-   // add path curvature
+   // add desired steering angle
    if (true) {
      char val_str[16];
      char uom_str[6];
      NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
-     if (scene->controls_state.getEnabled()) {
+     if (s->status == STATUS_ENGAGED) {
        //show Orange if more than 6 degrees
        //show red if  more than 12 degrees
-       if(((int)(s->scene.curvature) < -6) || ((int)(s->scene.curvature) > 6)) {
+       if(((int)(s->scene.angleSteersDes) < -6) || ((int)(s->scene.angleSteersDes) > 6)) {
          val_color = nvgRGBA(255, 188, 3, 200);
        }
-       if(((int)(s->scene.curvature) < -12) || ((int)(s->scene.curvature) > 12)) {
+       if(((int)(s->scene.angleSteersDes) < -12) || ((int)(s->scene.angleSteersDes) > 12)) {
          val_color = nvgRGBA(255, 0, 0, 200);
        }
        // steering is in degrees
-       snprintf(val_str, sizeof(val_str), "%.0f°",(s->scene.curvature));
+       snprintf(val_str, sizeof(val_str), "%.0f°",(s->scene.angleSteersDes));
      } else {
         snprintf(val_str, sizeof(val_str), "-");
      }
        snprintf(uom_str, sizeof(uom_str), "");
-     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "CURVATURE",
+     bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "DESIR STEER",
          bb_rx, bb_ry, bb_uom_dx,
          val_color, lab_color, uom_color,
          value_fontSize, label_fontSize, uom_fontSize );

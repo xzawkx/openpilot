@@ -110,19 +110,18 @@ typedef struct UIScene {
   cereal::DeviceState::Reader deviceState;
   cereal::RadarState::LeadData::Reader lead_data[2];
   cereal::CarState::Reader car_state;
-  cereal::ControlsState::Reader controls_state;
+  cereal::CarControl::Reader car_control;
+  cereal::CarControl::Actuators::Reader actuators;
 
   int lead_status;
   float lead_d_rel, lead_v_rel;
   float angleSteers;
   bool brakeLights;
-  float curvature;
-  bool recording;
+  float angleSteersDes;
   float gpsAccuracyUblox;
   float altitudeUblox;
   int satelliteCount;
   bool steerOverride;
-  float output_scale;
   float steeringTorqueEps;
   float aEgo;
   float cpuTemp;
