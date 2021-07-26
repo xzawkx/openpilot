@@ -83,6 +83,12 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                   "Unsafe option to disable openpilot disengage on gas pedal press. For use only for WIP models which do not support disengage on gas pedal press yet.",
                                   "../assets/offroad/icon_speed_limit.png"));
 
+  toggles.append(new ParamControl("ShowEngineeringUIToggle",
+                                  "Show Engineering UI",
+                                  "Show Openpilot engineering related measures in UI. Mostly useful for porting and tuning.",
+                                  "../assets/offroad/icon_calibration.png"));
+
+
 
 #ifdef ENABLE_MAPS
   toggles.append(new ParamControl("NavSettingTime24h",

@@ -120,6 +120,7 @@ typedef struct UIScene {
   bool recording;
   float gpsAccuracyUblox;
   float altitudeUblox;
+  int satelliteCount;
   bool steerOverride;
   float output_scale;
   float steeringTorqueEps;
@@ -128,8 +129,7 @@ typedef struct UIScene {
   int cpuPerc;
   int engineRPM;
 
-  // gps
-  int satelliteCount;
+  bool eng_ui;
 
   // ENG UI END
 
