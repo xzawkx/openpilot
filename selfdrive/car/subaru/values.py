@@ -128,6 +128,7 @@ FW_VERSIONS = {
     # 2019 Crosstrek Limited - UDM / @cellfreak
     # 2019 Impreza Limited - UDM / @boros
     # 2017 Impreza - UDM / @Fidel
+    # 2018 Impreza - UDM / @dnewstat
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x7a\x94\x3f\x90\x00',
@@ -181,6 +182,7 @@ FW_VERSIONS = {
       b'\xe5\xf5B\x00\x00',
       b'\xe5\xf5$\000\000',
       b'\xe4\xf5\a\000\000',
+      b'\xe3\xf5F\000\000',
     ],
   },
   CAR.IMPREZA_2020: {
