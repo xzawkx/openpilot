@@ -125,6 +125,7 @@ class CarState(CarStateBase):
     signals = [
       # sig_name, sig_address, default
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
+      ("Steer_Torque_Output", "Steering_Torque", 0),
       ("Steering_Angle", "Steering_Torque", 0),
       ("Steer_Error_1", "Steering_Torque", 0),
       ("Brake_Pedal", "Brake_Pedal", 0),
