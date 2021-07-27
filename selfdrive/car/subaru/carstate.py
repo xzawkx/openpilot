@@ -69,6 +69,7 @@ class CarState(CarStateBase):
       self.cruise_button = cp_cam.vl["ES_CruiseThrottle"]["Cruise_Button"]
       self.ready = not cp_cam.vl["ES_DashStatus"]["Not_Ready_Startup"]
       self.es_accel_msg = copy.copy(cp_cam.vl["ES_CruiseThrottle"])
+      ret.genericToggle = bool(cp.vl["Stalk"]["Highbeam"])
     else:
       ret.steerWarning = cp.vl["Steering_Torque"]["Steer_Warning"] == 1
       ret.cruiseState.nonAdaptive = cp_cam.vl["ES_DashStatus"]["Conventional_Cruise"] == 1
@@ -129,6 +130,11 @@ class CarState(CarStateBase):
       checks += [
         ("BodyInfo", 1),
         ("CruiseControl", 50),
+        ("Stalk", 8),
+      ]
+
+      signals += [
+        ("Highbeam", "Stalk", 0),
       ]
 
       if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.LEVORG_PREGLOBAL, CAR.WRX_PREGLOBAL]:
