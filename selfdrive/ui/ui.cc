@@ -199,6 +199,17 @@ static void update_state(UIState *s) {
 
     scene.light_sensor = std::clamp<float>((1023.0 / max_lines) * (max_lines - camera_state.getIntegLines() * gain), 0.0, 1023.0);
   }
+  if (sm.updated("carState")) {
+    auto stalk = sm["carState"].getCarState().getGenericToggle();
+    if (stalk) {
+      if (scene.blank_screen) {
+        scene.blank_screen = false;
+      }
+      else {
+        scene.blank_screen = true;
+      }
+    }
+  }
   scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
 }
 
@@ -368,5 +379,10 @@ void Device::updateWakefulness(const UIState &s) {
     accel_prev = (accel_prev * (accel_samples - 1) + s.scene.accel_sensor) / accel_samples;
   }
 
-  setAwake(awake_timeout, should_wake);
+  if (s.scene.blank_screen) {
+    setAwake(false, false);
+  }
+  else {
+    setAwake(awake_timeout, should_wake);
+  }
 }
