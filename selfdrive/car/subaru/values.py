@@ -230,10 +230,11 @@ FW_VERSIONS = {
     ],
   },
   CAR.FORESTER: {
-    # 2021 Subaru Forester - UDM / @gotham
-    # 2019 Subaru Forester - UDM / @clockenessmnstr
-    # 2020 Subaru Forester - UDM / @TH156UY
-    # 2021 Subaru Forester - UDM / @umby24
+    # 2021 Forester - UDM / @gotham
+    # 2019 Forester - UDM / @clockenessmnstr
+    # 2020 Forester - UDM / @TH156UY
+    # 2021 Forester - UDM / @umby24
+    # 2020 Forester Sport - UDM / @RyanYo
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa3 \030\024\000',
@@ -253,6 +254,7 @@ FW_VERSIONS = {
       b'\xb6\"`A\a',
       b'\xcf"`0\a',
       b'\xcb\"`@\a',
+      b'\xcb\"`p\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\032\xf6B0\000',
