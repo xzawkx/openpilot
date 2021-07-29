@@ -1,3 +1,8 @@
+2021-07-29
+==========
+* FPv2 updates
+  * 2020 Forester Sport - UDM / @RyanYo
+
 2021-07-26
 ==========
 * FPv2 updates
