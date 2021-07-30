@@ -202,12 +202,10 @@ static void update_state(UIState *s) {
   if (sm.updated("carState")) {
     auto stalk = sm["carState"].getCarState().getGenericToggle();
     if (stalk) {
-      if (scene.blank_screen) {
-        scene.blank_screen = false;
-      }
-      else {
-        scene.blank_screen = true;
-      }
+      scene.blank_screen = true;
+    }
+    else {
+      scene.blank_screen = false;
     }
   }
   scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
