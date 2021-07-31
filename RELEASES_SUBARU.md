@@ -1,3 +1,7 @@
+2021-07-31
+==========
+* Update LKAS alert filtering for Outback 2020+ and Forester 2021+ / @martinl
+
 2021-07-29
 ==========
 * FPv2 updates
