@@ -144,10 +144,13 @@ class CarController():
           pcm_cancel_cmd = False
 
       # FIXME: LKAS alerts filtering triggers PCB alerts on Outback 2020
+      '''
       if CS.CP.carFingerprint == CAR.OUTBACK:
         filter_alerts = False
       else:
         filter_alerts = True
+      '''
+      filter_alerts = True
 
       if self.es_lkas_cnt != CS.es_lkas_msg["Counter"]:
         can_sends.append(subarucan.create_es_lkas(self.packer, CS.es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart, filter_alerts))

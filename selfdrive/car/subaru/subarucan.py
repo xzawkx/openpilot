@@ -33,15 +33,23 @@ def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_
 
   if filter_alerts:
     # Filter the stock LKAS "Keep hands on wheel" alert
-    if values["Keep_Hands_On_Wheel"] == 1:
-      values["Keep_Hands_On_Wheel"] = 0
+    if values["LKAS_Alert_Msg"] == 1:
+      values["LKAS_Alert_Msg"] = 0
 
-    # Filter the stock LKAS sending an audible tone when it turns off LKAS
+    # Filter the stock LKAS sending an audible alert when it turns off LKAS
     if values["LKAS_Alert"] == 27:
       values["LKAS_Alert"] = 0
 
+    # Filter the stock LKAS sending an audible alert when "Keep hands on wheel now" alert is active (2020+ models)
+    if values["LKAS_Alert"] == 28 and values["LKAS_Alert_Msg"] == 7:
+      values["LKAS_Alert"] = 0
+
+    # Filter the stock LKAS sending "Keep hands on wheel now" alert (2020+ models)
+    if values["LKAS_Alert_Msg"] == 7:
+      values["LKAS_Alert_Msg"] = 0
+
   if visual_alert == VisualAlert.steerRequired:
-    values["Keep_Hands_On_Wheel"] = 1
+    values["LKAS_Alert_Msg"] = 1
 
   if filter_alerts:
     # Ensure we don't overwrite potentially more important alerts from stock (e.g. FCW)
