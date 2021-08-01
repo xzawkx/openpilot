@@ -1,3 +1,7 @@
+2021-08-01
+==========
+* Add Legacy 2018+ as separate model, has flipped triver torque signal / @martinl
+
 2021-07-31
 ==========
 * Update LKAS alert filtering for Outback 2020+ and Forester 2021+ / @martinl
