@@ -137,6 +137,4 @@ def create_preglobal_throttle(packer, throttle_msg, throttle_cmd):
   if throttle_cmd:
     values["Throttle_Pedal"] = 5
 
-  values["Checksum"] = subaru_preglobal_checksum(packer, values, "Throttle")
-
   return packer.make_can_msg("Throttle", 2, values)
