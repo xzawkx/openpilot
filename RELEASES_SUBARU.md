@@ -1,3 +1,8 @@
+2021-08-02
+==========
+* Removed last remaining Subaru FPv1 fingerprints / @martinl
+* Minor carstate signal fixes / @martinl
+
 2021-08-01
 ==========
 * Add Legacy 2018+ as separate model, has flipped triver torque signal / @martinl
