@@ -136,34 +136,40 @@ FW_VERSIONS = {
     ],
   },
   CAR.IMPREZA_2020: {
-    # 2020 Impreza Sport - UDM @CrispinFlowerday
-    # 2020 Impreza Hatchback Premium - UDM @davidvatz
-    # 2020 Impreza Hatchback - UDM @GPT-3
-    # 2020 Impreza Premium - UDM @KeetsScrimalittle
+    # 2020 Impreza Sport - UDM / @CrispinFlowerday
+    # 2020 Impreza Hatchback Premium - UDM / @davidvatz
+    # 2020 Impreza Hatchback - UDM / @GPT-3
+    # 2020 Impreza Premium - UDM / @KeetsScrimalittle
+    # 2021 Crosstrek Limited - UDM / @AdamSLevy
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa2 \0314\000',
       b'\xa2 \0313\000',
+      b'\xa2 !i\000',
     ],
     (Ecu.eps, 0x746, None): [
       b'\x9a\xc0\000\000',
+      b'\n\xc0\004\000',
     ],
     (Ecu.fwdCamera, 0x787, None): [
       b'\000\000eb\037@ \"',
+      b'\000\000e\x8f\037@ )',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xca!ap\a',
       b'\xca!`p\a',
       b'\xca!`0\a',
+      b'\xcc\"f0\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xe6\xf5\004\000\000',
       b'\xe6\xf5$\000\000',
+      b'\xe7\xf6B0\000',
     ],
   },
   CAR.CROSSTREK_2020H: {
-    # 2020 Crosstrek Hybrid UDM / @revity
-    # 2020 Crosstrek Hybrid UDM / @Dave32
+    # 2020 Crosstrek Hybrid - UDM / @revity
+    # 2020 Crosstrek Hybrid - UDM / @Dave32
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa2 \x19e\x01',
@@ -215,7 +221,7 @@ FW_VERSIONS = {
   CAR.FORESTER_PREGLOBAL: {
     # 2018 Subaru Forester 2.5i Touring - UDM / @Oreo
     # 2018 Subaru Forester 2.5 Limited - Canada / @litobro
-    # 2017 Subaru Forester UDM / @hitoryu2001
+    # 2017 Subaru Forester - UDM / @hitoryu2001
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x7d\x97\x14\x40',
@@ -314,7 +320,7 @@ FW_VERSIONS = {
   CAR.OUTBACK: {
     # 2020 Outback 2.4 XT Limited - UDM / @KingChalupa
     # 2020 Outback 2.5i Premium - UDM / @ursubpar
-    # 2021 Outback / @Frye - FL
+    # 2021 Outback - UDM / @Frye - FL
     # 2020 Outback 2.4 Touring XT  - UDM / @chrissantamaria
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
