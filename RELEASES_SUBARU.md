@@ -1,3 +1,8 @@
+2021-08-03
+==========
+* FPv2 updates
+  * 2021 Crosstrek Limited - UDM / @AdamSLevy
+
 2021-08-02
 ==========
 * Removed last remaining Subaru FPv1 fingerprints / @martinl
