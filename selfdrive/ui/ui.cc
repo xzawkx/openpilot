@@ -130,17 +130,36 @@ static void update_state(UIState *s) {
   UIScene &scene = s->scene;
 
   // ENG UI START
-  if (scene.started && sm.updated("carControl")) {
-    scene.car_control = sm["carControl"].getCarControl();
-    s->scene.actuators = scene.car_control.getActuators();
-    s->scene.angleSteersDes = scene.actuators.getSteeringAngleDeg();
-  }
-  if (sm.updated("carState")) {
-    scene.car_state = sm["carState"].getCarState();
-    s->scene.steerOverride = scene.car_state.getSteeringPressed();
-    s->scene.angleSteers = scene.car_state.getSteeringAngleDeg();
-    s->scene.aEgo = scene.car_state.getAEgo();
-    s->scene.steeringTorqueEps = scene.car_state.getSteeringTorqueEps();
+  if (scene->eng_ui) {
+    if (scene.started && sm.updated("carControl")) {
+      scene.car_control = sm["carControl"].getCarControl();
+      s->scene.actuators = scene.car_control.getActuators();
+      s->scene.angleSteersDes = scene.actuators.getSteeringAngleDeg();
+    }
+    if (sm.updated("carState")) {
+      scene.car_state = sm["carState"].getCarState();
+      s->scene.steerOverride = scene.car_state.getSteeringPressed();
+      s->scene.angleSteers = scene.car_state.getSteeringAngleDeg();
+      s->scene.aEgo = scene.car_state.getAEgo();
+      s->scene.steeringTorqueEps = scene.car_state.getSteeringTorqueEps();
+    }
+    if (sm.updated("deviceState")) {
+      scene.deviceState = sm["deviceState"].getDeviceState();
+      s->scene.cpuTemp = scene.deviceState.getCpuTempC()[0];
+      s->scene.cpuPerc = scene.deviceState.getCpuUsagePercent();
+    }
+    if (sm.updated("ubloxGnss")) {
+      auto data = sm["ubloxGnss"].getUbloxGnss();
+      if (data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
+        scene.satelliteCount = data.getMeasurementReport().getNumMeas();
+        s->scene.satelliteCount = scene.satelliteCount;
+      }
+    }
+    if (sm.updated("gpsLocationExternal")) {
+      auto data = sm["gpsLocationExternal"].getGpsLocationExternal();
+      s->scene.gpsAccuracyUblox = data.getAccuracy();
+      s->scene.altitudeUblox = data.getAltitude();
+    }
   }
   // ENG UI END
 
@@ -186,25 +205,6 @@ static void update_state(UIState *s) {
   if (sm.updated("carParams")) {
     scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
   }
-  // ENG UI START
-  if (sm.updated("deviceState")) {
-    scene.deviceState = sm["deviceState"].getDeviceState();
-    s->scene.cpuTemp = scene.deviceState.getCpuTempC()[0];
-    s->scene.cpuPerc = scene.deviceState.getCpuUsagePercent();
-  }
-  if (sm.updated("ubloxGnss")) {
-    auto data = sm["ubloxGnss"].getUbloxGnss();
-    if (data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
-      scene.satelliteCount = data.getMeasurementReport().getNumMeas();
-      s->scene.satelliteCount = scene.satelliteCount;
-    }
-  }
-  if (sm.updated("gpsLocationExternal")) {
-    auto data = sm["gpsLocationExternal"].getGpsLocationExternal();
-    s->scene.gpsAccuracyUblox = data.getAccuracy();
-    s->scene.altitudeUblox = data.getAltitude();
-  }
-  // ENG UI END
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
       if (!scene.started && sensor.which() == cereal::SensorEventData::ACCELERATION) {

@@ -235,10 +235,10 @@ static void ui_draw_vision_face(UIState *s) {
 
 // ENG UI
 
-static int bb_ui_draw_measure(UIState *s,  const char* bb_value, const char* bb_uom, const char* bb_label,
+static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_uom, const char* bb_label,
     int bb_x, int bb_y, int bb_uom_dx,
     NVGcolor bb_valueColor, NVGcolor bb_labelColor, NVGcolor bb_uomColor,
-    int bb_valueFontSize, int bb_labelFontSize, int bb_uomFontSize )  {
+    int bb_valueFontSize, int bb_labelFontSize, int bb_uomFontSize ) {
   nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
   int dx = 0;
   if (strlen(bb_uom) > 0) {
@@ -299,7 +299,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     char val_str[16];
     char uom_str[3];
     NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
-    //show red/orange if gps accuracy is low
+      //show red/orange if gps accuracy is low
       if(scene->gpsAccuracyUblox > 0.85) {
          val_color = nvgRGBA(255, 188, 3, 200);
       }
@@ -309,10 +309,9 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w )
     // gps accuracy is always in meters
     if(scene->gpsAccuracyUblox > 99 || scene->gpsAccuracyUblox == 0) {
        snprintf(val_str, sizeof(val_str), "None");
-    }else if(scene->gpsAccuracyUblox > 9.99) {
+    } else if(scene->gpsAccuracyUblox > 9.99) {
       snprintf(val_str, sizeof(val_str), "%.1f", (s->scene.gpsAccuracyUblox));
-    }
-    else {
+    } else {
       snprintf(val_str, sizeof(val_str), "%.2f", (s->scene.gpsAccuracyUblox));
     }
     snprintf(uom_str, sizeof(uom_str), "%d", (s->scene.satelliteCount));
@@ -437,7 +436,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     } else {
       snprintf(uom_str, sizeof(uom_str), "mph");
     }
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "REL SPEED",
+    bb_h +=bb_ui_draw_measure(s, val_str, uom_str, "REL SPEED",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
@@ -461,7 +460,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     snprintf(val_str, sizeof(val_str), "%.0f°",(s->scene.angleSteers));
 
     snprintf(uom_str, sizeof(uom_str), "");
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "REAL STEER",
+    bb_h +=bb_ui_draw_measure(s, val_str, uom_str, "REAL STEER",
          bb_rx, bb_ry, bb_uom_dx,
          val_color, lab_color, uom_color,
          value_fontSize, label_fontSize, uom_fontSize );
@@ -475,7 +474,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
     if (s->status == STATUS_ENGAGED) {
       //show Orange if more than 6 degrees
-      //show red if  more than 12 degrees
+      //show red if more than 12 degrees
       if(((int)(s->scene.angleSteersDes) < -6) || ((int)(s->scene.angleSteersDes) > 6)) {
         val_color = nvgRGBA(255, 188, 3, 200);
       }
@@ -488,7 +487,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
       snprintf(val_str, sizeof(val_str), "-");
     }
     snprintf(uom_str, sizeof(uom_str), "");
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "DESIR STEER",
+    bb_h +=bb_ui_draw_measure(s, val_str, uom_str, "DESIR STEER",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
@@ -505,7 +504,7 @@ static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w ) 
     }
     else {snprintf(val_str, sizeof(val_str), "%d", (s->scene.engineRPM));}
     snprintf(uom_str, sizeof(uom_str), "");
-    bb_h +=bb_ui_draw_measure(s,  val_str, uom_str, "ENG RPM",
+    bb_h +=bb_ui_draw_measure(s, val_str, uom_str, "ENG RPM",
         bb_rx, bb_ry, bb_uom_dx,
         val_color, lab_color, uom_color,
         value_fontSize, label_fontSize, uom_fontSize );
@@ -526,7 +525,7 @@ static void bb_ui_draw_UI(UIState *s)
   //const UIScene *scene = &s->scene;
   const int bb_dml_w = 180;
   const int bb_dml_x = (s->viz_rect.x + (bdr_is * 2));
-  const int bb_dml_y = (s->viz_rect.y  + (bdr_is * 1.5)) + 220;
+  const int bb_dml_y = (s->viz_rect.y + (bdr_is * 1.5)) + 220;
 
   const int bb_dmr_w = 180;
   const int bb_dmr_x = s->viz_rect.x + s->viz_rect.w - bb_dmr_w - (bdr_is * 2);
