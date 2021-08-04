@@ -130,7 +130,7 @@ static void update_state(UIState *s) {
   UIScene &scene = s->scene;
 
   // ENG UI START
-  if (scene->eng_ui) {
+  if (scene.eng_ui) {
     if (scene.started && sm.updated("carControl")) {
       scene.car_control = sm["carControl"].getCarControl();
       s->scene.actuators = scene.car_control.getActuators();
