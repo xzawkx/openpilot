@@ -199,9 +199,10 @@ FW_VERSIONS = {
     ],
   },
   CAR.FORESTER_PREGLOBAL: {
-    # 2018 Subaru Forester 2.5i Touring - UDM / @Oreo
-    # 2018 Subaru Forester 2.5 Limited - Canada / @litobro
-    # 2017 Subaru Forester UDM / @hitoryu2001
+    # 2018 Forester 2.5i Touring - UDM / @Oreo
+    # 2018 Forester 2.5 Limited - Canada / @litobro
+    # 2017 Forester - UDM / @hitoryu2001
+    # 2018 Forester - UDM / @sarvcomp
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x7d\x97\x14\x40',
@@ -218,6 +219,7 @@ FW_VERSIONS = {
       b'\xba"@p\a',
       b'\xa7)\xa0q\a',
       b'\xf1\x82\xa7)\xa0q\a',
+      b'\xba"@@\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xdc\xf2\x60\x60\x00',
