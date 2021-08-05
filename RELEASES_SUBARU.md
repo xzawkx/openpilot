@@ -1,5 +1,6 @@
 2021-08-04
 ==========
+* Merge upstream (0.8.7) / @martinl
 * FPv2 updates
   * 2018 Forester - UDM / @sarvcomp
 
