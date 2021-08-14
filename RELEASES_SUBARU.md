@@ -1,3 +1,8 @@
+2021-08-14
+==========
+* FPv2 updates
+  * 2020 Ascent - UDM / @ndtran
+
 2021-08-04
 ==========
 * Merge upstream (0.8.7) / @martinl
