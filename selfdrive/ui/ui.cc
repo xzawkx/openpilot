@@ -138,11 +138,6 @@ static void update_state(UIState *s) {
     s->scene.actuators = scene.car_control.getActuators();
     s->scene.angleSteersDes = scene.actuators.getSteeringAngleDeg();
   }
-  if (scene.started && sm.updated("controlsState")) {
-    scene.controls_state = sm["controlsState"].getControlsState();
-    s->scene.output_scale = scene.controls_state.getLateralControlState().getPidState().getOutput();
-    s->scene.angleSteersDes = scene.controls_state.getSteeringAngleDesiredDeg();
-  }
   if (sm.updated("carState")) {
     scene.car_state = sm["carState"].getCarState();
     s->scene.steerOverride = scene.car_state.getSteeringPressed();
