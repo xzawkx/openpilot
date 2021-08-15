@@ -71,11 +71,10 @@ static void update_leads(UIState *s, const cereal::ModelDataV2::Reader &model) {
       float z = model_position.getZ()[get_path_length_idx(model_position, leads[i].getX()[0])];
       calib_frame_to_full_frame(s, leads[i].getX()[0], leads[i].getY()[0], z + 1.22, &s->scene.lead_vertices[i]);
     }
-    s->scene.lead_data[i] = lead_data;
   }
-  s->scene.lead_v_rel = s->scene.lead_data[0].getVRel();
-  s->scene.lead_d_rel = s->scene.lead_data[0].getDRel();
-  s->scene.lead_status = s->scene.lead_data[0].getStatus();
+  s->scene.lead_v_rel = leads[0].getV()[0];
+  s->scene.lead_d_rel = leads[0].getX()[0];
+  s->scene.lead_status = leads[0].getProb() > 0.5;
 }
 
 static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,

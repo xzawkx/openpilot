@@ -269,7 +269,6 @@ static int bb_ui_draw_measure(UIState *s, const char* bb_value, const char* bb_u
 }
 
 static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w) {
-  const UIScene *scene = &s->scene;
   int bb_rx = bb_x + (int)(bb_w/2);
   int bb_ry = bb_y;
   int bb_h = 5;
@@ -293,21 +292,21 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w) 
     bb_ry = bb_y + bb_h;
   }
   //add Ublox GPS accuracy
-  if (scene->gpsAccuracyUblox != 0.00) {
+  if (s->scene.gpsAccuracyUblox != 0.00) {
     char val_str[16];
     char uom_str[3];
     NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
     //show red/orange if gps accuracy is low
-    if(scene->gpsAccuracyUblox > 0.85) {
+    if(s->scene.gpsAccuracyUblox > 0.85) {
        val_color = nvgRGBA(255, 188, 3, 200);
     }
-    if(scene->gpsAccuracyUblox > 1.3) {
+    if(s->scene.gpsAccuracyUblox > 1.3) {
        val_color = nvgRGBA(255, 0, 0, 200);
     }
     // gps accuracy is always in meters
-    if(scene->gpsAccuracyUblox > 99 || scene->gpsAccuracyUblox == 0) {
+    if(s->scene.gpsAccuracyUblox > 99 || s->scene.gpsAccuracyUblox == 0) {
        snprintf(val_str, sizeof(val_str), "None");
-    } else if(scene->gpsAccuracyUblox > 9.99) {
+    } else if(s->scene.gpsAccuracyUblox > 9.99) {
       snprintf(val_str, sizeof(val_str), "%.1f", (s->scene.gpsAccuracyUblox));
     }
     else {
@@ -321,7 +320,7 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w) 
     bb_ry = bb_y + bb_h;
   }
   //add altitude
-  if (scene->gpsAccuracyUblox != 0.00) {
+  if (s->scene.gpsAccuracyUblox != 0.00) {
     char val_str[16];
     char uom_str[3];
     NVGcolor val_color = nvgRGBA(255, 255, 255, 200);
@@ -369,7 +368,6 @@ static void bb_ui_draw_measures_right(UIState *s, int bb_x, int bb_y, int bb_w) 
 }
 
 static void bb_ui_draw_measures_left(UIState *s, int bb_x, int bb_y, int bb_w) {
-  const UIScene *scene = &s->scene;
   int bb_rx = bb_x + (int)(bb_w/2);
   int bb_ry = bb_y;
   int bb_h = 5;
