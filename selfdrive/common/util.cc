@@ -1,8 +1,14 @@
 #include "selfdrive/common/util.h"
 
-#include <errno.h>
+#include <sys/stat.h>
 
+#include <cassert>
+#include <cerrno>
+#include <cstring>
+#include <dirent.h>
+#include <fstream>
 #include <sstream>
+#include <iomanip>
 
 #ifdef __linux__
 #include <sys/prctl.h>
@@ -50,41 +56,42 @@ int set_core_affinity(int core) {
 namespace util {
 
 std::string read_file(const std::string& fn) {
-  std::ifstream ifs(fn, std::ios::binary | std::ios::ate);
-  if (ifs) {
-    std::ifstream::pos_type pos = ifs.tellg();
-    if (pos != std::ios::beg) {
-      std::string result;
-      result.resize(pos);
-      ifs.seekg(0, std::ios::beg);
-      ifs.read(result.data(), pos);
-      if (ifs) {
+  std::ifstream f(fn, std::ios::binary | std::ios::in);
+  if (f.is_open()) {
+    f.seekg(0, std::ios::end);
+    int size = f.tellg();
+    if (f.good() && size > 0) {
+      std::string result(size, '\0');
+      f.seekg(0, std::ios::beg);
+      f.read(result.data(), size);
+      // return either good() or has reached end-of-file (e.g. /sys/power/wakeup_count)
+      if (f.good() || f.eof()) {
+        result.resize(f.gcount());
         return result;
       }
     }
+    // fallback for files created on read, e.g. procfs
+    std::stringstream buffer;
+    buffer << f.rdbuf();
+    return buffer.str();
   }
-  ifs.close();
-
-  // fallback for files created on read, e.g. procfs
-  std::ifstream f(fn);
-  std::stringstream buffer;
-  buffer << f.rdbuf();
-  return buffer.str();
+  return std::string();
 }
 
-int read_files_in_dir(std::string path, std::map<std::string, std::string> *contents) {
+std::map<std::string, std::string> read_files_in_dir(const std::string &path) {
+  std::map<std::string, std::string> ret;
   DIR *d = opendir(path.c_str());
-  if (!d) return -1;
+  if (!d) return ret;
 
   struct dirent *de = NULL;
   while ((de = readdir(d))) {
     if (isalnum(de->d_name[0])) {
-      (*contents)[de->d_name] = util::read_file(path + "/" + de->d_name);
+      ret[de->d_name] = util::read_file(path + "/" + de->d_name);
     }
   }
 
   closedir(d);
-  return 0;
+  return ret;
 }
 
 int write_file(const char* path, const void* data, size_t size, int flags, mode_t mode) {
@@ -97,5 +104,80 @@ int write_file(const char* path, const void* data, size_t size, int flags, mode_
   return (n >= 0 && (size_t)n == size) ? 0 : -1;
 }
 
+std::string readlink(const std::string &path) {
+  char buff[4096];
+  ssize_t len = ::readlink(path.c_str(), buff, sizeof(buff)-1);
+  if (len != -1) {
+    buff[len] = '\0';
+    return std::string(buff);
+  }
+  return "";
+}
+
+bool file_exists(const std::string& fn) {
+  struct stat st = {};
+  return stat(fn.c_str(), &st) != -1;
+}
+
+std::string getenv(const char* key, const char* default_val) {
+  const char* val = ::getenv(key);
+  return val ? val : default_val;
+}
+
+int getenv(const char* key, int default_val) {
+  const char* val = ::getenv(key);
+  return val ? atoi(val) : default_val;
+}
+
+float getenv(const char* key, float default_val) {
+  const char* val = ::getenv(key);
+  return val ? atof(val) : default_val;
+}
+
+std::string tohex(const uint8_t *buf, size_t buf_size) {
+  std::unique_ptr<char[]> hexbuf(new char[buf_size * 2 + 1]);
+  for (size_t i = 0; i < buf_size; i++) {
+    sprintf(&hexbuf[i * 2], "%02x", buf[i]);
+  }
+  hexbuf[buf_size * 2] = 0;
+  return std::string(hexbuf.get(), hexbuf.get() + buf_size * 2);
+}
+
+std::string hexdump(const std::string& in) {
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    for (size_t i = 0; i < in.size(); i++) {
+        ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
+    }
+    return ss.str();
+}
+
+std::string base_name(std::string const &path) {
+  size_t pos = path.find_last_of("/");
+  if (pos == std::string::npos) return path;
+  return path.substr(pos + 1);
+}
+
+std::string dir_name(std::string const &path) {
+  size_t pos = path.find_last_of("/");
+  if (pos == std::string::npos) return "";
+  return path.substr(0, pos);
+}
+
+struct tm get_time() {
+  time_t rawtime;
+  time(&rawtime);
+
+  struct tm sys_time;
+  gmtime_r(&rawtime, &sys_time);
+
+  return sys_time;
+}
+
+bool time_valid(struct tm sys_time) {
+  int year = 1900 + sys_time.tm_year;
+  int month = 1 + sys_time.tm_mon;
+  return (year > 2021) || (year == 2021 && month >= 6);
+}
 
 }  // namespace util

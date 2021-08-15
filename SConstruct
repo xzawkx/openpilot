@@ -13,6 +13,10 @@ AddOption('--test',
           action='store_true',
           help='build test files')
 
+AddOption('--setup',
+          action='store_true',
+          help='build setup and installer files')
+
 AddOption('--kaitai',
           action='store_true',
           help='Regenerate kaitai struct parsers')
@@ -37,11 +41,20 @@ AddOption('--mpc-generate',
           action='store_true',
           help='regenerates the mpc sources')
 
+AddOption('--snpe',
+          action='store_true',
+          help='use SNPE on PC')
+
 AddOption('--external-sconscript',
           action='store',
           metavar='FILE',
           dest='external_sconscript',
           help='add an external SConscript to the build')
+
+AddOption('--no-thneed',
+          action='store_true',
+          dest='no_thneed',
+          help='avoid using thneed')
 
 real_arch = arch = subprocess.check_output(["uname", "-m"], encoding='utf8').rstrip()
 if platform.system() == "Darwin":
@@ -51,7 +64,6 @@ if arch == "aarch64" and TICI:
   arch = "larch64"
 
 USE_WEBCAM = os.getenv("USE_WEBCAM") is not None
-QCOM_REPLAY = arch == "aarch64" and os.getenv("QCOM_REPLAY") is not None
 
 lenv = {
   "PATH": os.environ['PATH'],
@@ -95,13 +107,9 @@ if arch == "aarch64" or arch == "larch64":
       "#phonelibs/libyuv/lib",
       "/system/vendor/lib64"
     ]
-    cflags = ["-DQCOM", "-mcpu=cortex-a57"]
-    cxxflags = ["-DQCOM", "-mcpu=cortex-a57"]
+    cflags = ["-DQCOM", "-D_USING_LIBCXX", "-mcpu=cortex-a57"]
+    cxxflags = ["-DQCOM", "-D_USING_LIBCXX", "-mcpu=cortex-a57"]
     rpath = []
-
-    if QCOM_REPLAY:
-      cflags += ["-DQCOM_REPLAY"]
-      cxxflags += ["-DQCOM_REPLAY"]
 else:
   cflags = []
   cxxflags = []
@@ -158,6 +166,10 @@ else:
 if arch != "Darwin":
   ldflags += ["-Wl,--as-needed"]
 
+# Enable swaglog include in submodules
+cflags += ["-DSWAGLOG"]
+cxxflags += ["-DSWAGLOG"]
+
 # change pythonpath to this
 lenv["PYTHONPATH"] = Dir("#").path
 
@@ -196,8 +208,6 @@ env = Environment(
     "#phonelibs/qrcode",
     "#phonelibs",
     "#cereal",
-    "#cereal/messaging",
-    "#cereal/visionipc",
     "#opendbc/can",
   ],
 
@@ -224,13 +234,10 @@ env = Environment(
 if GetOption('compile_db'):
   env.CompilationDatabase('compile_commands.json')
 
-if os.environ.get('SCONS_CACHE'):
-  cache_dir = '/tmp/scons_cache'
-  if TICI:
-    cache_dir = '/data/scons_cache'
-
-  CacheDir(cache_dir)
-  Clean(["."], cache_dir)
+# Setup cache dir
+cache_dir = '/data/scons_cache' if TICI else '/tmp/scons_cache'
+CacheDir(cache_dir)
+Clean(["."], cache_dir)
 
 node_interval = 5
 node_count = 0
@@ -321,7 +328,8 @@ qt_flags = [
   "-DQT_QUICK_LIB",
   "-DQT_QUICKWIDGETS_LIB",
   "-DQT_QML_LIB",
-  "-DQT_CORE_LIB"
+  "-DQT_CORE_LIB",
+  "-DQT_MESSAGELOGCONTEXT",
 ]
 qt_env['CXXFLAGS'] += qt_flags
 qt_env['LIBPATH'] += ['#selfdrive/ui']
@@ -338,7 +346,18 @@ if GetOption("clazy"):
   qt_env['ENV']['CLAZY_IGNORE_DIRS'] = qt_dirs[0]
   qt_env['ENV']['CLAZY_CHECKS'] = ','.join(checks)
 
-Export('env', 'qt_env', 'arch', 'real_arch', 'SHARED', 'USE_WEBCAM', 'QCOM_REPLAY')
+Export('env', 'qt_env', 'arch', 'real_arch', 'SHARED', 'USE_WEBCAM')
+
+SConscript(['selfdrive/common/SConscript'])
+Import('_common', '_gpucommon', '_gpu_libs')
+
+if SHARED:
+  common, gpucommon = abspath(common), abspath(gpucommon)
+else:
+  common = [_common, 'json11']
+  gpucommon = [_gpucommon] + _gpu_libs
+
+Export('common', 'gpucommon')
 
 # cereal and messaging are shared with the system
 SConscript(['cereal/SConscript'])
@@ -350,18 +369,7 @@ else:
   messaging = [File('#cereal/libmessaging.a')]
   visionipc = [File('#cereal/libvisionipc.a')]
 
-Export('cereal', 'messaging')
-
-SConscript(['selfdrive/common/SConscript'])
-Import('_common', '_gpucommon', '_gpu_libs')
-
-if SHARED:
-  common, gpucommon = abspath(common), abspath(gpucommon)
-else:
-  common = [_common, 'json11']
-  gpucommon = [_gpucommon] + _gpu_libs
-
-Export('common', 'gpucommon', 'visionipc')
+Export('cereal', 'messaging', 'visionipc')
 
 # Build rednose library and ekf models
 
@@ -403,8 +411,8 @@ SConscript(['selfdrive/modeld/SConscript'])
 
 SConscript(['selfdrive/controls/lib/cluster/SConscript'])
 SConscript(['selfdrive/controls/lib/lateral_mpc/SConscript'])
-SConscript(['selfdrive/controls/lib/longitudinal_mpc/SConscript'])
-SConscript(['selfdrive/controls/lib/longitudinal_mpc_model/SConscript'])
+SConscript(['selfdrive/controls/lib/lead_mpc_lib/SConscript'])
+SConscript(['selfdrive/controls/lib/longitudinal_mpc_lib/SConscript'])
 
 SConscript(['selfdrive/boardd/SConscript'])
 SConscript(['selfdrive/proclogd/SConscript'])

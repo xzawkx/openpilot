@@ -49,11 +49,19 @@ popd
 # Build stuff
 ln -sfn /data/openpilot /data/pythonpath
 export PYTHONPATH="/data/openpilot:/data/openpilot/pyextra"
-SCONS_CACHE=1 scons -j3
+scons -j3
 
 # Run tests
 python selfdrive/manager/test/test_manager.py
 selfdrive/car/tests/test_car_interfaces.py
+
+# Ensure no submodules in release
+if test "$(git submodule--helper list | wc -l)" -gt "0"; then
+  echo "submodules found:"
+  git submodule--helper list
+  exit 1
+fi
+git submodule status
 
 # Cleanup
 find . -name '*.a' -delete

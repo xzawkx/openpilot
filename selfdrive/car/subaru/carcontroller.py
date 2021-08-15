@@ -39,7 +39,7 @@ class CarController():
 
     self.packer = CANPacker(DBC[CP.carFingerprint]['pt'])
 
-  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert, left_line, right_line, left_ldw, right_ldw, lead_visible):
+  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart, lead_visible):
 
     can_sends = []
 
@@ -143,7 +143,7 @@ class CarController():
         self.es_dashstatus_cnt = CS.es_dashstatus_msg["Counter"]
 
       if self.es_lkas_state_cnt != CS.es_lkas_state_msg["Counter"]:
-        can_sends.append(subarucan.create_es_lkas_state(self.packer, CS.es_lkas_state_msg, visual_alert, left_line, right_line, left_ldw, right_ldw))
+        can_sends.append(subarucan.create_es_lkas_state(self.packer, CS.es_lkas_state_msg, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart))
         self.es_lkas_state_cnt = CS.es_lkas_state_msg["Counter"]
 
       if self.es_brake_cnt != CS.es_brake_msg["Counter"]:

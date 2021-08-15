@@ -1,9 +1,10 @@
 #pragma once
 
+#include <cassert>
 #include <pthread.h>
-#include <stdint.h>
-#include <stdio.h>
 
+#include <cstdint>
+#include <cstdio>
 #include <memory>
 
 #include <bzlib.h>
@@ -14,9 +15,8 @@
 #include "selfdrive/common/swaglog.h"
 #include "selfdrive/hardware/hw.h"
 
-const std::string LOG_ROOT =
-    Hardware::PC() ? util::getenv_default("HOME", "/.comma/media/0/realdata", "/data/media/0/realdata")
-                   : "/data/media/0/realdata";
+const std::string LOG_ROOT = Path::log_root();
+
 #define LOGGER_MAX_HANDLES 16
 
 class BZFile {

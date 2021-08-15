@@ -1,6 +1,8 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+#include <cmath>
+
 #include "locationd.h"
 
 using namespace EKFS;
@@ -15,6 +17,7 @@ const double ALTITUDE_SANITY_CHECK = 10000; // m
 const double MIN_STD_SANITY_CHECK = 1e-5; // m or rad
 const double VALID_TIME_SINCE_RESET = 1.0; // s
 const double VALID_POS_STD = 50.0; // m
+const double MAX_RESET_TRACKER = 5.0;
 
 static VectorXd floatlist2vector(const capnp::List<float, capnp::Kind::PRIMITIVE>::Reader& floatlist) {
   VectorXd res(floatlist.size());
@@ -79,8 +82,9 @@ void Localizer::build_live_location(cereal::LiveLocationKalman::Builder& fix) {
   //fix_pos_geo_std = np.abs(coord.ecef2geodetic(fix_ecef + fix_ecef_std) - fix_pos_geo)
   VectorXd orientation_ecef = quat2euler(vector2quat(predicted_state.segment<STATE_ECEF_ORIENTATION_LEN>(STATE_ECEF_ORIENTATION_START)));
   VectorXd orientation_ecef_std = predicted_std.segment<STATE_ECEF_ORIENTATION_ERR_LEN>(STATE_ECEF_ORIENTATION_ERR_START);
-  MatrixXdr device_from_ecef = quat2rot(vector2quat(predicted_state.segment<STATE_ECEF_ORIENTATION_LEN>(STATE_ECEF_ORIENTATION_START))).transpose();
-  VectorXd calibrated_orientation_ecef = rot2euler(this->calib_from_device * device_from_ecef);
+  MatrixXdr device_from_ecef = euler2rot(orientation_ecef).transpose();
+  //VectorXd calibrated_orientation_ecef = rot2euler(device_from_ecef);
+  VectorXd calibrated_orientation_ecef = rot2euler((this->calib_from_device * device_from_ecef).transpose());
 
   VectorXd acc_calib = this->calib_from_device * predicted_state.segment<STATE_ACCELERATION_LEN>(STATE_ACCELERATION_START);
   MatrixXdr acc_calib_cov = predicted_cov.block<STATE_ACCELERATION_ERR_LEN, STATE_ACCELERATION_ERR_LEN>(STATE_ACCELERATION_ERR_START, STATE_ACCELERATION_ERR_START);
@@ -112,6 +116,7 @@ void Localizer::build_live_location(cereal::LiveLocationKalman::Builder& fix) {
 
   VectorXd orientation_ned = ned_euler_from_ecef(fix_ecef_ecef, orientation_ecef);
   //orientation_ned_std = ned_euler_from_ecef(fix_ecef, orientation_ecef + orientation_ecef_std) - orientation_ned
+  VectorXd calibrated_orientation_ned = ned_euler_from_ecef(fix_ecef_ecef, calibrated_orientation_ecef);
   VectorXd nextfix_ecef = fix_ecef + vel_ecef;
   VectorXd ned_vel = this->converter->ecef2ned((ECEF) { .x = nextfix_ecef(0), .y = nextfix_ecef(1), .z = nextfix_ecef(2) }).to_vector() - converter->ecef2ned(fix_ecef_ecef).to_vector();
   //ned_vel_std = self.converter->ecef2ned(fix_ecef + vel_ecef + vel_ecef_std) - self.converter->ecef2ned(fix_ecef + vel_ecef)
@@ -134,6 +139,7 @@ void Localizer::build_live_location(cereal::LiveLocationKalman::Builder& fix) {
   init_measurement(fix.initOrientationECEF(), orientation_ecef, orientation_ecef_std, true);
   init_measurement(fix.initCalibratedOrientationECEF(), calibrated_orientation_ecef, nans, this->calibrated);
   init_measurement(fix.initOrientationNED(), orientation_ned, nans, true);
+  init_measurement(fix.initCalibratedOrientationNED(), calibrated_orientation_ned, nans, true);
   init_measurement(fix.initAngularVelocityDevice(), angVelocityDevice, angVelocityDeviceErr, true);
   init_measurement(fix.initVelocityCalibrated(), vel_calib, vel_calib_std, this->calibrated);
   init_measurement(fix.initAngularVelocityCalibrated(), ang_vel_calib, ang_vel_calib_std, this->calibrated);
@@ -156,6 +162,7 @@ void Localizer::build_live_location(cereal::LiveLocationKalman::Builder& fix) {
 
   fix.setPosenetOK(!(std_spike && this->car_speed > 5.0));
   fix.setDeviceStable(!this->device_fell);
+  fix.setExcessiveResets(this->reset_tracker > MAX_RESET_TRACKER);
   this->device_fell = false;
 
   //fix.setGpsWeek(this->time.week);
@@ -186,20 +193,20 @@ void Localizer::handle_sensors(double current_time, const capnp::List<cereal::Se
     const cereal::SensorEventData::Reader& sensor_reading = log[i];
 
     // Ignore empty readings (e.g. in case the magnetometer had no data ready)
-    if (sensor_reading.getTimestamp() == 0){
+    if (sensor_reading.getTimestamp() == 0) {
       continue;
     }
 
     double sensor_time = 1e-9 * sensor_reading.getTimestamp();
 
     // sensor time and log time should be close
-    if (abs(current_time - sensor_time) > 0.1) {
+    if (std::abs(current_time - sensor_time) > 0.1) {
       LOGE("Sensor reading ignored, sensor timestamp more than 100ms off from log time");
       return;
     }
 
       // TODO: handle messages from two IMUs at the same time
-    if (sensor_reading.getSource() == cereal::SensorEventData::SensorSource::LSM6DS3) {
+    if (sensor_reading.getSource() == cereal::SensorEventData::SensorSource::BMX055) {
       continue;
     }
 
@@ -243,7 +250,7 @@ void Localizer::handle_gps(double current_time, const cereal::GpsLocationData::R
     return;
   }
 
-  if (floatlist2vector(log.getVNED()).norm() > TRANS_SANITY_CHECK){
+  if (floatlist2vector(log.getVNED()).norm() > TRANS_SANITY_CHECK) {
     return;
   }
 
@@ -277,7 +284,7 @@ void Localizer::handle_gps(double current_time, const cereal::GpsLocationData::R
     LOGE("Locationd vs ubloxLocation orientation difference too large, kalman reset");
     this->reset_kalman(NAN, initial_pose_ecef_quat, ecef_pos);
     this->kf->predict_and_observe(current_time, OBSERVATION_ECEF_ORIENTATION_FROM_GPS, { initial_pose_ecef_quat });
-  } else if (gps_est_error > 50.0) {
+  } else if (gps_est_error > 100.0) {
     LOGE("Locationd vs ubloxLocation position difference too large, kalman reset");
     this->reset_kalman(NAN, initial_pose_ecef_quat, ecef_pos);
   }
@@ -304,7 +311,7 @@ void Localizer::handle_cam_odo(double current_time, const cereal::CameraOdometry
   VectorXd rot_calib_std = floatlist2vector(log.getRotStd());
   VectorXd trans_calib_std = floatlist2vector(log.getTransStd());
 
-  if ((rot_calib_std.minCoeff() <= MIN_STD_SANITY_CHECK) || (trans_calib_std.minCoeff() <= MIN_STD_SANITY_CHECK)){
+  if ((rot_calib_std.minCoeff() <= MIN_STD_SANITY_CHECK) || (trans_calib_std.minCoeff() <= MIN_STD_SANITY_CHECK)) {
     return;
   }
 
@@ -330,7 +337,7 @@ void Localizer::handle_cam_odo(double current_time, const cereal::CameraOdometry
 void Localizer::handle_live_calib(double current_time, const cereal::LiveCalibrationData::Reader& log) {
   if (log.getRpyCalib().size() > 0) {
     auto calib = floatlist2vector(log.getRpyCalib());
-    if ((calib.minCoeff() < -CALIB_RPY_SANITY_CHECK) || (calib.maxCoeff() > CALIB_RPY_SANITY_CHECK)){
+    if ((calib.minCoeff() < -CALIB_RPY_SANITY_CHECK) || (calib.maxCoeff() > CALIB_RPY_SANITY_CHECK)) {
       return;
     }
 
@@ -348,21 +355,30 @@ void Localizer::reset_kalman(double current_time) {
 
 void Localizer::finite_check(double current_time) {
   bool all_finite = this->kf->get_x().array().isFinite().all() or this->kf->get_P().array().isFinite().all();
-  if (!all_finite){
+  if (!all_finite) {
     LOGE("Non-finite values detected, kalman reset");
     this->reset_kalman(current_time);
   }
 }
 
 void Localizer::time_check(double current_time) {
-  if (isnan(this->last_reset_time)) {
+  if (std::isnan(this->last_reset_time)) {
     this->last_reset_time = current_time;
   }
   double filter_time = this->kf->get_filter_time();
-  bool big_time_gap = !isnan(filter_time) && (current_time - filter_time > 10);
-  if (big_time_gap){
+  bool big_time_gap = !std::isnan(filter_time) && (current_time - filter_time > 10);
+  if (big_time_gap) {
     LOGE("Time gap of over 10s detected, kalman reset");
     this->reset_kalman(current_time);
+  }
+}
+
+void Localizer::update_reset_tracker() {
+  // reset tracker is tuned to trigger when over 1reset/10s over 2min period
+  if (this->isGpsOK()) {
+    this->reset_tracker *= .99995;
+  } else {
+    this->reset_tracker = 0.0;
   }
 }
 
@@ -375,6 +391,7 @@ void Localizer::reset_kalman(double current_time, VectorXd init_orient, VectorXd
 
   this->kf->init_state(init_x, init_P, current_time);
   this->last_reset_time = current_time;
+  this->reset_tracker += 1.0;
 }
 
 void Localizer::handle_msg_bytes(const char *data, const size_t size) {
@@ -401,6 +418,7 @@ void Localizer::handle_msg(const cereal::Event::Reader& log) {
     this->handle_live_calib(t, log.getLiveCalibration());
   }
   this->finite_check();
+  this->update_reset_tracker();
 }
 
 kj::ArrayPtr<capnp::byte> Localizer::get_message_bytes(MessageBuilder& msg_builder, uint64_t logMonoTime,
@@ -414,6 +432,11 @@ kj::ArrayPtr<capnp::byte> Localizer::get_message_bytes(MessageBuilder& msg_build
   liveLoc.setSensorsOK(sensorsOK);
   liveLoc.setGpsOK(gpsOK);
   return msg_builder.toBytes();
+}
+
+
+bool Localizer::isGpsOK() {
+  return this->kf->get_filter_time() - this->last_gps_fix < 1.0;
 }
 
 int Localizer::locationd_thread() {
@@ -437,7 +460,7 @@ int Localizer::locationd_thread() {
       uint64_t logMonoTime = sm["cameraOdometry"].getLogMonoTime();
       bool inputsOK = sm.allAliveAndValid();
       bool sensorsOK = sm.alive("sensorEvents") && sm.valid("sensorEvents");
-      bool gpsOK = (logMonoTime / 1e9) - this->last_gps_fix < 1.0;
+      bool gpsOK = this->isGpsOK();
 
       MessageBuilder msg_builder;
       kj::ArrayPtr<capnp::byte> bytes = this->get_message_bytes(msg_builder, logMonoTime, inputsOK, sensorsOK, gpsOK);
@@ -458,7 +481,7 @@ int Localizer::locationd_thread() {
 }
 
 int main() {
-  setpriority(PRIO_PROCESS, 0, -20);
+  set_realtime_priority(5);
 
   Localizer localizer;
   return localizer.locationd_thread();

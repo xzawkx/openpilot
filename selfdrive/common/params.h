@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stddef.h>
-
 #include <map>
 #include <sstream>
 #include <string>
@@ -12,8 +10,10 @@ enum ParamKeyType {
   PERSISTENT = 0x02,
   CLEAR_ON_MANAGER_START = 0x04,
   CLEAR_ON_PANDA_DISCONNECT = 0x08,
-  CLEAR_ON_IGNITION = 0x10,
-  ALL = 0x02 | 0x04 | 0x08 | 0x10
+  CLEAR_ON_IGNITION_ON = 0x10,
+  CLEAR_ON_IGNITION_OFF = 0x20,
+  DONT_LOG = 0x40,
+  ALL = 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40
 };
 
 class Params {
@@ -25,6 +25,7 @@ public:
   Params(const std::string &path);
 
   bool checkKey(const std::string &key);
+  ParamKeyType getKeyType(const std::string &key);
 
   // Delete a value
   int remove(const char *key);
@@ -34,13 +35,17 @@ public:
   void clearAll(ParamKeyType type);
 
   // read all values
-  int readAll(std::map<std::string, std::string> *params);
+  std::map<std::string, std::string> readAll();
 
   // helpers for reading values
   std::string get(const char *key, bool block = false);
 
   inline std::string get(const std::string &key, bool block = false) {
     return get(key.c_str(), block);
+  }
+
+  inline std::string getParamsPath() {
+    return params_path;
   }
 
   template <class T>

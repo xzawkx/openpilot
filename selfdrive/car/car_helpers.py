@@ -13,14 +13,17 @@ from cereal import car
 EventName = car.CarEvent.EventName
 
 
-def get_startup_event(car_recognized, controller_available, fuzzy_fingerprint):
+def get_startup_event(car_recognized, controller_available, fuzzy_fingerprint, fw_seen):
   if comma_remote and tested_branch:
     event = EventName.startup
   else:
     event = EventName.startupMaster
 
   if not car_recognized:
-    event = EventName.startupNoCar
+    if fw_seen:
+      event = EventName.startupNoCar
+    else:
+      event = EventName.startupNoFw
   elif car_recognized and not controller_available:
     event = EventName.startupNoControl
   elif car_recognized and fuzzy_fingerprint:
@@ -167,7 +170,8 @@ def fingerprint(logcan, sendcan):
     car_fingerprint = fixed_fingerprint
     source = car.CarParams.FingerprintSource.fixed
 
-  cloudlog.event("fingerprinted", car_fingerprint=car_fingerprint, source=source, fuzzy=not exact_match)
+  cloudlog.event("fingerprinted", car_fingerprint=car_fingerprint,
+                 source=source, fuzzy=not exact_match, fw_count=len(car_fw))
   return car_fingerprint, finger, vin, car_fw, source, exact_match
 
 

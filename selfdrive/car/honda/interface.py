@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
-import numpy as np
 from cereal import car
-from common.numpy_fast import clip, interp
-from common.realtime import DT_CTRL
-from selfdrive.swaglog import cloudlog
+from panda import Panda
+from common.numpy_fast import interp
+from common.params import Params
 from selfdrive.config import Conversions as CV
-from selfdrive.controls.lib.events import ET
-from selfdrive.car.honda.values import CruiseButtons, CAR, HONDA_BOSCH, HONDA_BOSCH_ALT_BRAKE_SIGNAL
+from selfdrive.car.honda.values import CarControllerParams, CruiseButtons, CAR, HONDA_BOSCH, HONDA_BOSCH_ALT_BRAKE_SIGNAL
+from selfdrive.car.honda.hondacan import disable_radar
 from selfdrive.car import STD_CARGO_KG, CivicParams, scale_rot_inertia, scale_tire_stiffness, gen_empty_fingerprint
-from selfdrive.controls.lib.longitudinal_planner import _A_CRUISE_MAX_V_FOLLOWING
 from selfdrive.car.interfaces import CarInterfaceBase
 
-A_ACC_MAX = max(_A_CRUISE_MAX_V_FOLLOWING)
 
 ButtonType = car.CarState.ButtonEvent.Type
 EventName = car.CarEvent.EventName
+TransmissionType = car.CarParams.TransmissionType
 
 
-def compute_gb_honda(accel, speed):
+def compute_gb_honda_bosch(accel, speed):
+  return float(accel) / 3.5
+
+
+def compute_gb_honda_nidec(accel, speed):
   creep_brake = 0.0
   creep_speed = 2.3
   creep_brake_value = 0.15
@@ -26,62 +28,22 @@ def compute_gb_honda(accel, speed):
   return float(accel) / 4.8 - creep_brake
 
 
-def get_compute_gb_acura():
-  # generate a function that takes in [desired_accel, current_speed] -> [-1.0, 1.0]
-  # where -1.0 is max brake and 1.0 is max gas
-  # see debug/dump_accel_from_fiber.py to see how those parameters were generated
-  w0 = np.array([[ 1.22056961, -0.39625418,  0.67952657],
-                 [ 1.03691769,  0.78210306, -0.41343188]])
-  b0 = np.array([ 0.01536703, -0.14335321, -0.26932889])
-  w2 = np.array([[-0.59124422,  0.42899439,  0.38660881],
-                 [ 0.79973811,  0.13178682,  0.08550351],
-                 [-0.15651935, -0.44360259,  0.76910877]])
-  b2 = np.array([ 0.15624429,  0.02294923, -0.0341086 ])
-  w4 = np.array([[-0.31521443],
-                 [-0.38626176],
-                 [ 0.52667892]])
-  b4 = np.array([-0.02922216])
-
-  def compute_output(dat, w0, b0, w2, b2, w4, b4):
-    m0 = np.dot(dat, w0) + b0
-    m0 = leakyrelu(m0, 0.1)
-    m2 = np.dot(m0, w2) + b2
-    m2 = leakyrelu(m2, 0.1)
-    m4 = np.dot(m2, w4) + b4
-    return m4
-
-  def leakyrelu(x, alpha):
-    return np.maximum(x, alpha * x)
-
-  def _compute_gb_acura(accel, speed):
-    # linearly extrap below v1 using v1 and v2 data
-    v1 = 5.
-    v2 = 10.
-    dat = np.array([accel, speed])
-    if speed > 5.:
-      m4 = compute_output(dat, w0, b0, w2, b2, w4, b4)
-    else:
-      dat[1] = v1
-      m4v1 = compute_output(dat, w0, b0, w2, b2, w4, b4)
-      dat[1] = v2
-      m4v2 = compute_output(dat, w0, b0, w2, b2, w4, b4)
-      m4 = (speed - v1) * (m4v2 - m4v1) / (v2 - v1) + m4v1
-    return float(m4)
-
-  return _compute_gb_acura
+def compute_gb_acura(accel, speed):
+  GB_VALUES = [-2., 0.0, 0.8]
+  GB_BP = [-5., 0.0, 4.0]
+  return interp(accel, GB_BP, GB_VALUES)
 
 
 class CarInterface(CarInterfaceBase):
   def __init__(self, CP, CarController, CarState):
     super().__init__(CP, CarController, CarState)
 
-    self.last_enable_pressed = 0
-    self.last_enable_sent = 0
-
     if self.CS.CP.carFingerprint == CAR.ACURA_ILX:
-      self.compute_gb = get_compute_gb_acura()
+      self.compute_gb = compute_gb_acura
+    elif self.CS.CP.carFingerprint in HONDA_BOSCH:
+      self.compute_gb = compute_gb_honda_bosch
     else:
-      self.compute_gb = compute_gb_honda
+      self.compute_gb = compute_gb_honda_nidec
 
   @staticmethod
   def compute_gb(accel, speed): # pylint: disable=method-hidden
@@ -117,7 +79,7 @@ class CarInterface(CarInterfaceBase):
     # accelOverride is more or less the max throttle allowed to pcm: usually set to a constant
     # unless aTargetMax is very high and then we scale with it; this help in quicker restart
 
-    return float(max(max_accel, a_target / A_ACC_MAX)) * min(speedLimiter, accelLimiter)
+    return float(max(max_accel, a_target / CarControllerParams.ACCEL_MAX)) * min(speedLimiter, accelLimiter)
 
   @staticmethod
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=[]):  # pylint: disable=dangerous-default-value
@@ -126,23 +88,28 @@ class CarInterface(CarInterfaceBase):
 
     if candidate in HONDA_BOSCH:
       ret.safetyModel = car.CarParams.SafetyModel.hondaBoschHarness
-      ret.enableCamera = True
       ret.radarOffCan = True
-      ret.openpilotLongitudinalControl = False
+
+      # Disable the radar and let openpilot control longitudinal
+      # WARNING: THIS DISABLES AEB!
+      ret.openpilotLongitudinalControl = Params().get_bool("DisableRadar")
+
+      ret.pcmCruise = not ret.openpilotLongitudinalControl
+      ret.communityFeature = ret.openpilotLongitudinalControl
     else:
       ret.safetyModel = car.CarParams.SafetyModel.hondaNidec
-      ret.enableCamera = True
       ret.enableGasInterceptor = 0x201 in fingerprint[0]
-      ret.openpilotLongitudinalControl = ret.enableCamera
+      ret.openpilotLongitudinalControl = True
+
+      ret.pcmCruise = not ret.enableGasInterceptor
+      ret.communityFeature = ret.enableGasInterceptor
 
     if candidate == CAR.CRV_5G:
       ret.enableBsm = 0x12f8bfa7 in fingerprint[0]
 
-    cloudlog.warning("ECU Camera Simulated: %r", ret.enableCamera)
-    cloudlog.warning("ECU Gas Interceptor: %r", ret.enableGasInterceptor)
-
-    ret.enableCruise = not ret.enableGasInterceptor
-    ret.communityFeature = ret.enableGasInterceptor
+    # Accord 1.5T CVT has different gearbox message
+    if candidate == CAR.ACCORD and 0x191 in fingerprint[1]:
+      ret.transmissionType = TransmissionType.cvt
 
     # Certain Hondas have an extra steering sensor at the bottom of the steering rack,
     # which improves controls quality as it removes the steering column torsion from feedback.
@@ -176,11 +143,10 @@ class CarInterface(CarInterfaceBase):
         ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2560], [0, 2560]]
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[1.1], [0.33]]
       tire_stiffness_factor = 1.
-
       ret.longitudinalTuning.kpBP = [0., 5., 35.]
-      ret.longitudinalTuning.kpV = [3.6, 2.4, 1.5]
+      ret.longitudinalTuning.kpV = [1.2, 0.8, 0.5]
       ret.longitudinalTuning.kiBP = [0., 35.]
-      ret.longitudinalTuning.kiV = [0.54, 0.36]
+      ret.longitudinalTuning.kiV = [0.18, 0.12]
 
     elif candidate in (CAR.CIVIC_BOSCH, CAR.CIVIC_BOSCH_DIESEL):
       stop_and_go = True
@@ -196,7 +162,7 @@ class CarInterface(CarInterfaceBase):
       ret.longitudinalTuning.kiBP = [0., 35.]
       ret.longitudinalTuning.kiV = [0.18, 0.12]
 
-    elif candidate in (CAR.ACCORD, CAR.ACCORD_15, CAR.ACCORDH):
+    elif candidate in (CAR.ACCORD, CAR.ACCORDH):
       stop_and_go = True
       ret.mass = 3279. * CV.LB_TO_KG + STD_CARGO_KG
       ret.wheelbase = 2.83
@@ -408,7 +374,10 @@ class CarInterface(CarInterfaceBase):
 
     # These cars use alternate user brake msg (0x1BE)
     if candidate in HONDA_BOSCH_ALT_BRAKE_SIGNAL:
-      ret.safetyParam = 1
+      ret.safetyParam |= Panda.FLAG_HONDA_ALT_BRAKE
+
+    if ret.openpilotLongitudinalControl and candidate in HONDA_BOSCH:
+      ret.safetyParam |= Panda.FLAG_HONDA_BOSCH_LONG
 
     # min speed to enable ACC. if car can do stop and go, then set enabling speed
     # to a negative value, so it won't matter. Otherwise, add 0.5 mph margin to not
@@ -424,12 +393,17 @@ class CarInterface(CarInterfaceBase):
     ret.tireStiffnessFront, ret.tireStiffnessRear = scale_tire_stiffness(ret.mass, ret.wheelbase, ret.centerToFront,
                                                                          tire_stiffness_factor=tire_stiffness_factor)
 
-    ret.gasMaxBP = [0.]  # m/s
-    ret.gasMaxV = [0.6] if ret.enableGasInterceptor else [0.]  # max gas allowed
-    ret.brakeMaxBP = [5., 20.]  # m/s
-    ret.brakeMaxV = [1., 0.8]   # max brake allowed
+    if candidate in HONDA_BOSCH:
+      ret.gasMaxBP = [0.]  # m/s
+      ret.gasMaxV = [0.6]
+      ret.brakeMaxBP = [0.]  # m/s
+      ret.brakeMaxV = [1.]   # max brake allowed, 3.5m/s^2
+    else:
+      ret.gasMaxBP = [0.]  # m/s
+      ret.gasMaxV = [0.6]  # max gas allowed
+      ret.brakeMaxBP = [5., 20.]  # m/s
+      ret.brakeMaxV = [1., 0.8]   # max brake allowed
 
-    ret.stoppingControl = True
     ret.startAccel = 0.5
 
     ret.steerActuatorDelay = 0.1
@@ -437,6 +411,11 @@ class CarInterface(CarInterfaceBase):
     ret.steerLimitTimer = 0.8
 
     return ret
+
+  @staticmethod
+  def init(CP, logcan, sendcan):
+    if CP.carFingerprint in HONDA_BOSCH and CP.openpilotLongitudinalControl:
+      disable_radar(logcan, sendcan)
 
   # returns a car.CarState
   def update(self, c, can_strings):
@@ -496,48 +475,35 @@ class CarInterface(CarInterfaceBase):
     if self.CS.park_brake:
       events.add(EventName.parkBrake)
 
-    if self.CP.enableCruise and ret.vEgo < self.CP.minEnableSpeed:
+    if self.CP.pcmCruise and ret.vEgo < self.CP.minEnableSpeed:
       events.add(EventName.belowEngageSpeed)
 
-    # it can happen that car cruise disables while comma system is enabled: need to
-    # keep braking if needed or if the speed is very low
-    if self.CP.enableCruise and not ret.cruiseState.enabled \
-       and (c.actuators.brake <= 0. or not self.CP.openpilotLongitudinalControl):
-      # non loud alert if cruise disables below 25mph as expected (+ a little margin)
-      if ret.vEgo < self.CP.minEnableSpeed + 2.:
-        events.add(EventName.speedTooLow)
-      else:
-        events.add(EventName.cruiseDisabled)
+    if self.CP.pcmCruise:
+      # we engage when pcm is active (rising edge)
+      if ret.cruiseState.enabled and not self.CS.out.cruiseState.enabled:
+        events.add(EventName.pcmEnable)
+      elif not ret.cruiseState.enabled and (c.actuators.brake <= 0. or not self.CP.openpilotLongitudinalControl):
+        # it can happen that car cruise disables while comma system is enabled: need to
+        # keep braking if needed or if the speed is very low
+        if ret.vEgo < self.CP.minEnableSpeed + 2.:
+          # non loud alert if cruise disables below 25mph as expected (+ a little margin)
+          events.add(EventName.speedTooLow)
+        else:
+          events.add(EventName.cruiseDisabled)
     if self.CS.CP.minEnableSpeed > 0 and ret.vEgo < 0.001:
       events.add(EventName.manualRestart)
 
-    cur_time = self.frame * DT_CTRL
-    enable_pressed = False
     # handle button presses
     for b in ret.buttonEvents:
 
       # do enable on both accel and decel buttons
       if b.type in [ButtonType.accelCruise, ButtonType.decelCruise] and not b.pressed:
-        self.last_enable_pressed = cur_time
-        enable_pressed = True
+        if not self.CP.pcmCruise:
+          events.add(EventName.buttonEnable)
 
       # do disable on button down
-      if b.type == "cancel" and b.pressed:
+      if b.type == ButtonType.cancel and b.pressed:
         events.add(EventName.buttonCancel)
-
-    if self.CP.enableCruise:
-      # KEEP THIS EVENT LAST! send enable event if button is pressed and there are
-      # NO_ENTRY events, so controlsd will display alerts. Also not send enable events
-      # too close in time, so a no_entry will not be followed by another one.
-      # TODO: button press should be the only thing that triggers enable
-      if ((cur_time - self.last_enable_pressed) < 0.2 and
-          (cur_time - self.last_enable_sent) > 0.2 and
-          ret.cruiseState.enabled) or \
-         (enable_pressed and events.any(ET.NO_ENTRY)):
-        events.add(EventName.buttonEnable)
-        self.last_enable_sent = cur_time
-    elif enable_pressed:
-      events.add(EventName.buttonEnable)
 
     ret.events = events.to_msg()
 
@@ -552,14 +518,12 @@ class CarInterface(CarInterfaceBase):
     else:
       hud_v_cruise = 255
 
-    pcm_accel = int(clip(c.cruiseControl.accelOverride, 0, 1) * 0xc6)
-
     can_sends = self.CC.update(c.enabled, self.CS, self.frame,
                                c.actuators,
                                c.cruiseControl.speedOverride,
                                c.cruiseControl.override,
                                c.cruiseControl.cancel,
-                               pcm_accel,
+                               c.cruiseControl.accelOverride,
                                hud_v_cruise,
                                c.hudControl.lanesVisible,
                                hud_show_car=c.hudControl.leadVisible,

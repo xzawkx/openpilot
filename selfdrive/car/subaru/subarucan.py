@@ -43,15 +43,18 @@ def create_es_dashstatus(packer, es_dashstatus_msg, enabled, lead_visible):
 
   return packer.make_can_msg("ES_DashStatus", 0, values)
 
-def create_es_lkas_state(packer, es_lkas_msg, visual_alert, left_line, right_line, left_ldw, right_ldw):
+def create_es_lkas_state(packer, es_lkas_msg, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
 
   values = copy.copy(es_lkas_msg)
-  if left_ldw:
-    values["LKAS_Alert"] = 12
-  elif right_ldw:
-    values["LKAS_Alert"] = 11
-  elif visual_alert == VisualAlert.steerRequired:
+  if visual_alert == VisualAlert.steerRequired:
     values["Keep_Hands_On_Wheel"] = 1
+
+  # Ensure we don't overwrite potentially more important alerts from stock (e.g. FCW)
+  if visual_alert == VisualAlert.ldw and values["LKAS_Alert"] == 0:
+    if left_lane_depart:
+      values["LKAS_Alert"] = 12 # Left lane departure dash alert
+    elif right_lane_depart:
+      values["LKAS_Alert"] = 11 # Right lane departure dash alert
 
   values["LKAS_Left_Line_Visible"] = int(left_line)
   values["LKAS_Right_Line_Visible"] = int(right_line)
