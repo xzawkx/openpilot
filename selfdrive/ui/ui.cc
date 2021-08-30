@@ -147,7 +147,7 @@ static void update_state(UIState *s) {
   if (sm.updated("deviceState")) {
     scene.deviceState = sm["deviceState"].getDeviceState();
     s->scene.cpuTemp = scene.deviceState.getCpuTempC()[0];
-    s->scene.cpuPerc = scene.deviceState.getCpuUsagePercent();
+    s->scene.cpuPerc = scene.deviceState.getCpuUsagePercent()[0];
   }
   // ENG UI END
 
