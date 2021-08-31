@@ -73,7 +73,7 @@ TogglesPanel::TogglesPanel(QWidget *parent) : QWidget(parent) {
                                   "In this mode openpilot will ignore lanelines and just drive how it thinks a human would.",
                                   "../assets/offroad/icon_road.png",
                                   this));
-  
+
   toggles.append(new ParamControl("HandsOnWheelMonitoring",
                                   "Enable Hands on Wheel Monitoring",
                                   "Monitor and alert when driver is not keeping the hands on the steering wheel.",
