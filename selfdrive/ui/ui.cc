@@ -72,6 +72,9 @@ static void update_leads(UIState *s, const cereal::ModelDataV2::Reader &model) {
       calib_frame_to_full_frame(s, leads[i].getX()[0], leads[i].getY()[0], z + 1.22, &s->scene.lead_vertices[i]);
     }
   }
+  s->scene.lead_v_rel = leads[0].getV()[0];
+  s->scene.lead_d_rel = leads[0].getX()[0];
+  s->scene.lead_status = leads[0].getProb() > 0.5;
 }
 
 static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,
@@ -128,6 +131,25 @@ static void update_sockets(UIState *s) {
 static void update_state(UIState *s) {
   SubMaster &sm = *(s->sm);
   UIScene &scene = s->scene;
+  // ENG UI START
+  if (scene.started && sm.updated("carControl")) {
+    scene.car_control = sm["carControl"].getCarControl();
+    s->scene.actuators = scene.car_control.getActuators();
+    s->scene.angleSteersDes = scene.actuators.getSteeringAngleDeg();
+  }
+  if (sm.updated("carState")) {
+    scene.car_state = sm["carState"].getCarState();
+    s->scene.steerOverride = scene.car_state.getSteeringPressed();
+    s->scene.angleSteers = scene.car_state.getSteeringAngleDeg();
+    s->scene.aEgo = scene.car_state.getAEgo();
+    s->scene.steeringTorqueEps = scene.car_state.getSteeringTorqueEps();
+  }
+  if (sm.updated("deviceState")) {
+    scene.deviceState = sm["deviceState"].getDeviceState();
+    s->scene.cpuTemp = scene.deviceState.getCpuTempC()[0];
+    s->scene.cpuPerc = scene.deviceState.getCpuUsagePercent()[0];
+  }
+  // ENG UI END
 
   // update engageability and DM icons at 2Hz
   if (sm.frame % (UI_FREQ / 2) == 0) {
@@ -166,6 +188,20 @@ static void update_state(UIState *s) {
   if (sm.updated("carParams")) {
     scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
   }
+  // ENG UI START
+  if (sm.updated("gpsLocationExternal")) {
+    auto data = sm["gpsLocationExternal"].getGpsLocationExternal();
+    s->scene.gpsAccuracyUblox = data.getAccuracy();
+    s->scene.altitudeUblox = data.getAltitude();
+  }
+  if (sm.updated("ubloxGnss")) {
+    auto data = sm["ubloxGnss"].getUbloxGnss();
+    if (data.which() == cereal::UbloxGnss::MEASUREMENT_REPORT) {
+      scene.satelliteCount = data.getMeasurementReport().getNumMeas();
+      s->scene.satelliteCount = scene.satelliteCount;
+    }
+  }
+  // ENG UI END
   if (sm.updated("sensorEvents")) {
     for (auto sensor : sm["sensorEvents"].getSensorEvents()) {
       if (!scene.started && sensor.which() == cereal::SensorEventData::ACCELERATION) {
@@ -276,7 +312,7 @@ QUIState::QUIState(QObject *parent) : QObject(parent) {
   ui_state.sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "deviceState", "roadCameraState",
     "pandaState", "carParams", "driverMonitoringState", "sensorEvents", "carState", "liveLocationKalman",
-    "longitudinalPlan",
+    "longitudinalPlan", "gpsLocationExternal", "ubloxGnss", "carControl",
   });
 
   ui_state.fb_w = vwp_w;

@@ -70,6 +70,7 @@ const Alert CONTROLS_UNRESPONSIVE_ALERT = {"TAKE CONTROL IMMEDIATELY", "Controls
 const int CONTROLS_TIMEOUT = 5;
 
 const int bdr_s = 30;
+const int bdr_is = 30;
 const int header_h = 420;
 const int footer_h = 280;
 
@@ -124,6 +125,31 @@ typedef struct UIScene {
   double last_speed_limit_sign_tap;
 
   cereal::PandaState::PandaType pandaType;
+
+  // ENG UI START
+  cereal::DeviceState::Reader deviceState;
+  cereal::RadarState::LeadData::Reader lead_data[2];
+  cereal::CarState::Reader car_state;
+  cereal::CarControl::Reader car_control;
+  cereal::CarControl::Actuators::Reader actuators;
+
+
+  int lead_status;
+  float lead_d_rel, lead_v_rel;
+  float angleSteers;
+  bool brakeLights;
+  float angleSteersDes;
+  float gpsAccuracyUblox;
+  float altitudeUblox;
+  int satelliteCount;
+  bool steerOverride;
+  float steeringTorqueEps;
+  float aEgo;
+  float cpuTemp;
+  int cpuPerc;
+  int engineRPM;
+
+  // ENG UI END
 
   // modelV2
   float lane_line_probs[4];
