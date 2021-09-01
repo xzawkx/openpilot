@@ -14,7 +14,7 @@ _TURN_CURVATURE_THRESHOLD = 0.002  # 1/mts. A curvature over this value will gen
 #_MAX_LAT_ACC = 2.3  # Maximum lateral acceleration in turns.
 _MAX_LAT_ACC = 1.95  # Maximum lateral acceleration in turns for Subaru
 _SPLINE_EVAL_STEP = 5  # mts for spline evaluation for curvature calculation
-_MIN_SPEED_SECTION_LENGHT = 100.  # mts. Sections below this value will not be split in smaller sections.
+_MIN_SPEED_SECTION_LENGTH = 100.  # mts. Sections below this value will not be split in smaller sections.
 _MAX_CURV_DEVIATION_FOR_SPLIT = 2.  # Split a speed section if the max curvature deviates from mean by this factor.
 _MAX_CURV_SPLIT_ARC_ANGLE = 90.  # degrees. Arc section to split into new speed section around max curvature.
 _MIN_NODE_DISTANCE = 50.  # mts. Minimum distance between nodes for spline evaluation. Data is enhanced if not met.
@@ -144,7 +144,7 @@ def split_speed_section_by_curv_degree(curv_sec):
   """
   # Only consider spliting a section if long enough.
   lenght = curv_sec[-1, 2] - curv_sec[0, 2]
-  if lenght <= _MIN_SPEED_SECTION_LENGHT:
+  if lenght <= _MIN_SPEED_SECTION_LENGTH:
     return [curv_sec]
 
   # Only split if max curvature deviates substantially from mean curvature.
