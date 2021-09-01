@@ -379,7 +379,7 @@ static void ui_draw_vision_event(UIState *s) {
     const float vision_turn_speed = longitudinal_plan.getVisionTurnSpeed() * (s->scene.is_metric ? 3.6 : 2.2369363);
     std::string acc_str = std::to_string((int)std::nearbyint(vision_turn_speed));
     nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-    ui_draw_text(s, rect.centerX(), rect.centerY(), acc_str.c_str(), 56, COLOR_WHITE_ALPHA(alpha), "sans-bold");
+    ui_draw_text(s, rect.centerX(), rect.centerY(), acc_str.c_str(), 96, COLOR_WHITE_ALPHA(alpha), "sans-bold");
   } else if (s->scene.engageable) {
     // draw steering wheel
     const int radius = 96;
