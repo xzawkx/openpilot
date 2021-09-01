@@ -21,10 +21,11 @@ _FINISH_LAT_ACC_TH = 1.1  # Lat Acc threshold to trigger end of turn cycle.
 
 _EVAL_STEP = 5.  # mts. Resolution of the curvature evaluation.
 _EVAL_START = 20.  # mts. Distance ahead where to start evaluating vision curvature.
-_EVAL_LENGHT = 150.  # mts. Distance ahead where to stop evaluating vision curvature.
-_EVAL_RANGE = np.arange(_EVAL_START, _EVAL_LENGHT, _EVAL_STEP)
+_EVAL_LENGTH = 150.  # mts. Distance ahead where to stop evaluating vision curvature.
+_EVAL_RANGE = np.arange(_EVAL_START, _EVAL_LENGTH, _EVAL_STEP)
 
-_A_LAT_REG_MAX = 2.  # Maximum lateral acceleration
+#_A_LAT_REG_MAX = 2.  # Maximum lateral acceleration
+_A_LAT_REG_MAX = 1.95  # Maximum lateral acceleration for Subaru
 
 # Lookup table for the minimum smooth deceleration during the ENTERING state
 # depending on the actual maximum absolute lateral acceleration predicted on the turn ahead.
