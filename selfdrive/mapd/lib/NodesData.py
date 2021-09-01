@@ -11,7 +11,8 @@ else:
 
 
 _TURN_CURVATURE_THRESHOLD = 0.002  # 1/mts. A curvature over this value will generate a speed limit section.
-_MAX_LAT_ACC = 2.3  # Maximum lateral acceleration in turns.
+#_MAX_LAT_ACC = 2.3  # Maximum lateral acceleration in turns.
+_MAX_LAT_ACC = 1.95  # Maximum lateral acceleration in turns for Subaru
 _SPLINE_EVAL_STEP = 5  # mts for spline evaluation for curvature calculation
 _MIN_SPEED_SECTION_LENGHT = 100.  # mts. Sections below this value will not be split in smaller sections.
 _MAX_CURV_DEVIATION_FOR_SPLIT = 2.  # Split a speed section if the max curvature deviates from mean by this factor.
@@ -116,7 +117,7 @@ def spline_curvature_calculations(vect, dist_prev):
 
 def speed_section(curv_sec):
   """Map curvature section data into turn speed sections data.
-    Returns: [section start distance, section end distance, speed limit based on max curvature, sing of curvature]
+    Returns: [section start distance, section end distance, speed limit based on max curvature, sign of curvature]
   """
   max_curv_idx = np.argmax(curv_sec[:, 0])
   start = np.amin(curv_sec[:, 2])
