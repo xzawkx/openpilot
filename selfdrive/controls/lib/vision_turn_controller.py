@@ -25,7 +25,7 @@ _EVAL_LENGTH = 150.  # mts. Distance ahead where to stop evaluating vision curva
 _EVAL_RANGE = np.arange(_EVAL_START, _EVAL_LENGTH, _EVAL_STEP)
 
 #_A_LAT_REG_MAX = 2.  # Maximum lateral acceleration
-_A_LAT_REG_MAX = 1.95  # Maximum lateral acceleration for Subaru
+_A_LAT_REG_MAX = 1.5  # Maximum lateral acceleration for Subaru
 
 # Lookup table for the minimum smooth deceleration during the ENTERING state
 # depending on the actual maximum absolute lateral acceleration predicted on the turn ahead.
