@@ -15,7 +15,7 @@ _COUNTRY_LIMITS_KPH = {
     'motorway': 0.,
     'living_street': 7.,
     'bicycle_road': 30.
-  }
+  },
 
   'EE': {
     'urban': 50.,
@@ -23,7 +23,7 @@ _COUNTRY_LIMITS_KPH = {
     'motorway': 90.,
     'living_street': 10.,
     'bicycle_road': 30.
-  }
+  },
 }
 
 _WD = {
