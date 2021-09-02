@@ -265,11 +265,11 @@ class VisionTurnController():
       _debug(f'    Decel: {a_target:.2f}, target v: {self.v_turn * CV.MS_TO_KPH}')
     # TURNING
     elif self.state == VisionTurnControllerState.turning:
-      # When turning we provide a target acceleration that is confortable for the lateral accelearation felt.
+      # When turning we provide a target acceleration that is comfortable for the lateral accelearation felt.
       a_target = interp(self._current_lat_acc, _TURNING_ACC_BP, _TURNING_ACC_V)
     # LEAVING
     elif self.state == VisionTurnControllerState.leaving:
-      # When leaving we provide a confortable acceleration to regain speed.
+      # When leaving we provide a comfortable acceleration to regain speed.
       a_target = _LEAVING_ACC
 
     # update solution values.
