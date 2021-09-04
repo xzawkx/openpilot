@@ -200,6 +200,7 @@ FW_VERSIONS = {
     # 2020 Forester - UDM / @TH156UY
     # 2021 Forester - UDM / @umby24
     # 2020 Forester Sport - UDM / @RyanYo
+    # 2019 Forester Sport - UDM / @Zapman
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa3 \030\024\000',
@@ -225,6 +226,7 @@ FW_VERSIONS = {
       b'\032\xf6B0\000',
       b'\032\xf6F`\000',
       b'\032\xf6b`\000',
+      b'\032\xf6B`\000'
     ],
   },
   CAR.FORESTER_PREGLOBAL: {
