@@ -13,9 +13,9 @@
 #include "selfdrive/common/timing.h"
 
 constexpr int DESIRE_PRED_SIZE = 32;
-constexpr int OTHER_META_SIZE = 32;
+constexpr int OTHER_META_SIZE = 48;
 constexpr int NUM_META_INTERVALS = 5;
-constexpr int META_STRIDE = 6;
+constexpr int META_STRIDE = 7;
 
 constexpr int PLAN_MHP_N = 5;
 constexpr int PLAN_MHP_COLUMNS = 15;
@@ -23,12 +23,17 @@ constexpr int PLAN_MHP_VALS = 15*33;
 constexpr int PLAN_MHP_SELECTION = 1;
 constexpr int PLAN_MHP_GROUP_SIZE =  (2*PLAN_MHP_VALS + PLAN_MHP_SELECTION);
 
-constexpr int LEAD_MHP_N = 5;
+constexpr int LEAD_MHP_N = 2;
 constexpr int LEAD_TRAJ_LEN = 6;
 constexpr int LEAD_PRED_DIM = 4;
 constexpr int LEAD_MHP_VALS = LEAD_PRED_DIM*LEAD_TRAJ_LEN;
 constexpr int LEAD_MHP_SELECTION = 3;
 constexpr int LEAD_MHP_GROUP_SIZE = (2*LEAD_MHP_VALS + LEAD_MHP_SELECTION);
+
+constexpr int STOP_LINE_MHP_N = 3;
+constexpr int STOP_LINE_PRED_DIM = 8;
+constexpr int STOP_LINE_MHP_SELECTION = 1;
+constexpr int STOP_LINE_MHP_GROUP_SIZE = (2*STOP_LINE_PRED_DIM + STOP_LINE_MHP_SELECTION);
 
 constexpr int POSE_SIZE = 12;
 
@@ -38,7 +43,9 @@ constexpr int LL_PROB_IDX = LL_IDX + 4*2*2*33;
 constexpr int RE_IDX = LL_PROB_IDX + 8;
 constexpr int LEAD_IDX = RE_IDX + 2*2*2*33;
 constexpr int LEAD_PROB_IDX = LEAD_IDX + LEAD_MHP_N*(LEAD_MHP_GROUP_SIZE);
-constexpr int DESIRE_STATE_IDX = LEAD_PROB_IDX + 3;
+constexpr int STOP_LINE_IDX = LEAD_PROB_IDX + 3;
+constexpr int STOP_LINE_PROB_IDX = STOP_LINE_IDX + STOP_LINE_MHP_N*STOP_LINE_MHP_GROUP_SIZE;
+constexpr int DESIRE_STATE_IDX = STOP_LINE_PROB_IDX + 1;
 constexpr int META_IDX = DESIRE_STATE_IDX + DESIRE_LEN;
 constexpr int POSE_IDX = META_IDX + OTHER_META_SIZE + DESIRE_PRED_SIZE;
 constexpr int OUTPUT_SIZE =  POSE_IDX + POSE_SIZE;
@@ -63,10 +70,12 @@ void model_init(ModelState* s, cl_device_id device_id, cl_context context) {
   constexpr int output_size = OUTPUT_SIZE + TEMPORAL_SIZE;
   s->output.resize(output_size);
 
-#if (defined(QCOM) || defined(QCOM2)) && defined(USE_THNEED)
+#ifdef USE_THNEED
   s->m = std::make_unique<ThneedModel>("../../models/supercombo.thneed", &s->output[0], output_size, USE_GPU_RUNTIME);
+#elif USE_ONNX_MODEL
+  s->m = std::make_unique<ONNXModel>("../../models/supercombo.onnx", &s->output[0], output_size, USE_GPU_RUNTIME);
 #else
-  s->m = std::make_unique<DefaultRunModel>("../../models/supercombo.dlc", &s->output[0], output_size, USE_GPU_RUNTIME);
+  s->m = std::make_unique<SNPEModel>("../../models/supercombo.dlc", &s->output[0], output_size, USE_GPU_RUNTIME);
 #endif
 
 #ifdef TEMPORAL
@@ -103,7 +112,8 @@ ModelDataRaw model_eval_frame(ModelState* s, cl_mem yuv_cl, int width, int heigh
 
   //for (int i = 0; i < OUTPUT_SIZE + TEMPORAL_SIZE; i++) { printf("%f ", s->output[i]); } printf("\n");
 
-  auto net_input_buf = s->frame->prepare(yuv_cl, width, height, transform);
+  // if getInputBuf is not NULL, net_input_buf will be
+  auto net_input_buf = s->frame->prepare(yuv_cl, width, height, transform, static_cast<cl_mem*>(s->m->getInputBuf()));
   s->m->execute(net_input_buf, s->frame->buf_size);
 
   // net outputs
@@ -114,6 +124,8 @@ ModelDataRaw model_eval_frame(ModelState* s, cl_mem yuv_cl, int width, int heigh
   net_outputs.road_edges = &s->output[RE_IDX];
   net_outputs.lead = &s->output[LEAD_IDX];
   net_outputs.lead_prob = &s->output[LEAD_PROB_IDX];
+  net_outputs.stop_line = &s->output[STOP_LINE_IDX];
+  net_outputs.stop_line_prob = &s->output[STOP_LINE_PROB_IDX];
   net_outputs.meta = &s->output[DESIRE_STATE_IDX];
   net_outputs.pose = &s->output[POSE_IDX];
   return net_outputs;
@@ -140,6 +152,10 @@ static const float *get_plan_data(float *plan) {
 
 static const float *get_lead_data(const float *lead, int t_offset) {
   return get_best_data(lead, LEAD_MHP_N, LEAD_MHP_GROUP_SIZE, t_offset - LEAD_MHP_SELECTION);
+}
+
+static const float *get_stop_line_data(const float *stop_line) {
+  return get_best_data(stop_line, STOP_LINE_MHP_N, STOP_LINE_MHP_GROUP_SIZE, -1);
 }
 
 
@@ -183,6 +199,29 @@ void fill_lead_v3(cereal::ModelDataV2::LeadDataV3::Builder lead, const float *le
   lead.setAStd(a_stds_arr);
 }
 
+void fill_stop_line(cereal::ModelDataV2::StopLineData::Builder stop_line, const float *stop_line_data, const float *prob) {
+  const float *data = get_stop_line_data(stop_line_data);
+  stop_line.setProb(sigmoid(prob[0]));
+
+  stop_line.setX(data[0]);
+  stop_line.setY(data[1]);
+  stop_line.setZ(data[2]);
+  stop_line.setRoll(data[3]);
+  stop_line.setPitch(data[4]);
+  stop_line.setYaw(data[5]);
+  stop_line.setSpeedAtLine(data[6]);
+  stop_line.setSecondsUntilLine(data[7]);
+
+  stop_line.setXStd(data[STOP_LINE_PRED_DIM+0]);
+  stop_line.setYStd(data[STOP_LINE_PRED_DIM+1]);
+  stop_line.setZStd(data[STOP_LINE_PRED_DIM+2]);
+  stop_line.setRollStd(data[STOP_LINE_PRED_DIM+3]);
+  stop_line.setPitchStd(data[STOP_LINE_PRED_DIM+4]);
+  stop_line.setYawStd(data[STOP_LINE_PRED_DIM+5]);
+  stop_line.setSpeedAtLineStd(data[STOP_LINE_PRED_DIM+6]);
+  stop_line.setSecondsUntilLineStd(data[STOP_LINE_PRED_DIM+7]);
+}
+
 void fill_meta(cereal::ModelDataV2::MetaData::Builder meta, const float *meta_data) {
   float desire_state_softmax[DESIRE_LEN];
   float desire_pred_softmax[4*DESIRE_LEN];
@@ -205,6 +244,7 @@ void fill_meta(cereal::ModelDataV2::MetaData::Builder meta, const float *meta_da
   fill_sigmoid(&meta_data[DESIRE_LEN+4], brake_3ms2_sigmoid, NUM_META_INTERVALS, META_STRIDE);
   fill_sigmoid(&meta_data[DESIRE_LEN+5], brake_4ms2_sigmoid, NUM_META_INTERVALS, META_STRIDE);
   fill_sigmoid(&meta_data[DESIRE_LEN+6], brake_5ms2_sigmoid, NUM_META_INTERVALS, META_STRIDE);
+  //fill_sigmoid(&meta_data[DESIRE_LEN+7], GAS PRESSED, NUM_META_INTERVALS, META_STRIDE);
 
   std::memmove(prev_brake_5ms2_probs, &prev_brake_5ms2_probs[1], 4*sizeof(float));
   std::memmove(prev_brake_3ms2_probs, &prev_brake_3ms2_probs[1], 2*sizeof(float));
@@ -323,6 +363,9 @@ void fill_model(cereal::ModelDataV2::Builder &framed, const ModelDataRaw &net_ou
 
   // meta
   fill_meta(framed.initMeta(), net_outputs.meta);
+
+  // stop line
+  fill_stop_line(framed.initStopLine(), net_outputs.stop_line, net_outputs.stop_line_prob);
 
   // leads
   auto leads = framed.initLeadsV3(LEAD_MHP_SELECTION);

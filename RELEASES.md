@@ -1,5 +1,17 @@
-Version 0.8.9 (2021-XX-XX)
+Version 0.8.10 (2021-XX-XX)
 ========================
+ * Honda Freed 2020 support thanks to belm0!
+ * Hyundai Santa Fe 2022 support thanks to sunnyhaibin!
+ * Škoda Kamiq 2021 support thanks to jyoung8607!
+ * Škoda Karoq 2019 support thanks to jyoung8607!
+ * Volkswagen Arteon 2021 support thanks to jyoung8607!
+ * Volkswagen California 2021 support thanks to jyoung8607!
+
+Version 0.8.9 (2021-09-14)
+========================
+ * Improved fan control on comma three
+ * AGNOS 1.5: improved stability
+ * Honda e 2020 support
 
 Version 0.8.8 (2021-08-27)
 ========================
@@ -11,6 +23,7 @@ Version 0.8.8 (2021-08-27)
  * NEOS 18 for comma two: update packages
  * AGNOS 1.3 for comma three: fix display init at high temperatures
  * Improved auto-exposure on comma three
+ * Improved longitudinal control on Honda Nidec cars
  * Hyundai Kona Hybrid 2020 support thanks to haram-KONA!
  * Hyundai Sonata Hybrid 2021 support thanks to Matt-Wash-Burn!
  * Kia Niro Hybrid 2021 support thanks to tetious!
