@@ -1,3 +1,10 @@
+2021-09-29
+==========
+* Merge upstream (0.8.9) / @martinl
+  * Improved fan control on comma three
+  * AGNOS 1.5: improved stability
+  * Honda e 2020 support
+
 2021-09-05
 ==========
 * FPv2 updates
