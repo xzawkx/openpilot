@@ -1,3 +1,7 @@
+2021-09-30
+==========
+* Fix for preglobal LKAS fault / @martinl
+
 2021-09-29
 ==========
 * Merge upstream (0.8.9) / @martinl
