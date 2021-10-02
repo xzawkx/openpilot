@@ -21,7 +21,7 @@ class CarState(CarStateBase):
     if self.car_fingerprint in PREGLOBAL_CARS:
       ret.brakePressed = cp.vl["Brake_Pedal"]["Brake_Pedal"] > 2
     else:
-      ret.brakePressed = cp.vl["Brake_Pedal"]["Brake_Pedal"] > 1e-5
+      ret.brakePressed = cp.vl["Brake_Status"]["Brake"] == 1
 
     ret.wheelSpeeds.fl = cp.vl["Wheel_Speeds"]["FL"] * CV.KPH_TO_MS
     ret.wheelSpeeds.fr = cp.vl["Wheel_Speeds"]["FR"] * CV.KPH_TO_MS
@@ -161,8 +161,8 @@ class CarState(CarStateBase):
       checks += [
         ("Dashlights", 10),
         ("BodyInfo", 10),
-        ("CruiseControl", 20),
         ("Brake_Status", 50),
+        ("CruiseControl", 20),
       ]
     else:
       signals += [
@@ -224,18 +224,23 @@ class CarState(CarStateBase):
         ("PCB_Off", "ES_DashStatus", 0),
         ("LDW_Off", "ES_DashStatus", 0),
         ("Signal1", "ES_DashStatus", 0),
-        ("Cruise_Soft_Disable", "ES_DashStatus", 0),
+        ("Cruise_State_Msg", "ES_DashStatus", 0),
+        ("LKAS_State_Msg", "ES_DashStatus", 0),
         ("Signal2", "ES_DashStatus", 0),
-        ("Cruise_Distance", "ES_DashStatus", 0),
+        ("Cruise_Soft_Disable", "ES_DashStatus", 0),
+        ("Cruise_Status_Msg", "ES_DashStatus", 0),
         ("Signal3", "ES_DashStatus", 0),
-        ("Conventional_Cruise", "ES_DashStatus", 0),
+        ("Cruise_Distance", "ES_DashStatus", 0),
         ("Signal4", "ES_DashStatus", 0),
+        ("Conventional_Cruise", "ES_DashStatus", 0),
+        ("Signal5", "ES_DashStatus", 0),
         ("Cruise_Disengaged", "ES_DashStatus", 0),
         ("Cruise_Activated", "ES_DashStatus", 0),
-        ("Signal5", "ES_DashStatus", 0),
+        ("Signal6", "ES_DashStatus", 0),
         ("Cruise_Set_Speed", "ES_DashStatus", 0),
         ("Cruise_Fault", "ES_DashStatus", 0),
-        ("Signal6", "ES_DashStatus", 0),
+        ("Cruise_On", "ES_DashStatus", 0),
+        ("Display_Own_Car", "ES_DashStatus", 0),
         ("Brake_Lights", "ES_DashStatus", 0),
         ("Car_Follow", "ES_DashStatus", 0),
         ("Signal7", "ES_DashStatus", 0),
