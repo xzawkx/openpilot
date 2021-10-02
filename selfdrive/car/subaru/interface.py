@@ -94,8 +94,8 @@ class CarInterface(CarInterfaceBase):
       #ret.gasMaxV = [1.]  # max gas allowed
       #ret.brakeMaxBP = [0.]  # m/s
       #ret.brakeMaxV = [0.99]   # max brake allowed
-      ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
-      ret.startingAccelRate = 6.0  # release brakes fast
+      #ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
+      #ret.startingAccelRate = 6.0  # release brakes fast
       ret.openpilotLongitudinalControl = True
 
     if candidate in [CAR.FORESTER_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
