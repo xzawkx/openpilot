@@ -1,3 +1,8 @@
+2021-10-03
+==========
+* FPv2 updates
+  * 2021 Crosstrek Premium - UDM / @pemerick07
+
 2021-09-30
 ==========
 * Fix for preglobal LKAS fault / @martinl
