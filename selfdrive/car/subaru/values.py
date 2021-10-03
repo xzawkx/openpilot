@@ -148,11 +148,13 @@ FW_VERSIONS = {
     # 2020 Impreza Hatchback - UDM / @GPT-3
     # 2020 Impreza Premium - UDM / @KeetsScrimalittle
     # 2021 Crosstrek Limited - UDM / @AdamSLevy
+    # 2021 Crosstrek Premium - UDM / @pemerick07
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa2 \0314\000',
       b'\xa2 \0313\000',
       b'\xa2 !i\000',
+      b'\xa2 !`\000',
     ],
     (Ecu.eps, 0x746, None): [
       b'\x9a\xc0\000\000',
@@ -167,11 +169,13 @@ FW_VERSIONS = {
       b'\xca!`p\a',
       b'\xca!`0\a',
       b'\xcc\"f0\a',
+      b'\xcc!fp\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xe6\xf5\004\000\000',
       b'\xe6\xf5$\000\000',
       b'\xe7\xf6B0\000',
+      b'\xe7\xf5D0\000',
     ],
   },
   CAR.FORESTER: {
