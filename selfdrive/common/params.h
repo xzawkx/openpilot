@@ -3,8 +3,7 @@
 #include <map>
 #include <sstream>
 #include <string>
-
-#define ERR_NO_VALUE -33
+#include <optional>
 
 enum ParamKeyType {
   PERSISTENT = 0x02,
@@ -43,6 +42,10 @@ public:
 
   inline std::string getParamsPath() {
     return params_path;
+  }
+
+  inline std::string getParamPath(std::string key) {
+    return params_path + "/d/" + key;
   }
 
   template <class T>

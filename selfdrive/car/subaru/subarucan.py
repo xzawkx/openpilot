@@ -46,8 +46,18 @@ def create_es_dashstatus(packer, es_dashstatus_msg, enabled, lead_visible):
 def create_es_lkas_state(packer, es_lkas_msg, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
 
   values = copy.copy(es_lkas_msg)
+
+  # Filter the stock LKAS "Keep hands on wheel" alert
+  if values["LKAS_Alert_Msg"] == 1:
+    values["LKAS_Alert_Msg"] = 0
+
+  # Filter the stock LKAS sending an audible alert when it turns off LKAS
+  if values["LKAS_Alert"] == 27:
+    values["LKAS_Alert"] = 0
+
+  # Show Keep hands on wheel alert for openpilot steerRequired alert
   if visual_alert == VisualAlert.steerRequired:
-    values["Keep_Hands_On_Wheel"] = 1
+    values["LKAS_Alert_Msg"] = 1
 
   # Ensure we don't overwrite potentially more important alerts from stock (e.g. FCW)
   if visual_alert == VisualAlert.ldw and values["LKAS_Alert"] == 0:
@@ -55,6 +65,12 @@ def create_es_lkas_state(packer, es_lkas_msg, visual_alert, left_line, right_lin
       values["LKAS_Alert"] = 12 # Left lane departure dash alert
     elif right_lane_depart:
       values["LKAS_Alert"] = 11 # Right lane departure dash alert
+
+  if enabled:
+    values["LKAS_ACTIVE"] = 1 # Show LKAS lane lines
+    values["LKAS_Dash_State"] = 2 # Green enabled indicator
+  else:
+     values["LKAS_Dash_State"] = 0 # LKAS Not enabled
 
   values["LKAS_Left_Line_Visible"] = int(left_line)
   values["LKAS_Right_Line_Visible"] = int(right_line)
