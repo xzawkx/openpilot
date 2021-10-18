@@ -54,11 +54,6 @@ class CarInterface(CarInterfaceBase):
       ret.longitudinalTuning.kiV = [0.54, 0.36]
 
       ret.stoppingControl = True
-      ret.startAccel = 0.0
-      ret.gasMaxBP = [0.]
-      ret.gasMaxV = [1.]  # max gas allowed
-      ret.brakeMaxBP = [0.]  # m/s
-      ret.brakeMaxV = [1.]   # max brake allowed
       ret.openpilotLongitudinalControl = True
 
     if candidate == CAR.FORESTER:
@@ -87,11 +82,6 @@ class CarInterface(CarInterfaceBase):
       ret.longitudinalTuning.kiV = [0.54, 0.36]
 
       ret.stoppingControl = True
-      ret.startAccel = 0.0
-      ret.gasMaxBP = [0.]
-      ret.gasMaxV = [1.]  # max gas allowed
-      ret.brakeMaxBP = [0.]  # m/s
-      ret.brakeMaxV = [0.99]   # max brake allowed
       ret.openpilotLongitudinalControl = True
 
     if candidate in [CAR.FORESTER_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:

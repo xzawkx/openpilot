@@ -76,24 +76,24 @@ class CarController():
 
       # Manual trigger using wipers signal
       #if CS.wipers:
-      #  actuators.brake = 0.5
+      #  actuators.accel = -0.5
       #  print("wipers set brake 0.5")
       #  brake_cmd = True
 
-      if enabled and actuators.brake > 0:
-        brake_value = clip(int(actuators.brake * CarControllerParams.BRAKE_SCALE), CarControllerParams.BRAKE_MIN, CarControllerParams.BRAKE_MAX)
+      if enabled and actuators.accel < 0:
+        brake_value = clip(int(abs(actuators.accel) * CarControllerParams.BRAKE_SCALE), CarControllerParams.BRAKE_MIN, CarControllerParams.BRAKE_MAX)
         brake_cmd = True
-        #print('actuators.brake: %s, es_brake_pressure: %s es_brake_active: %s brake_value: %s' % (actuators.brake, CS.es_brake_pressure, CS.es_brake_active, brake_value))
+        #print('actuators.accel: %s, es_brake_pressure: %s es_brake_active: %s brake_value: %s' % (actuators.accel, CS.es_brake_pressure, CS.es_brake_active, brake_value))
 
       # PCB passthrough
       if enabled and CS.es_brake_active:
         brake_cmd = True
         brake_value = CS.es_brake_pressure
 
-      if enabled and actuators.gas > 0:
+      if enabled and actuators.accel > 0:
         # limit min and max values
-        cruise_throttle = clip(int(CarControllerParams.THROTTLE_BASE + (actuators.gas * CarControllerParams.THROTTLE_SCALE)), CarControllerParams.THROTTLE_MIN, CarControllerParams.THROTTLE_MAX)
-        cruise_rpm = clip(int(CarControllerParams.RPM_BASE + (actuators.gas * CarControllerParams.RPM_SCALE)), CarControllerParams.RPM_MIN, CarControllerParams.RPM_MAX)
+        cruise_throttle = clip(int(CarControllerParams.THROTTLE_BASE + (actuators.accel * CarControllerParams.THROTTLE_SCALE)), CarControllerParams.THROTTLE_MIN, CarControllerParams.THROTTLE_MAX)
+        cruise_rpm = clip(int(CarControllerParams.RPM_BASE + (actuators.accel * CarControllerParams.RPM_SCALE)), CarControllerParams.RPM_MIN, CarControllerParams.RPM_MAX)
         # hysteresis
         cruise_throttle, self.throttle_steady = accel_hysteresis(cruise_throttle, self.throttle_steady)
         cruise_rpm, self.rpm_steady = accel_hysteresis(cruise_rpm, self.rpm_steady)
@@ -105,7 +105,7 @@ class CarController():
         self.cruise_throttle_last = cruise_throttle
         self.cruise_rpm_last = cruise_rpm
 
-        #print('actuators.gas: %s throttle_cruise: %s tcm_rpm: %s op_cruise_throttle: %s op_cruise_rpm: %s' % (actuators.gas, CS.throttle_cruise, CS.tcm_rpm, cruise_throttle, cruise_rpm))
+        #print('actuators.accel: %s throttle_cruise: %s tcm_rpm: %s op_cruise_throttle: %s op_cruise_rpm: %s' % (actuators.accel, CS.throttle_cruise, CS.tcm_rpm, cruise_throttle, cruise_rpm))
 
     # *** alerts and pcm cancel ***
 
@@ -143,7 +143,7 @@ class CarController():
         self.es_dashstatus_cnt = CS.es_dashstatus_msg["Counter"]
 
       if self.es_lkas_state_cnt != CS.es_lkas_state_msg["Counter"]:
-        can_sends.append(subarucan.create_es_lkas_state(self.packer, CS.es_lkas_state_msg, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart))
+        can_sends.append(subarucan.create_es_lkas_state(self.packer, CS.es_lkas_state_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart))
         self.es_lkas_state_cnt = CS.es_lkas_state_msg["Counter"]
 
       if self.es_brake_cnt != CS.es_brake_msg["Counter"]:

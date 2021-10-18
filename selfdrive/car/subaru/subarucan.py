@@ -43,7 +43,7 @@ def create_es_dashstatus(packer, es_dashstatus_msg, enabled, lead_visible):
 
   return packer.make_can_msg("ES_DashStatus", 0, values)
 
-def create_es_lkas_state(packer, es_lkas_msg, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
+def create_es_lkas_state(packer, es_lkas_msg, enabled, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
 
   values = copy.copy(es_lkas_msg)
 
