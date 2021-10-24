@@ -1,6 +1,11 @@
 2021-10-22
 ==========
 * FPv2 updates
+  * 2017 Impreza 1.6 - UDM / @Moodkiller
+
+2021-10-22
+==========
+* FPv2 updates
   * 2016 WRX - UDM / @Hexinator
 
 2021-10-03
