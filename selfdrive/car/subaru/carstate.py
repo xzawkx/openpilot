@@ -161,7 +161,7 @@ class CarState(CarStateBase):
 
       checks += [
         ("Transmission", 100),
-      ]
+     ]
 
     # CruiseControl is on can1 for OUTBACK and not used for CROSSTREK_2020H
     if CP.carFingerprint not in [CAR.OUTBACK, CAR.CROSSTREK_2020H]:
