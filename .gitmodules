@@ -1,7 +1,7 @@
 [submodule "panda"]
 	path = panda
 	url = ../../martinl/panda.git
-	branch = subaru-gen2
+	branch = subaru-PR-test
 [submodule "opendbc"]
 	path = opendbc
 	url = ../../commaai/opendbc.git
