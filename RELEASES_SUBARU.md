@@ -1,3 +1,12 @@
+2021-11-07
+==========
+* FPv2 updates
+  * 2022 Outback - UDM / @atran913
+
+2021-11-01
+==========
+* merge upstream (0.8.10) / @martinl
+
 2021-10-22
 ==========
 * FPv2 updates
