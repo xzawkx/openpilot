@@ -348,31 +348,37 @@ FW_VERSIONS = {
     # 2020 Outback 2.5i Premium - UDM / @ursubpar
     # 2021 Outback - UDM / @Frye - FL
     # 2020 Outback 2.4 Touring XT  - UDM / @chrissantamaria
+    # 2022 Outback - UDM / @atran913
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa1  \x06\x01',
       b'\xa1  \a\x00',
       b'\xa1  \b\001',
       b'\xa1  \x06\x00',
+      b'\xa1 "\t\x01'
     ],
     (Ecu.eps, 0x746, None): [
       b'\x9b\xc0\x10\x00',
       b'\x9b\xc0\x20\x00',
+      b'\x1b\xc0\x10\x00',
     ],
     (Ecu.fwdCamera, 0x787, None): [
       b'\x00\x00eJ\x00\x1f@ \x19\x00',
       b'\000\000e\x80\000\037@ \031\000',
+      b'\x00\x00e\x9a\x00\x1f@ 1\x00',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xbc,\xa0q\x07',
       b'\xbc\"`@\a',
       b'\xde"`0\a',
       b'\xf1\x82\xbc,\xa0q\a',
+      b'\xf1\x82\xe3,\xa0@\x07',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xa5\xfe\xf7@\x00',
       b'\xa5\xf6D@\x00',
       b'\xa5\xfe\xf6@\x00',
+      b'\xa7\x8e\xf40\x00',
     ],
   },
   CAR.OUTBACK_PREGLOBAL: {
