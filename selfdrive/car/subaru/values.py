@@ -33,6 +33,8 @@ class CarControllerParams:
   BRAKE_MAX = 400
   BRAKE_SCALE = 150             # from testing
 
+  ACCEL_BRAKE = -0.2            # m/s^2
+
 class CAR:
   ASCENT = "SUBARU ASCENT LIMITED 2019"
   IMPREZA = "SUBARU IMPREZA LIMITED 2019"

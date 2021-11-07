@@ -38,30 +38,31 @@ class CarController():
     self.throttle_steady = 0
 
     self.packer = CANPacker(DBC[CP.carFingerprint]['pt'])
-    self.p = CarControllerParams
+    self.params = CarControllerParams(CP)
 
   def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart, lead_visible):
 
+    P = self.params
     can_sends = []
 
     # *** steering ***
-    if (frame % self.p.STEER_STEP) == 0:
+    if (frame % P.STEER_STEP) == 0:
 
-      apply_steer = int(round(actuators.steer * self.p.STEER_MAX))
+      apply_steer = int(round(actuators.steer * P.STEER_MAX))
 
       # limits due to driver torque
 
       new_steer = int(round(apply_steer))
-      apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
+      apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, P)
       self.steer_rate_limited = new_steer != apply_steer
 
       if not enabled:
         apply_steer = 0
 
       if CS.CP.carFingerprint in PREGLOBAL_CARS:
-        can_sends.append(subarucan.create_preglobal_steering_control(self.packer, apply_steer, frame, self.p.STEER_STEP))
+        can_sends.append(subarucan.create_preglobal_steering_control(self.packer, apply_steer, frame, P.STEER_STEP))
       else:
-        can_sends.append(subarucan.create_steering_control(self.packer, apply_steer, frame, self.p.STEER_STEP))
+        can_sends.append(subarucan.create_steering_control(self.packer, apply_steer, frame, P.STEER_STEP))
 
       self.apply_steer_last = apply_steer
 
@@ -81,8 +82,8 @@ class CarController():
       #  print("wipers set brake 0.5")
       #  brake_cmd = True
 
-      if enabled and actuators.accel < 0:
-        brake_value = clip(int(abs(actuators.accel) * self.p.BRAKE_SCALE), self.p.BRAKE_MIN, self.p.BRAKE_MAX)
+      if enabled and actuators.accel < P.ACCEL_BRAKE:
+        brake_value = clip(int(abs(actuators.accel) * P.BRAKE_SCALE), P.BRAKE_MIN, P.BRAKE_MAX)
         brake_cmd = True
         #print('actuators.accel: %s, es_brake_pressure: %s es_brake_active: %s brake_value: %s' % (actuators.accel, CS.es_brake_pressure, CS.es_brake_active, brake_value))
 
@@ -91,10 +92,11 @@ class CarController():
         brake_cmd = True
         brake_value = CS.es_brake_pressure
 
-      if enabled and actuators.accel > 0:
+      if enabled and actuators.accel > P.ACCEL_BRAKE:
         # limit min and max values
-        cruise_throttle = clip(int(self.p.THROTTLE_BASE + ((CS.out.vEgo + actuators.accel) * self.p.THROTTLE_SCALE)), self.p.THROTTLE_MIN, self.p.THROTTLE_MAX)
-        cruise_rpm = clip(int(self.p.RPM_BASE + ((CS.out.vEgo + actuators.accel) * self.p.RPM_SCALE)), self.p.RPM_MIN, self.p.RPM_MAX)
+        target_accel = actuators.accel
+        cruise_throttle = clip(int(P.THROTTLE_BASE + ((CS.out.vEgo + target_accel) * P.THROTTLE_SCALE)), P.THROTTLE_MIN, P.THROTTLE_MAX)
+        cruise_rpm = clip(int(P.RPM_BASE + ((CS.out.vEgo + target_accel) * P.RPM_SCALE)), P.RPM_MIN, P.RPM_MAX)
         # hysteresis
         cruise_throttle, self.throttle_steady = accel_hysteresis(cruise_throttle, self.throttle_steady)
         cruise_rpm, self.rpm_steady = accel_hysteresis(cruise_rpm, self.rpm_steady)
