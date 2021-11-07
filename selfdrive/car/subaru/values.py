@@ -16,12 +16,12 @@ class CarControllerParams:
   RPM_MIN = 0                   # min cruise_rpm
   RPM_MAX = 3200                # max cruise_rpm
   RPM_BASE = 600                # cruise_rpm idle, from stock drive
-  RPM_SCALE = 3000              # cruise_rpm, from testing
+  RPM_SCALE = 85                # cruise_rpm, from testing
 
   THROTTLE_MIN = 0              # min cruise_throttle
   THROTTLE_MAX = 3400           # max cruise_throttle
   THROTTLE_BASE = 1810          # cruise_throttle, from stock drive
-  THROTTLE_SCALE = 3000         # from testing
+  THROTTLE_SCALE = 85           # from testing
 
   RPM_DELTA_UP = 50
   RPM_DELTA_DOWN = 50
@@ -31,7 +31,7 @@ class CarControllerParams:
 
   BRAKE_MIN = 0
   BRAKE_MAX = 400
-  BRAKE_SCALE = 1000            # from testing
+  BRAKE_SCALE = 150             # from testing
 
 class CAR:
   ASCENT = "SUBARU ASCENT LIMITED 2019"
