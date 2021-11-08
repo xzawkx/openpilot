@@ -5,24 +5,9 @@ from selfdrive.car.subaru.values import DBC, PREGLOBAL_CARS, CarControllerParams
 from opendbc.can.packer import CANPacker
 
 
-ACCEL_HYST_GAP = 10  # don't change accel command for small oscilalitons within this value
-
-def accel_hysteresis(accel, accel_steady):
-
-  # for small accel oscillations within ACCEL_HYST_GAP, don't change the accel command
-  if accel > accel_steady + ACCEL_HYST_GAP:
-    accel_steady = accel - ACCEL_HYST_GAP
-  elif accel < accel_steady - ACCEL_HYST_GAP:
-    accel_steady = accel + ACCEL_HYST_GAP
-  accel = accel_steady
-
-  return accel, accel_steady
-
 class CarController():
   def __init__(self, dbc_name, CP, VM):
     self.apply_steer_last = 0
-    self.cruise_rpm_last = 0
-    self.cruise_throttle_last = 0
     self.es_lkas_state_cnt = -1
     self.es_dashstatus_cnt = -1
     self.cruise_control_cnt = -1
@@ -97,16 +82,6 @@ class CarController():
         target_accel = actuators.accel
         cruise_throttle = clip(int(P.THROTTLE_BASE + ((CS.out.vEgo + target_accel) * P.THROTTLE_SCALE)), P.THROTTLE_MIN, P.THROTTLE_MAX)
         cruise_rpm = clip(int(P.RPM_BASE + ((CS.out.vEgo + target_accel) * P.RPM_SCALE)), P.RPM_MIN, P.RPM_MAX)
-        # hysteresis
-        cruise_throttle, self.throttle_steady = accel_hysteresis(cruise_throttle, self.throttle_steady)
-        cruise_rpm, self.rpm_steady = accel_hysteresis(cruise_rpm, self.rpm_steady)
-
-        # slow down the signals change
-        cruise_throttle = clip(cruise_throttle, self.cruise_throttle_last - P.THROTTLE_DELTA_DOWN, self.cruise_throttle_last + P.THROTTLE_DELTA_UP)
-        cruise_rpm = clip(cruise_rpm, self.cruise_rpm_last - P.RPM_DELTA_DOWN, self.cruise_rpm_last + P.RPM_DELTA_UP)
-
-        self.cruise_throttle_last = cruise_throttle
-        self.cruise_rpm_last = cruise_rpm
 
         #print('actuators.accel: %s throttle_cruise: %s tcm_rpm: %s op_cruise_throttle: %s op_cruise_rpm: %s' % (actuators.accel, CS.throttle_cruise, CS.tcm_rpm, cruise_throttle, cruise_rpm))
 
@@ -134,11 +109,11 @@ class CarController():
 
     else:
       if self.es_distance_cnt != CS.es_distance_msg["Counter"]:
-        can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, enabled, pcm_cancel_cmd, brake_cmd, cruise_throttle))
+        can_sends.append(subarucan.create_es_distance(self.packer, CS.es_distance_msg, enabled, pcm_cancel_cmd, brake_cmd, brake_value, cruise_throttle))
         self.es_distance_cnt = CS.es_distance_msg["Counter"]
 
       if self.es_status_cnt != CS.es_status_msg["Counter"]:
-        can_sends.append(subarucan.create_es_status(self.packer, CS.es_status_msg, enabled, brake_cmd, cruise_rpm))
+        can_sends.append(subarucan.create_es_status(self.packer, CS.es_status_msg, enabled, brake_cmd, brake_value, cruise_rpm))
         self.es_status_cnt = CS.es_status_msg["Counter"]
 
       if self.es_dashstatus_cnt != CS.es_dashstatus_msg["Counter"]:

@@ -19,7 +19,7 @@ def create_steering_control(packer, apply_steer, frame, steer_step):
 def create_steering_status(packer, apply_steer, frame, steer_step):
   return packer.make_can_msg("ES_LKAS_State", 0, {})
 
-def create_es_distance(packer, es_distance_msg, enabled, pcm_cancel_cmd, brake_cmd, cruise_throttle):
+def create_es_distance(packer, es_distance_msg, enabled, pcm_cancel_cmd, brake_cmd, brake_value, cruise_throttle):
 
   values = copy.copy(es_distance_msg)
   if enabled:
@@ -27,7 +27,7 @@ def create_es_distance(packer, es_distance_msg, enabled, pcm_cancel_cmd, brake_c
   if pcm_cancel_cmd:
     values["Cruise_Cancel"] = 1
   if brake_cmd:
-    values["Cruise_Throttle"] = 808
+    values["Cruise_Throttle"] = 808 if brake_value >= 35 else 1818
     values["Cruise_Brake_Active"] = 1
 
   return packer.make_can_msg("ES_Distance", 0, values)
@@ -89,14 +89,12 @@ def create_es_brake(packer, es_brake_msg, enabled, brake_cmd, brake_value):
 
   return packer.make_can_msg("ES_Brake", 0, values)
 
-def create_es_status(packer, es_status_msg, enabled, brake_cmd, cruise_rpm):
+def create_es_status(packer, es_status_msg, enabled, brake_cmd, brake_value, cruise_rpm):
 
   values = copy.copy(es_status_msg)
   if enabled:
     values["Cruise_Activated"] = 1
-    values["Cruise_RPM"] = cruise_rpm
-  if brake_cmd:
-    values["Cruise_RPM"] = 600
+    values["Cruise_RPM"] = 600 if brake_value >= 35 else cruise_rpm
 
   return packer.make_can_msg("ES_Status", 0, values)
 
