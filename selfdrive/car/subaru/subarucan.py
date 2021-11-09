@@ -89,12 +89,12 @@ def create_es_brake(packer, es_brake_msg, enabled, brake_cmd, brake_value):
 
   return packer.make_can_msg("ES_Brake", 0, values)
 
-def create_es_status(packer, es_status_msg, enabled, brake_cmd, brake_value, cruise_rpm):
+def create_es_status(packer, es_status_msg, enabled, brake_cmd, cruise_rpm):
 
   values = copy.copy(es_status_msg)
   if enabled:
     values["Cruise_Activated"] = 1
-    values["Cruise_RPM"] = 600 if brake_value >= 35 else cruise_rpm
+    values["Cruise_RPM"] = cruise_rpm
 
   return packer.make_can_msg("ES_Status", 0, values)
 

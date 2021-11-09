@@ -63,8 +63,8 @@ class CarController():
 
       # Manual trigger using wipers signal
       #if CS.wipers:
-      #  actuators.accel = -0.5
-      #  print("wipers set brake 0.5")
+      #  actuators.accel = -1.5
+      #  print("wipers set brake 1.5")
       #  brake_cmd = True
 
       if enabled and actuators.accel < P.ACCEL_BRAKE:
@@ -113,7 +113,7 @@ class CarController():
         self.es_distance_cnt = CS.es_distance_msg["Counter"]
 
       if self.es_status_cnt != CS.es_status_msg["Counter"]:
-        can_sends.append(subarucan.create_es_status(self.packer, CS.es_status_msg, enabled, brake_cmd, brake_value, cruise_rpm))
+        can_sends.append(subarucan.create_es_status(self.packer, CS.es_status_msg, enabled, brake_cmd, cruise_rpm))
         self.es_status_cnt = CS.es_status_msg["Counter"]
 
       if self.es_dashstatus_cnt != CS.es_dashstatus_msg["Counter"]:
