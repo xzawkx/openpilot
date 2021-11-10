@@ -6,7 +6,6 @@ from selfdrive.version import comma_remote, tested_branch
 from selfdrive.car.fingerprints import eliminate_incompatible_cars, all_legacy_fingerprint_cars
 from selfdrive.car.vin import get_vin, VIN_UNKNOWN
 from selfdrive.car.fw_versions import get_fw_versions, match_fw_to_car
-from selfdrive.car.subaru.values import SUBARU_WMI
 from selfdrive.swaglog import cloudlog
 import cereal.messaging as messaging
 from selfdrive.car import gen_empty_fingerprint
@@ -107,12 +106,6 @@ def fingerprint(logcan, sendcan):
     else:
       cloudlog.warning("Getting VIN & FW versions")
       _, vin = get_vin(logcan, sendcan, bus)
-
-      for wmi in SUBARU_WMI:
-        if vin.startswith(wmi):
-          cloudlog.warning("Subaru 10 second ECU init delay")
-          time.sleep(10)
-          break
       car_fw = get_fw_versions(logcan, sendcan, bus)
 
     exact_fw_match, fw_candidates = match_fw_to_car(car_fw)
@@ -183,6 +176,11 @@ def fingerprint(logcan, sendcan):
 
 def get_car(logcan, sendcan):
   candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan)
+
+  if candidate is None:
+    cloudlog.warning("no matching fingerprints, retrying")
+    time.sleep(10)
+    candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan)
 
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)
