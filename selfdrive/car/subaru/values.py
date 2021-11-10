@@ -224,6 +224,7 @@ FW_VERSIONS = {
     # 2017 Forester - UDM / @hitoryu2001
     # 2018 Forester - UDM / @sarvcomp
     # 2018 Forester 2.5i Premium - UDM / @Diesel Monkey
+    # 2018 Forester - UDM / @2018NissanRogue
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x7d\x97\x14\x40',
@@ -249,6 +250,7 @@ FW_VERSIONS = {
       b'\xdc\xf2@`\x00',
       b'\xda\xfd\xe0\x80\x00',
       b'\xdc\xf2`\x81\000',
+      b'\xdc\xf2`\x80\x00',
     ],
   },
   CAR.LEGACY_PREGLOBAL: {
