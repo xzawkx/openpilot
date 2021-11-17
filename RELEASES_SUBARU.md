@@ -1,3 +1,7 @@
+2021-11-17
+==========
+* Fast FPv2 fingerprinting when Community Features toggle is off / @martinl
+
 2021-11-16
 ==========
 * FPv2 updates
