@@ -175,14 +175,12 @@ def fingerprint(logcan, sendcan):
 
 
 def get_car(logcan, sendcan):
-  candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan)
-
   community_feature_toggle = Params().get_bool("CommunityFeaturesToggle")
-
-  if community_feature_toggle and candidate is None:
-    cloudlog.warning("no matching fingerprints, retrying: : %r", fingerprints)
+  if community_feature_toggle:
+    cloudlog.warning("10 second delay for Subaru FPv2")
     time.sleep(10)
-    candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan)
+
+  candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(logcan, sendcan)
 
   if candidate is None:
     cloudlog.warning("car doesn't match any fingerprints: %r", fingerprints)

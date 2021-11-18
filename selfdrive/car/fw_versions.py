@@ -337,7 +337,12 @@ if __name__ == "__main__":
       extra[(Ecu.unknown, 0x750, i)] = []
     extra = {"any": {"debug": extra}}
 
-  time.sleep(1.)
+  community_feature_toggle = Params().get_bool("CommunityFeaturesToggle")
+  if community_feature_toggle:
+    cloudlog.warning("10 second delay for Subaru FPv2")
+    time.sleep(10.)
+  else:
+    time.sleep(1.)
 
   t = time.time()
   print("Getting vin...")
@@ -349,14 +354,6 @@ if __name__ == "__main__":
   t = time.time()
   fw_vers = get_fw_versions(logcan, sendcan, 1, extra=extra, debug=args.debug, progress=True)
   _, candidates = match_fw_to_car(fw_vers)
-
-  community_feature_toggle = Params().get_bool("CommunityFeaturesToggle")
-
-  if community_feature_toggle and candidates == set():
-    cloudlog.warning("No matching candidates found, retrying fingerprinting")
-    time.sleep(10.)
-    fw_vers = get_fw_versions(logcan, sendcan, 1, extra=extra, debug=args.debug, progress=True)
-    _, candidates = match_fw_to_car(fw_vers)
 
   print()
   print("Found FW versions")
