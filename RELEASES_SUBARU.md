@@ -1,3 +1,8 @@
+2021-11-19
+==========
+* FPv2 updates
+  * 2019 Crosstrek - UDM / @AJInvesting
+
 2021-11-17
 ==========
 * Fast FPv2 fingerprinting when Community Features toggle is off / @martinl
