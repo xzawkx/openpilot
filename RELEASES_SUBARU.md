@@ -1,3 +1,7 @@
+2021-12-16
+==========
+* Merge upstream (0.8.12) / @martinl
+
 2021-12-01
 ==========
 * Merge upstream (0.8.11) / @martinl
