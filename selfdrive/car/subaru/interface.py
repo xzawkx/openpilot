@@ -46,7 +46,6 @@ class CarInterface(CarInterfaceBase):
       ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.2, 0.3], [0.02, 0.03]]
 
     if candidate == CAR.IMPREZA_2020:
-      ret.safetyConfigs[0].safetyParam = 1 # lower max_steer for 2020
       ret.mass = 1480. + STD_CARGO_KG
       ret.wheelbase = 2.67
       ret.centerToFront = ret.wheelbase * 0.5
