@@ -195,6 +195,7 @@ FW_VERSIONS = {
     # 2021 Forester - UDM / @umby24
     # 2020 Forester Sport - UDM / @RyanYo
     # 2019 Forester Sport - UDM / @Zapman
+    # 2019 Forester - UDM / @Patienc3
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa3 \030\024\000',
@@ -209,18 +210,21 @@ FW_VERSIONS = {
       b'\000\000e!\037@ \021',
       b'\000\000e\x97\037@ 0',
       b'\000\000e`\037@  ',
+      b'\xf1\x00\xac\x02\x00',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xb6\"`A\a',
       b'\xcf"`0\a',
       b'\xcb\"`@\a',
       b'\xcb\"`p\a',
+      b'\xf1\x00\xa2\x10\n',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\032\xf6B0\000',
       b'\032\xf6F`\000',
       b'\032\xf6b`\000',
       b'\032\xf6B`\000'
+      b'\xf1\x00\xa4\x10@',
     ],
   },
   CAR.FORESTER_PREGLOBAL: {
