@@ -1,3 +1,8 @@
+2021-11-17
+==========
+* FPv2 updates
+  * 2019 Forester - UDM / @Patienc3
+
 2021-12-16
 ==========
 * Merge upstream (0.8.12) / @martinl
