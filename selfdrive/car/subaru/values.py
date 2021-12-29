@@ -221,21 +221,25 @@ FW_VERSIONS = {
     # 2020 Forester Sport - UDM / @RyanYo
     # 2019 Forester Sport - UDM / @Zapman
     # 2019 Forester - UDM / @Patienc3
+    # 2021 Forester - SGM (no LKAS) / @BarryTsai
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa3 \030\024\000',
       b'\xa3  \024\000',
       b'\xa3 \031\024\000',
       b'\xa3  \024\001',
+      b'\xa3  r\x01',
     ],
     (Ecu.eps, 0x746, None): [
       b'\x8d\xc0\004\000',
+      b'\x8d\xc0\x00\x00',
     ],
     (Ecu.fwdCamera, 0x787, None): [
       b'\000\000e!\037@ \021',
       b'\000\000e\x97\037@ 0',
       b'\000\000e`\037@  ',
       b'\xf1\x00\xac\x02\x00',
+      b'\x00\x00e\x96\x1f@ &',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xb6\"`A\a',
@@ -243,6 +247,7 @@ FW_VERSIONS = {
       b'\xcb\"`@\a',
       b'\xcb\"`p\a',
       b'\xf1\x00\xa2\x10\n',
+      b'\xcf\x99`p\x07',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\032\xf6B0\000',
@@ -250,6 +255,7 @@ FW_VERSIONS = {
       b'\032\xf6b`\000',
       b'\032\xf6B`\000'
       b'\xf1\x00\xa4\x10@',
+      b'\x1a\xe5F1\x00',
     ],
   },
   CAR.FORESTER_PREGLOBAL: {
