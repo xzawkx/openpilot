@@ -71,6 +71,10 @@ def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_
   values["LKAS_Left_Line_Visible"] = int(left_line)
   values["LKAS_Right_Line_Visible"] = int(right_line)
 
+  # Enable LKAS for market specific models
+  values["LKAS_Enable_1"] = 0
+  values["LKAS_Enable_2"] = 3
+
   return packer.make_can_msg("ES_LKAS_State", 0, values)
 
 def create_es_dashstatus(packer, dashstatus_msg):

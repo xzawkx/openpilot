@@ -389,6 +389,10 @@ class CarState(CarStateBase):
         ("LKAS_Right_Line_Visible", "ES_LKAS_State", 0),
         ("LKAS_Alert", "ES_LKAS_State", 0),
         ("Signal3", "ES_LKAS_State", 0),
+        ("LKAS_Enable_1", "ES_LKAS_State", 0),
+        ("Signal4", "ES_LKAS_State", 0),
+        ("LKAS_Enable_2", "ES_LKAS_State", 0),
+        ("Signal5", "ES_LKAS_State", 0),
       ]
 
       checks = [
