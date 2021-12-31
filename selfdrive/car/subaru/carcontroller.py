@@ -18,14 +18,7 @@ def accel_hysteresis(accel, accel_steady):
   return accel, accel_steady
 
 def compute_gb(accel):
-  gas = 0.0
-  brake = 0.0
-  if (accel > 0):
-    gas = clip(accel/4.0, 0.0, 1.0)
-  else:
-    brake = clip(-accel/4.0, 0.0, 1.0)
-
-  return gas, brake
+  return clip(accel/4.0, 0.0, 1.0), clip(-accel/4.0, 0.0, 1.0)
 
 class CarController():
   def __init__(self, dbc_name, CP, VM):
