@@ -4,6 +4,28 @@ from selfdrive.car.subaru import subarucan
 from selfdrive.car.subaru.values import DBC, PREGLOBAL_CARS, CarControllerParams
 from opendbc.can.packer import CANPacker
 
+ACCEL_HYST_GAP = 10  # don't change accel command for small oscilalitons within this value
+
+def accel_hysteresis(accel, accel_steady):
+
+  # for small accel oscillations within ACCEL_HYST_GAP, don't change the accel command
+  if accel > accel_steady + ACCEL_HYST_GAP:
+    accel_steady = accel - ACCEL_HYST_GAP
+  elif accel < accel_steady - ACCEL_HYST_GAP:
+    accel_steady = accel + ACCEL_HYST_GAP
+  accel = accel_steady
+
+  return accel, accel_steady
+
+def compute_gb(accel):
+  gas = 0.0
+  brake = 0.0
+  if (accel > 0):
+    gas = clip(accel/4.0, 0.0, 1.0)
+  else:
+    brake = clip(-accel/4.0, 0.0, 1.0)
+
+  return gas, brake
 
 class CarController():
   def __init__(self, dbc_name, CP, VM):
@@ -61,29 +83,40 @@ class CarController():
 
     if CS.CP.openpilotLongitudinalControl:
 
+      gas, brake = compute_gb(actuators.accel)
+
       # Manual trigger using wipers signal
       #if CS.wipers:
-      #  actuators.accel = -1.5
-      #  print("wipers set brake 1.5")
+      #  brake = 0.5
+      #  print("wipers set brake 0.5")
       #  brake_cmd = True
 
-      if enabled and actuators.accel < P.ACCEL_BRAKE:
-        brake_value = clip(int(abs(actuators.accel) * P.BRAKE_SCALE), P.BRAKE_MIN, P.BRAKE_MAX)
+      if enabled and brake > 0:
+        brake_value = clip(int(brake * CarControllerParams.BRAKE_SCALE), CarControllerParams.BRAKE_MIN, CarControllerParams.BRAKE_MAX)
         brake_cmd = True
-        #print('actuators.accel: %s, es_brake_pressure: %s es_brake_active: %s brake_value: %s' % (actuators.accel, CS.es_brake_pressure, CS.es_brake_active, brake_value))
+        #print('brake: %s, es_brake_pressure: %s es_brake_active: %s brake_value: %s' % (brake, CS.es_brake_pressure, CS.es_brake_active, brake_value))
 
       # PCB passthrough
       if enabled and CS.es_brake_active:
         brake_cmd = True
         brake_value = CS.es_brake_pressure
 
-      if enabled and actuators.accel > P.ACCEL_BRAKE:
+      if enabled and gas > 0:
         # limit min and max values
-        target_accel = actuators.accel
-        cruise_throttle = clip(int(P.THROTTLE_BASE + ((CS.out.vEgo + target_accel) * P.THROTTLE_SCALE)), P.THROTTLE_MIN, P.THROTTLE_MAX)
-        cruise_rpm = clip(int(P.RPM_BASE + ((CS.out.vEgo + target_accel) * P.RPM_SCALE)), P.RPM_MIN, P.RPM_MAX)
+        cruise_throttle = clip(int(CarControllerParams.THROTTLE_BASE + (gas * CarControllerParams.THROTTLE_SCALE)), CarControllerParams.THROTTLE_MIN, CarControllerParams.THROTTLE_MAX)
+        cruise_rpm = clip(int(CarControllerParams.RPM_BASE + (gas * CarControllerParams.RPM_SCALE)), CarControllerParams.RPM_MIN, CarControllerParams.RPM_MAX)
+        # hysteresis
+        cruise_throttle, self.throttle_steady = accel_hysteresis(cruise_throttle, self.throttle_steady)
+        cruise_rpm, self.rpm_steady = accel_hysteresis(cruise_rpm, self.rpm_steady)
 
-        #print('actuators.accel: %s throttle_cruise: %s tcm_rpm: %s op_cruise_throttle: %s op_cruise_rpm: %s' % (actuators.accel, CS.throttle_cruise, CS.tcm_rpm, cruise_throttle, cruise_rpm))
+        # slow down the signals change
+        cruise_throttle = clip(cruise_throttle, self.cruise_throttle_last - CarControllerParams.THROTTLE_DELTA_DOWN, self.cruise_throttle_last + CarControllerParams.THROTTLE_DELTA_UP)
+        cruise_rpm = clip(cruise_rpm, self.cruise_rpm_last - CarControllerParams.RPM_DELTA_DOWN, self.cruise_rpm_last + CarControllerParams.RPM_DELTA_UP)
+
+        self.cruise_throttle_last = cruise_throttle
+        self.cruise_rpm_last = cruise_rpm
+
+        #print('gas: %s throttle_cruise: %s tcm_rpm: %s op_cruise_throttle: %s op_cruise_rpm: %s' % (gas, CS.throttle_cruise, CS.tcm_rpm, cruise_throttle, cruise_rpm))
 
     # *** alerts and pcm cancel ***
 
