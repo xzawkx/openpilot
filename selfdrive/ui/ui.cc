@@ -50,9 +50,9 @@ static void update_leads(UIState *s, const cereal::RadarState::Reader &radar_sta
       calib_frame_to_full_frame(s, lead_data.getDRel(), -lead_data.getYRel(), z + 1.22, &s->scene.lead_vertices[i]);
     }
   }
-  s->scene.lead_v_rel = leads[0].getV()[0];
-  s->scene.lead_d_rel = leads[0].getX()[0];
-  s->scene.lead_status = leads[0].getProb() > 0.5;
+  s->scene.lead_v_rel = lead_data.getVRel()
+  s->scene.lead_d_rel = lead_data.getDRel()
+  s->scene.lead_status = lead_data.getStatus();
 }
 
 static void update_line_data(const UIState *s, const cereal::ModelDataV2::XYZTData::Reader &line,
