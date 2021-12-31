@@ -30,7 +30,7 @@ _FULL_FRAME_TO_BB = {}
 _INTRINSICS = {}
 
 eon_f_qcam_frame_size = (480, 360)
-tici_f_qcam_frame_size = (526, 330)
+tici_f_qcam_frame_size = (528, 330)
 
 cams = [(eon_f_frame_size, eon_f_focal_length, eon_f_frame_size),
         (tici_f_frame_size, tici_f_focal_length, tici_f_frame_size),
@@ -152,7 +152,7 @@ def init_plots(arr, name_to_arr_idx, plot_xlims, plot_ylims, plot_names, plot_co
       plots.append(plot)
       idxs.append(name_to_arr_idx[item])
       plot_select.append(i)
-    axs[i].set_title(", ".join("%s (%s)" % (nm, cl)
+    axs[i].set_title(", ".join(f"{nm} ({cl})"
                                for (nm, cl) in zip(pl_list, plot_colors[i])), fontsize=10)
     axs[i].tick_params(axis="x", colors="white")
     axs[i].tick_params(axis="y", colors="white")

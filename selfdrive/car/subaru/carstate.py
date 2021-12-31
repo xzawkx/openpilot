@@ -23,10 +23,12 @@ class CarState(CarStateBase):
     else:
       ret.brakePressed = cp.vl["Brake_Status"]["Brake"] == 1
 
-    ret.wheelSpeeds.fl = cp.vl["Wheel_Speeds"]["FL"] * CV.KPH_TO_MS
-    ret.wheelSpeeds.fr = cp.vl["Wheel_Speeds"]["FR"] * CV.KPH_TO_MS
-    ret.wheelSpeeds.rl = cp.vl["Wheel_Speeds"]["RL"] * CV.KPH_TO_MS
-    ret.wheelSpeeds.rr = cp.vl["Wheel_Speeds"]["RR"] * CV.KPH_TO_MS
+    ret.wheelSpeeds = self.get_wheel_speeds(
+      cp.vl["Wheel_Speeds"]["FL"],
+      cp.vl["Wheel_Speeds"]["FR"],
+      cp.vl["Wheel_Speeds"]["RL"],
+      cp.vl["Wheel_Speeds"]["RR"],
+    )
     ret.vEgoRaw = (ret.wheelSpeeds.fl + ret.wheelSpeeds.fr + ret.wheelSpeeds.rl + ret.wheelSpeeds.rr) / 4.
     # Kalman filter, even though Subaru raw wheel speed is heaviliy filtered by default
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
@@ -64,13 +66,11 @@ class CarState(CarStateBase):
     ret.steerError = cp.vl["Steering_Torque"]["Steer_Error_1"] == 1
 
     if self.car_fingerprint in PREGLOBAL_CARS:
-      self.cruise_button = cp_cam.vl["ES_CruiseThrottle"]["Cruise_Button"]
+      self.cruise_button = cp_cam.vl["ES_Distance"]["Cruise_Button"]
       self.ready = not cp_cam.vl["ES_DashStatus"]["Not_Ready_Startup"]
-      self.es_accel_msg = copy.copy(cp_cam.vl["ES_CruiseThrottle"])
     else:
       ret.steerWarning = cp.vl["Steering_Torque"]["Steer_Warning"] == 1
       ret.cruiseState.nonAdaptive = cp_cam.vl["ES_DashStatus"]["Conventional_Cruise"] == 1
-      self.es_distance_msg = copy.copy(cp_cam.vl["ES_Distance"])
       self.es_lkas_msg = copy.copy(cp_cam.vl["ES_LKAS_State"])
       self.throttle_cruise = cp.vl["Throttle"]["Throttle_Cruise"]
       self.es_cruise_throttle = cp_cam.vl["ES_Distance"]["Cruise_Throttle"]
@@ -83,11 +83,11 @@ class CarState(CarStateBase):
 
       self.es_dashstatus_msg = copy.copy(cp_cam.vl["ES_DashStatus"])
       self.es_lkas_state_msg = copy.copy(cp_cam.vl["ES_LKAS_State"])
-      self.es_distance_msg = copy.copy(cp_cam.vl["ES_Distance"])
       self.es_brake_msg = copy.copy(cp_cam.vl["ES_Brake"])
       self.es_status_msg = copy.copy(cp_cam.vl["ES_Status"])
       self.cruise_control_msg = copy.copy(cp.vl["CruiseControl"])
       self.brake_status_msg = copy.copy(cp.vl["Brake_Status"])
+    self.es_distance_msg = copy.copy(cp_cam.vl["ES_Distance"])
 
     return ret
 
@@ -195,28 +195,28 @@ class CarState(CarStateBase):
         ("Cruise_Set_Speed", "ES_DashStatus", 0),
         ("Not_Ready_Startup", "ES_DashStatus", 0),
 
-        ("Throttle_Cruise", "ES_CruiseThrottle", 0),
-        ("Signal1", "ES_CruiseThrottle", 0),
-        ("Cruise_Activated", "ES_CruiseThrottle", 0),
-        ("Signal2", "ES_CruiseThrottle", 0),
-        ("Brake_On", "ES_CruiseThrottle", 0),
-        ("Distance_Swap", "ES_CruiseThrottle", 0),
-        ("Standstill", "ES_CruiseThrottle", 0),
-        ("Signal3", "ES_CruiseThrottle", 0),
-        ("Close_Distance", "ES_CruiseThrottle", 0),
-        ("Signal4", "ES_CruiseThrottle", 0),
-        ("Standstill_2", "ES_CruiseThrottle", 0),
-        ("Cruise_Fault", "ES_CruiseThrottle", 0),
-        ("Signal5", "ES_CruiseThrottle", 0),
-        ("Counter", "ES_CruiseThrottle", 0),
-        ("Signal6", "ES_CruiseThrottle", 0),
-        ("Cruise_Button", "ES_CruiseThrottle", 0),
-        ("Signal7", "ES_CruiseThrottle", 0),
+        ("Cruise_Throttle", "ES_Distance", 0),
+        ("Signal1", "ES_Distance", 0),
+        ("Car_Follow", "ES_Distance", 0),
+        ("Signal2", "ES_Distance", 0),
+        ("Brake_On", "ES_Distance", 0),
+        ("Distance_Swap", "ES_Distance", 0),
+        ("Standstill", "ES_Distance", 0),
+        ("Signal3", "ES_Distance", 0),
+        ("Close_Distance", "ES_Distance", 0),
+        ("Signal4", "ES_Distance", 0),
+        ("Standstill_2", "ES_Distance", 0),
+        ("Cruise_Fault", "ES_Distance", 0),
+        ("Signal5", "ES_Distance", 0),
+        ("Counter", "ES_Distance", 0),
+        ("Signal6", "ES_Distance", 0),
+        ("Cruise_Button", "ES_Distance", 0),
+        ("Signal7", "ES_Distance", 0),
       ]
 
       checks = [
         ("ES_DashStatus", 20),
-        ("ES_CruiseThrottle", 20),
+        ("ES_Distance", 20),
       ]
     else:
       signals = [

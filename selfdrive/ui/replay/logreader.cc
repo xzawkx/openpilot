@@ -1,7 +1,7 @@
 #include "selfdrive/ui/replay/logreader.h"
 
-#include <sstream>
-#include "selfdrive/common/util.h"
+#include <algorithm>
+#include <iostream>
 #include "selfdrive/ui/replay/util.h"
 
 Event::Event(const kj::ArrayPtr<const capnp::word> &amsg, bool frame) : reader(amsg), frame(frame) {
@@ -28,51 +28,74 @@ Event::Event(const kj::ArrayPtr<const capnp::word> &amsg, bool frame) : reader(a
 // class LogReader
 
 LogReader::LogReader(size_t memory_pool_block_size) {
+#ifdef HAS_MEMORY_RESOURCE
   const size_t buf_size = sizeof(Event) * memory_pool_block_size;
   pool_buffer_ = ::operator new(buf_size);
   mbr_ = new std::pmr::monotonic_buffer_resource(pool_buffer_, buf_size);
-
+#endif
   events.reserve(memory_pool_block_size);
 }
 
 LogReader::~LogReader() {
-  delete mbr_;
-  ::operator delete(pool_buffer_);
-}
-
-bool LogReader::load(const std::string &file) {
-  bool is_bz2 = file.rfind(".bz2") == file.length() - 4;
-  if (is_bz2) {
-    std::ostringstream stream;
-    if (!readBZ2File(file, stream)) {
-      LOGW("bz2 decompress failed");
-      return false;
-    }
-    raw_ = stream.str();
-  } else {
-    raw_ = util::read_file(file);
+  for (Event *e : events) {
+    delete e;
   }
 
-  kj::ArrayPtr<const capnp::word> words((const capnp::word *)raw_.data(), raw_.size() / sizeof(capnp::word));
-  while (words.size() > 0) {
-    try {
+#ifdef HAS_MEMORY_RESOURCE
+  delete mbr_;
+  ::operator delete(pool_buffer_);
+#endif
+}
+
+bool LogReader::load(const std::string &url, std::atomic<bool> *abort, bool local_cache, int chunk_size, int retries) {
+  FileReader f(local_cache, chunk_size, retries);
+  std::string data = f.read(url, abort);
+  if (data.empty()) return false;
+
+  return load((std::byte*)data.data(), data.size(), abort);
+}
+
+bool LogReader::load(const std::byte *data, size_t size, std::atomic<bool> *abort) {
+  raw_ = decompressBZ2(data, size);
+  if (raw_.empty()) {
+    std::cout << "failed to decompress log" << std::endl;
+    return false;
+  }
+
+  try {
+    kj::ArrayPtr<const capnp::word> words((const capnp::word *)raw_.data(), raw_.size() / sizeof(capnp::word));
+    while (words.size() > 0) {
+
+#ifdef HAS_MEMORY_RESOURCE
       Event *evt = new (mbr_) Event(words);
+#else
+      Event *evt = new Event(words);
+#endif
 
       // Add encodeIdx packet again as a frame packet for the video stream
       if (evt->which == cereal::Event::ROAD_ENCODE_IDX ||
           evt->which == cereal::Event::DRIVER_ENCODE_IDX ||
           evt->which == cereal::Event::WIDE_ROAD_ENCODE_IDX) {
 
-          Event *frame_evt = new (mbr_) Event(words, true);
-          events.push_back(frame_evt);
+#ifdef HAS_MEMORY_RESOURCE
+        Event *frame_evt = new (mbr_) Event(words, true);
+#else
+        Event *frame_evt = new Event(words, true);
+#endif
+
+        events.push_back(frame_evt);
       }
 
       words = kj::arrayPtr(evt->reader.getEnd(), words.end());
       events.push_back(evt);
-    } catch (const kj::Exception &e) {
-      return false;
     }
+  } catch (const kj::Exception &e) {
+    std::cout << "failed to parse log : " << e.getDescription().cStr() << std::endl;
+    if (events.empty()) return false;
+
+    std::cout << "read " << events.size() << " events from corrupt log" << std::endl;
   }
+
   std::sort(events.begin(), events.end(), Event::lessThan());
   return true;
 }
