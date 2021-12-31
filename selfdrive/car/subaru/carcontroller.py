@@ -41,6 +41,8 @@ class CarController():
     self.es_lkas_cnt = -1
     self.cruise_button_prev = 0
     self.steer_rate_limited = False
+    self.cruise_rpm_last = 0
+    self.cruise_throttle_last = 0
     self.rpm_steady = 0
     self.throttle_steady = 0
 
