@@ -77,8 +77,6 @@ def create_es_lkas(packer, es_lkas_msg, enabled, visual_alert, left_line, right_
   # Enable LKAS for market specific models
   values["LKAS_Enable_1"] = 0
   values["LKAS_Enable_2"] = 3
-  values["LKAS_Left_Line_Enable"] = 1
-  values["LKAS_Right_Line_Enable"] = 1
 
   return packer.make_can_msg("ES_LKAS_State", 0, values)
 
