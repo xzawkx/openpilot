@@ -85,6 +85,7 @@ class CarController():
             and CS.close_distance < 255                        # ignore max value
             and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
           self.sng_acc_resume = True
+        self.prev_cruise_state = CS.cruise_state
     else:
       if (enabled                                          # ACC active
           and CS.car_follow == 1                           # lead car
@@ -95,7 +96,6 @@ class CarController():
       if CS.out.standstill and not self.prev_standstill:
         self.standstill_start = frame
       self.prev_standstill = CS.out.standstill
-      self.prev_cruise_state = CS.cruise_state
 
     if self.sng_acc_resume:
       if self.sng_acc_resume_cnt < 5:
