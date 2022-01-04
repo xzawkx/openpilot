@@ -86,7 +86,7 @@ class CarController():
             and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
           self.sng_acc_resume = True
         self.prev_cruise_state = CS.cruise_state
-    else:
+    elif CS.CP.carFingerprint in PREGLOBAL_CARS or CS.CP.carFingerprint in GLOBAL_CARS_SNG:
       if (enabled                                          # ACC active
           and CS.car_follow == 1                           # lead car
           and CS.out.standstill
