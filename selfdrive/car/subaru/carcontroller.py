@@ -56,20 +56,20 @@ class CarController():
     throttle_cmd = False
     speed_cmd = False
 
-    if CS.CP.carFingerprint in PREGLOBAL_CARS:
-      # Initiate the ACC resume sequence if conditions are met
-      if (enabled                                            # ACC active
+    if CS.has_epb:
+      if CS.CP.carFingerprint in PREGLOBAL_CARS:
+        # Initiate the ACC resume sequence if conditions are met
+        if (enabled                                          # ACC active
           and CS.car_follow == 1                             # lead car
           and CS.out.standstill                              # must be standing still
           and CS.close_distance > 3                          # acc resume trigger threshold
           and CS.close_distance < 4.5                        # max operating distance to filter false positives
           and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
         self.sng_acc_resume = True
-      # Cancel ACC if stopped, brake pressed and not stopped behind another car
-      if enabled and CS.out.brakePressed and CS.car_follow == 0 and CS.out.standstill:
-        pcm_cancel_cmd = True
-    elif CS.CP.carFingerprint in GLOBAL_CARS_SNG:
-      if CS.has_epb:
+        # Cancel ACC if stopped, brake pressed and not stopped behind another car
+        if enabled and CS.out.brakePressed and CS.car_follow == 0 and CS.out.standstill:
+          pcm_cancel_cmd = True
+      elif CS.CP.carFingerprint in GLOBAL_CARS_SNG:
         # Record manual hold set while in standstill and no car in front
         if CS.out.standstill and self.prev_cruise_state == 1 and CS.cruise_state == 3 and CS.car_follow == 0:
           self.manual_hold = True
@@ -85,12 +85,12 @@ class CarController():
             and CS.close_distance < 255                        # ignore max value
             and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
           self.sng_acc_resume = True
-      else:
-          if (enabled                                          # ACC active
-              and CS.car_follow == 1                           # lead car
-              and CS.out.standstill
-              and frame > self.standstill_start + 50):         # standstill for >0.5 second
-            speed_cmd = True
+    else:
+      if (enabled                                          # ACC active
+          and CS.car_follow == 1                           # lead car
+          and CS.out.standstill
+          and frame > self.standstill_start + 50):         # standstill for >0.5 second
+        speed_cmd = True
 
       if CS.out.standstill and not self.prev_standstill:
         self.standstill_start = frame
@@ -133,6 +133,9 @@ class CarController():
       if self.throttle_cnt != CS.throttle_msg["Counter"]:
          can_sends.append(subarucan.create_preglobal_throttle(self.packer, CS.throttle_msg, throttle_cmd))
          self.throttle_cnt = CS.throttle_msg["Counter"]
+
+      if (frame % 2) == 0:
+         can_sends.append(subarucan.create_preglobal_brake_pedal(self.packer, CS.brake_pedal_msg, speed_cmd))
 
     else:
       if CS.CP.carFingerprint not in [CAR.CROSSTREK_2020H, CAR.OUTBACK]:

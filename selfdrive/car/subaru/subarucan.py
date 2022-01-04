@@ -136,3 +136,11 @@ def create_preglobal_throttle(packer, throttle_msg, throttle_cmd):
     values["Throttle_Pedal"] = 5
 
   return packer.make_can_msg("Throttle", 2, values)
+
+def create_preglobal_brake_pedal(packer, brake_pedal_msg, speed_cmd):
+
+  values = copy.copy(brake_pedal_msg)
+  if speed_cmd:
+    values["Speed"] = 3
+
+  return packer.make_can_msg("Brake_Pedal", 2, values)

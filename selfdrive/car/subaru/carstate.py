@@ -96,6 +96,7 @@ class CarState(CarStateBase):
                         cp.vl["BodyInfo"]["DOOR_OPEN_FL"]])
     ret.steerError = cp.vl["Steering_Torque"]["Steer_Error_1"] == 1
     self.throttle_msg = copy.copy(cp.vl["Throttle"])
+    self.brake_pedal_msg = copy.copy(cp.vl["Brake_Pedal"])
 
     if self.car_fingerprint in PREGLOBAL_CARS:
       self.cruise_button = cp_cam.vl["ES_Distance"]["Cruise_Button"]
@@ -107,7 +108,6 @@ class CarState(CarStateBase):
       ret.steerWarning = cp.vl["Steering_Torque"]["Steer_Warning"] == 1
       ret.cruiseState.nonAdaptive = cp_cam.vl["ES_DashStatus"]["Conventional_Cruise"] == 1
       self.cruise_state = cp_cam.vl["ES_DashStatus"]["Cruise_State"]
-      self.brake_pedal_msg = copy.copy(cp.vl["Brake_Pedal"])
       self.es_lkas_msg = copy.copy(cp_cam.vl["ES_LKAS_State"])
       if self.car_fingerprint == CAR.OUTBACK:
         self.car_follow = cp_body.vl["ES_Distance"]["Car_Follow"]
@@ -192,6 +192,7 @@ class CarState(CarStateBase):
 
         ("UNITS", "Dash_State2", 0),
         ("Steering_Angle", "Steering", 0),
+        ("Speed", "Brake_Pedal", 0),
       ]
 
       checks += [
