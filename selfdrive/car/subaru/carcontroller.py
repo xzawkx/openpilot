@@ -60,12 +60,12 @@ class CarController():
       if CS.CP.carFingerprint in PREGLOBAL_CARS:
         # Initiate the ACC resume sequence if conditions are met
         if (enabled                                          # ACC active
-          and CS.car_follow == 1                             # lead car
-          and CS.out.standstill                              # must be standing still
-          and CS.close_distance > 3                          # acc resume trigger threshold
-          and CS.close_distance < 4.5                        # max operating distance to filter false positives
-          and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
-        self.sng_acc_resume = True
+            and CS.car_follow == 1                             # lead car
+            and CS.out.standstill                              # must be standing still
+            and CS.close_distance > 3                          # acc resume trigger threshold
+            and CS.close_distance < 4.5                        # max operating distance to filter false positives
+            and CS.close_distance > self.prev_close_distance): # distance with lead car is increasing
+          self.sng_acc_resume = True
         # Cancel ACC if stopped, brake pressed and not stopped behind another car
         if enabled and CS.out.brakePressed and CS.car_follow == 0 and CS.out.standstill:
           pcm_cancel_cmd = True
