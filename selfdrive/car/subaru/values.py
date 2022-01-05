@@ -30,14 +30,70 @@ class CAR:
   OUTBACK_PREGLOBAL_2018 = "SUBARU OUTBACK 2018 - 2019"
   WRX_PREGLOBAL = "SUBARU WRX 2018"
 
+FINGERPRINTS = {
+  CAR.ASCENT: [{
+  # SUBARU ASCENT LIMITED 2019
+    2: 8, 64: 8, 65: 8, 72: 8, 73: 8, 280: 8, 281: 8, 290: 8, 312: 8, 313: 8, 314: 8, 315: 8, 316: 8, 326: 8, 544: 8, 545: 8, 546: 8, 552: 8, 554: 8, 557: 8, 576: 8, 577: 8, 722: 8, 801: 8, 802: 8, 805: 8, 808: 8, 811: 8, 816: 8, 826: 8, 837: 8, 838: 8, 839: 8, 842: 8, 912: 8, 915: 8, 940: 8, 1614: 8, 1617: 8, 1632: 8, 1650: 8, 1657: 8, 1658: 8, 1677: 8, 1722: 8, 1743: 8, 1759: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8
+  }],
+  CAR.IMPREZA: [{
+    2: 8, 64: 8, 65: 8, 72: 8, 73: 8, 280: 8, 281: 8, 290: 8, 312: 8, 313: 8, 314: 8, 315: 8, 316: 8, 326: 8, 372: 8, 544: 8, 545: 8, 546: 8, 552: 8, 554: 8, 557: 8, 576: 8, 577: 8, 722: 8, 801: 8, 802: 8, 805: 8, 808: 8, 811: 8, 816: 8, 826: 8, 827: 8, 837: 8, 838: 8, 839: 8, 842: 8, 912: 8, 915: 8, 940: 8, 1614: 8, 1617: 8, 1632: 8, 1650: 8, 1657: 8, 1658: 8, 1677: 8, 1697: 8, 1722: 8, 1743: 8, 1759: 8, 1786: 5, 1787: 5, 1788: 8, 1809: 8, 1813: 8, 1817: 8, 1821: 8, 1840: 8, 1848: 8, 1924: 8, 1932: 8, 1952: 8, 1960: 8
+  }],
+  CAR.IMPREZA_2020: [{
+  # SUBARU CROSSTREK SPORT 2020
+    2: 8, 64: 8, 65: 8, 72: 8, 73: 8, 280: 8, 281: 8, 282: 8, 290: 8, 312: 8, 313: 8, 314: 8, 315: 8, 316: 8, 326: 8, 372: 8, 544: 8, 545: 8, 546: 8, 552: 8, 554: 8, 557: 8, 576: 8, 577: 8, 722: 8, 801: 8, 802: 8, 803: 8, 805: 8, 808: 8, 816: 8, 826: 8, 837: 8, 838: 8, 839: 8, 842: 8, 912: 8, 915: 8, 940: 8, 1617: 8, 1632: 8, 1650: 8, 1677: 8, 1697: 8, 1722: 8, 1743: 8, 1759: 8, 1786: 5, 1787: 5, 1788: 8, 1809: 8, 1813: 8, 1817: 8, 1821: 8, 1840: 8, 1848: 8, 1924: 8, 1932: 8, 1952: 8, 1960: 8, 1968: 8, 1976: 8, 2015: 8, 2016: 8, 2024: 8
+  },
+  # IMPREZA 2020
+  {
+    2: 8, 64: 8, 65: 8, 72: 8, 73: 8, 280: 8, 281: 8, 282: 8, 290: 8, 312: 8, 313: 8, 314: 8, 315: 8, 316: 8, 326: 8, 544: 8, 545: 8, 546: 8, 554: 8, 557: 8, 576: 8, 577: 8, 801: 8, 802: 8, 803: 8, 805: 8, 808: 8, 816: 8, 826: 8, 837: 8, 838: 8, 839: 8, 842: 8, 912: 8, 915: 8, 940: 8, 1614: 8, 1617: 8, 1632: 8, 1657: 8, 1658: 8, 1677: 8, 1697: 8, 1743: 8, 1759: 8, 1786: 5, 1787: 5, 1788: 8, 1809: 8, 1813: 8, 1817: 8, 1821: 8, 1840: 8, 1848: 8, 1924: 8, 1932: 8, 1952: 8, 1960: 8
+  }],
+  CAR.FORESTER: [{
+  # Forester 2019-2020
+    2: 8, 64: 8, 65: 8, 72: 8, 73: 8, 280: 8, 281: 8, 282: 8, 290: 8, 312: 8, 313: 8, 314: 8, 315: 8, 316: 8, 326: 8, 372: 8, 544: 8, 545: 8, 546: 8, 552: 8, 554: 8, 557: 8, 576: 8, 577: 8, 722: 8, 801: 8, 802: 8, 803: 8, 805: 8, 808: 8, 811: 8, 816: 8, 826: 8, 837: 8, 838: 8, 839: 8, 842: 8, 912: 8, 915: 8, 940: 8, 961: 8, 984: 8, 1614: 8, 1617: 8, 1632: 8, 1650: 8, 1651: 8, 1657: 8, 1658: 8, 1677: 8, 1697: 8, 1698: 8, 1722: 8, 1743: 8, 1759: 8, 1787: 5, 1788: 8, 1809: 8, 1813: 8, 1817: 8, 1821: 8, 1840: 8, 1848: 8, 1924: 8, 1932: 8, 1952: 8, 1960: 8
+  }],
+  CAR.OUTBACK_PREGLOBAL: [{
+  # OUTBACK PREMIUM 2.5i 2015
+    2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 346: 8, 352: 8, 353: 8, 354: 8, 356: 8, 358: 8, 359: 8, 392: 8, 640: 8, 642: 8, 644: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 977: 8, 1632: 8, 1745: 8, 1786: 5, 1882: 8, 2015: 8, 2016: 8, 2024: 8, 604: 8, 885: 8, 1788: 8, 316: 8, 1614: 8, 1640: 8, 1657: 8, 1658: 8, 1672: 8, 1743: 8, 1785: 5, 1787: 5
+  }],
+  },
+  # OUTBACK PREMIUM 3.6i 2015
+  {
+    2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 392: 8, 604: 8, 640: 8, 642: 8, 644: 8, 864: 8, 865: 8, 866: 8, 87
+2: 8, 880: 8, 881: 8, 882: 8, 884: 8, 977: 8, 1632: 8, 1745: 8, 1779: 8, 1786: 5
+  },
+  # OUTBACK LIMITED 2.5i 2018
+  {
+    2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 316: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 352: 8, 353: 8, 354: 8, 356: 8, 358: 8, 359: 8, 392: 8, 55
+4: 8, 604: 8, 640: 8, 642: 8, 644: 8, 805: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 977: 8, 1614: 8, 1632: 8, 1657: 8, 1658: 8, 1672: 8, 1722: 8, 1
+736: 8, 1743: 8, 1745: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8
+  }],
+  CAR.OUTBACK_PREGLOBAL_2018: [{
+  # OUTBACK LIMITED 3.6R 2019
+    2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 316: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 352: 8, 353: 8, 354: 8, 356: 8, 358: 8, 359: 8, 392: 8, 55
+4: 8, 604: 8, 640: 8, 642: 8, 644: 8, 805: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 886: 2, 977: 8, 1614: 8, 1632: 8, 1657: 8, 1658: 8, 1672: 8, 17
+36: 8, 1743: 8, 1745: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8, 1862: 8, 1870: 8, 1920: 8, 1927: 8, 1928: 8, 1935: 8, 1968: 8, 1976: 8, 2016: 8, 2017: 8, 2024: 8, 2025: 8
+  }],
+  CAR.FORESTER_PREGLOBAL: [{
+  # FORESTER PREMIUM 2.5i 2017
+    2: 8, 112: 8, 117: 8, 128: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 340: 7, 342: 8, 352: 8, 353: 8, 354: 8, 355: 8, 35
+6: 8, 554: 8, 604: 8, 640: 8, 641: 8, 642: 8, 805: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 886: 1, 888: 8, 977: 8, 1398: 8, 1632: 8, 1743: 8, 1744
+: 8, 1745: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8, 1882: 8, 1895: 8, 1903: 8, 1986: 8, 1994: 8, 2015: 8, 2016: 8, 2024: 8, 644:8, 890:8, 1736:8
+  }],
+  CAR.LEGACY_PREGLOBAL: [{
+  # LEGACY 2.5i 2017
+    2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 392: 8, 604: 8, 640: 8, 642: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 977: 8, 1632: 8, 1640: 8, 1736: 8, 1745: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8, 352: 8, 353: 8, 354: 8, 356: 8, 358: 8, 359: 8, 644: 8
+  },
+  # LEGACY 2018
+  {
+    2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 316: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 392: 8, 604: 8, 640: 8, 642: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 977: 8, 1614: 8, 1632: 8, 1640: 8, 1657: 8, 1658: 8, 1672: 8, 1722: 8, 1743: 8, 1745: 8, 1778: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8, 2015: 8, 2016: 8, 2024: 8
+  },
+  # LEGACY 2018
+  {
+    2: 8, 208: 8, 209: 4, 210: 8, 211: 7, 212: 8, 316: 8, 320: 8, 321: 8, 324: 8, 328: 8, 329: 8, 336: 2, 338: 8, 342: 8, 352: 8, 353: 8, 354: 8, 356: 8, 358: 8, 359: 8, 392: 8, 554: 8, 604: 8, 640: 8, 642: 8, 805: 8, 864: 8, 865: 8, 866: 8, 872: 8, 880: 8, 881: 8, 882: 8, 884: 8, 885: 8, 977: 8, 1614: 8, 1632: 8, 1640: 8, 1657: 8, 1658: 8, 1672: 8, 1722: 8, 1743: 8, 1745: 8, 1785: 5, 1786: 5, 1787: 5, 1788: 8, 2015: 8, 2016: 8, 2024: 8
+  }],
+}
+
 FW_VERSIONS = {
   CAR.ASCENT: {
-    # 2019 Ascent - UDM / @Adminiuga
-    # 2019 Ascent - UDM / @tvo
-    # 2019 Ascent - UDM / @RCoaster
-    # 2021 Ascent - UDM / @Sandy
-    # 2020 Ascent - UDM / @ndtran
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa5 \x19\x02\x00',
       b'\xa5 !\002\000',
@@ -67,28 +123,6 @@ FW_VERSIONS = {
     ],
   },
   CAR.IMPREZA: {
-    # 2018 Crosstrek - EDM / @martinl
-    # 2018 Impreza - ADM / @Michael
-    # 2019 Impreza Premium - UDM / @hitoryu2001
-    # 2018 Crosstrek Limited - UDM / @Joey
-    # 2017 Impreza - UDM / @Frye
-    # 2018 Crosstrek - UDM / @rwalsh3
-    # 2018 Crosstrek - UDM / @pemerick07
-    # 2018 Crosstrek - UDM / @rwalsh3 (new engine fw)
-    # 2019 Crosstrek - UDM / @Nooks Cranny
-    # 2019 Impreza - UDM / @phosphor
-    # 2019 Impreza - UDM / @cheesypotato
-    # 2019 Impreza - UDM / @dbzx6r
-    # 2018 Impreza Sport - UDM / @gking
-    # 2019 Crosstrek Limited - UDM / @cellfreak
-    # 2019 Impreza Limited - UDM / @boros
-    # 2017 Impreza - UDM / @Fidel
-    # 2018 Crosstrek - UDM / @dnewstat
-    # 2018 Impreza Limited - UDM / @isaacdchan
-    # 2017 Impreza 1.6 - UDM / @Moodkiller
-    # 2019 Crosstrek - UDM / @AJInvesting
-    # 2017 Impreza 2.0 - UDM / @prlifestyle93
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x7a\x94\x3f\x90\x00',
       b'\xa2 \x185\x00',
@@ -109,7 +143,7 @@ FW_VERSIONS = {
       b'\x8a\xc0\x10\x00',
     ],
     (Ecu.fwdCamera, 0x787, None): [
-      b'\x00\x00d\xb5\x1f@ \x0e',
+      b'\x00\x00\x64\xb5\x1f\x40\x20\x0e',
       b'\x00\x00d\xdc\x1f@ \x0e',
       b'\x00\x00e\x1c\x1f@ \x14',
       b'\x00\x00d)\x1f@ \a',
@@ -158,13 +192,6 @@ FW_VERSIONS = {
     ],
   },
   CAR.IMPREZA_2020: {
-    # 2020 Impreza Sport - UDM / @CrispinFlowerday
-    # 2020 Impreza Hatchback Premium - UDM / @davidvatz
-    # 2020 Impreza Hatchback - UDM / @GPT-3
-    # 2020 Impreza Premium - UDM / @KeetsScrimalittle
-    # 2021 Crosstrek Limited - UDM / @AdamSLevy
-    # 2021 Crosstrek Premium - UDM / @pemerick07
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa2 \0314\000',
       b'\xa2 \0313\000',
@@ -194,14 +221,6 @@ FW_VERSIONS = {
     ],
   },
   CAR.FORESTER: {
-    # 2021 Forester - UDM / @gotham
-    # 2019 Forester - UDM / @clockenessmnstr
-    # 2020 Forester - UDM / @TH156UY
-    # 2021 Forester - UDM / @umby24
-    # 2020 Forester Sport - UDM / @RyanYo
-    # 2019 Forester Sport - UDM / @Zapman
-    # 2019 Forester - UDM / @Patienc3
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\xa3 \030\024\000',
       b'\xa3  \024\000',
@@ -233,13 +252,6 @@ FW_VERSIONS = {
     ],
   },
   CAR.FORESTER_PREGLOBAL: {
-    # 2018 Forester 2.5i Touring - UDM / @Oreo
-    # 2018 Forester 2.5 Limited - Canada / @litobro
-    # 2017 Forester - UDM / @hitoryu2001
-    # 2018 Forester - UDM / @sarvcomp
-    # 2018 Forester 2.5i Premium - UDM / @Diesel Monkey
-    # 2018 Forester - UDM / @2018NissanRogue
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x7d\x97\x14\x40',
       b'\xf1\x00\xbb\x0c\x04',
@@ -268,11 +280,6 @@ FW_VERSIONS = {
     ],
   },
   CAR.LEGACY_PREGLOBAL: {
-    # 2016 Subaru Legacy - UDM / @nort
-    # 2015 Subaru Legacy 3.6R Limited / @chrissantamaria
-    # 2017 Subaru Legacy 2.5i Sport / @bonnysonnyandclyde
-    # 2015 Subaru Legacy Premium 2.5i / @Wanting.RA1N
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'k\x97D\x00',
       b'[\xba\xc4\x03',
@@ -302,58 +309,7 @@ FW_VERSIONS = {
       b'\xbf\xf2\000\x80\000',
     ],
   },
-  CAR.LEGACY_PREGLOBAL_2018: {
-    # 2018 Subaru Legacy 2.5i Premium - UDM / @kram322
-    # Ecu, addr, subaddr: ROM ID
-    (Ecu.esp, 0x7b0, None): [
-      b'\x8b\x97D\x00',
-    ],
-    (Ecu.eps, 0x746, None): [
-      b'{\xb0\x00\x00',
-    ],
-    (Ecu.fwdCamera, 0x787, None): [
-      b'\x00\x00df\x1f@ \n',
-    ],
-    (Ecu.engine, 0x7e0, None): [
-      b'\xb5\"@p\a',
-    ],
-    (Ecu.transmission, 0x7e1, None): [
-      b'\xbc\xf2\x00\x81\x00',
-    ],
-  },
-  CAR.LEVORG_PREGLOBAL: {
-     # 2016 Subaru Levorg / @jpgnz
-     # Ecu, addr, subaddr: ROM ID
-     (Ecu.esp, 0x7b0, None): [
-       b'j\x9c\x92\002'
-     ],
-     (Ecu.eps, 0x746, None): [
-       b'Z\xb0\000\000'
-     ],
-     (Ecu.fwdCamera, 0x787, None): [
-       b'\000\000c\xd3\000\000\000\000',
-     ],
-     (Ecu.engine, 0x7e0, None): [
-       b'\xf1\x82\xa6\000\xa1t\a'
-     ],
-     (Ecu.transmission, 0x7e1, None): [
-       b'\xcb\xd9\000p\000'
-     ],
-  },
   CAR.OUTBACK_PREGLOBAL: {
-    # 2017 Outback Limited 3.6r - UDM / @Anthony
-    # 2016 Outback Limited 2.5 - UDM / @aeiro
-    # 2015 Outback Limited 2.5 - ADM / @Bugsy
-    # 2015 Outback Premium 3.6i - UDM / @aidrive
-    # 2016 Outback Premium 2.5 - UDM / @Troy
-    # 2017 Subaru Outback 2.5 - UDM / @chewbaru
-    # 2017 Subaru Outback - UDM / @the3seashells
-    # 2016 Outback Premium 2.5i - UDM / @G-Wood
-    # 2016 Outback 3.6R - UDM / @KingSlayer
-    # 2017 Outback Limited 2.5i / @laksdjf
-    # 2015 Outback 3.6R - UDM / @bitwaster
-    # 2015 Outback - UDM / @chk_null
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'{\x9a\xac\x00',
       b'k\x97\xac\x00',
@@ -407,19 +363,7 @@ FW_VERSIONS = {
       b'\xbf\xfb\xe0b\x00',
     ],
   },
-  # Outback with reversed driver torque signal
   CAR.OUTBACK_PREGLOBAL_2018: {
-    # 2018 Outback Premium 2.5i - UDM / @zhoux260
-    # 2018 Outback 3.6r UDM / @mirroregami
-    # 2018 Outback 2.5i Premium UDM / @dirkmm
-    # 2019 Outback UDM / @Valhalla
-    # 2018 Outback 2.5 / @haak
-    # 2018 Outback 3.6r USDM / @Scripty_
-    # 2018 Subaru Outback 2.0d - ADM / @Richo
-    # 2019 Outback 2.5i Premium / @Z-dawg Swizzlepants
-    # 2019 Outback Touring 3.6R / @danyo
-    # 2019 Outback - UDM / @Steven C
-    # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x8b\x97\xac\x00',
       b'\x8b\x9a\xac\x00',
@@ -462,6 +406,44 @@ FW_VERSIONS = {
       b'\xbb\xfb\xe0`\000',
     ],
   },
+  CAR.LEGACY_PREGLOBAL_2018: {
+    # 2018 Subaru Legacy 2.5i Premium - UDM / @kram322
+    # Ecu, addr, subaddr: ROM ID
+    (Ecu.esp, 0x7b0, None): [
+      b'\x8b\x97D\x00',
+    ],
+    (Ecu.eps, 0x746, None): [
+      b'{\xb0\x00\x00',
+    ],
+    (Ecu.fwdCamera, 0x787, None): [
+      b'\x00\x00df\x1f@ \n',
+    ],
+    (Ecu.engine, 0x7e0, None): [
+      b'\xb5\"@p\a',
+    ],
+    (Ecu.transmission, 0x7e1, None): [
+      b'\xbc\xf2\x00\x81\x00',
+    ],
+  },
+  CAR.LEVORG_PREGLOBAL: {
+     # 2016 Subaru Levorg / @jpgnz
+     # Ecu, addr, subaddr: ROM ID
+     (Ecu.esp, 0x7b0, None): [
+       b'j\x9c\x92\002'
+     ],
+     (Ecu.eps, 0x746, None): [
+       b'Z\xb0\000\000'
+     ],
+     (Ecu.fwdCamera, 0x787, None): [
+       b'\000\000c\xd3\000\000\000\000',
+     ],
+     (Ecu.engine, 0x7e0, None): [
+       b'\xf1\x82\xa6\000\xa1t\a'
+     ],
+     (Ecu.transmission, 0x7e1, None): [
+       b'\xcb\xd9\000p\000'
+     ],
+  },
   CAR.WRX_PREGLOBAL: {
     # 2018 Subaru WRX / @cferra
     # Ecu, addr, subaddr: ROM ID
@@ -482,7 +464,6 @@ FW_VERSIONS = {
     ],
   },
 }
-
 
 STEER_THRESHOLD = {
   CAR.ASCENT: 80,
