@@ -87,6 +87,7 @@ class CarController():
           self.sng_acc_resume = True
         self.prev_cruise_state = CS.cruise_state
     elif CS.CP.carFingerprint in PREGLOBAL_CARS or CS.CP.carFingerprint in GLOBAL_CARS_SNG:
+      # avoid acc disengage in standstill, stock acc will autoresume when car in front starts moving
       if (enabled                                          # ACC active
           and CS.car_follow == 1                           # lead car
           and CS.out.standstill
@@ -116,6 +117,9 @@ class CarController():
         # disengage ACC when OP is disengaged
         if pcm_cancel_cmd:
           cruise_button = 1
+        # send resume 1/sec while in standstill
+        elif speed_cmd and (frame % 100) == 0:
+          cruise_button = 4
         # turn main on if off and past start-up state
         elif not CS.out.cruiseState.available and CS.ready:
           cruise_button = 1
@@ -124,6 +128,8 @@ class CarController():
 
         # unstick previous mocked button press
         if cruise_button == 1 and self.cruise_button_prev == 1:
+          cruise_button = 0
+        elif cruise_button == 4 and self.cruise_button_prev == 4:
           cruise_button = 0
         self.cruise_button_prev = cruise_button
 
