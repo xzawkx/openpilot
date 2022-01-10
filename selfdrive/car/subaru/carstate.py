@@ -118,7 +118,7 @@ class CarState(CarStateBase):
         self.close_distance = cp_cam.vl["ES_Distance"]["Close_Distance"]
         self.es_distance_msg = copy.copy(cp_cam.vl["ES_Distance"])
       self.es_dashstatus_msg = copy.copy(cp_cam.vl["ES_DashStatus"])
-      self.es_status_2_msg = copy.copy(cp.cam_vl["ES_Status_2"])
+      self.es_status_2_msg = copy.copy(cp_cam.vl["ES_Status_2"])
 
     return ret
 
