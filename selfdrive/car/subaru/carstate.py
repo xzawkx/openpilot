@@ -118,6 +118,7 @@ class CarState(CarStateBase):
         self.close_distance = cp_cam.vl["ES_Distance"]["Close_Distance"]
         self.es_distance_msg = copy.copy(cp_cam.vl["ES_Distance"])
       self.es_dashstatus_msg = copy.copy(cp_cam.vl["ES_DashStatus"])
+      self.es_status_2_msg = copy.copy(cp.cam_vl["ES_Status_2"])
 
     return ret
 
@@ -393,11 +394,16 @@ class CarState(CarStateBase):
         ("Signal4", "ES_LKAS_State", 0),
         ("LKAS_Enable_2", "ES_LKAS_State", 0),
         ("Signal5", "ES_LKAS_State", 0),
+
+        ("Counter", "ES_Status_2", 0),
+        ("Signal1", "ES_Status_2", 0),
+        ("Signal2", "ES_Status_2", 0),
       ]
 
       checks = [
         ("ES_DashStatus", 10),
         ("ES_LKAS_State", 10),
+        ("ES_Status_2", 10),
       ]
 
       if CP.carFingerprint not in [CAR.CROSSTREK_2020H, CAR.OUTBACK]:
