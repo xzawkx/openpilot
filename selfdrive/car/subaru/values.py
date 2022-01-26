@@ -323,6 +323,7 @@ FW_VERSIONS = {
   },
   CAR.LEGACY_PREGLOBAL_2018: {
     # 2018 Subaru Legacy 2.5i Premium - UDM / @kram322
+    # 2018 Subaru Legacy - UDM / @Hassan
     # Ecu, addr, subaddr: ROM ID
     (Ecu.esp, 0x7b0, None): [
       b'\x8b\x97D\x00',
@@ -332,12 +333,15 @@ FW_VERSIONS = {
     ],
     (Ecu.fwdCamera, 0x787, None): [
       b'\x00\x00df\x1f@ \n',
+      b'\x00\x00df\x00\x00\x00\x00',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xb5\"@p\a',
+      b'\x01EB4S100C\x00\x00\x00\x00\x00\x00\x00\x00',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xbc\xf2\x00\x81\x00',
+      b'\xf1\x00\xa4\x10@',
     ],
   },
   CAR.LEVORG_PREGLOBAL: {
