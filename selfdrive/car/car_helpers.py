@@ -1,4 +1,5 @@
 import os
+import time
 from common.params import Params
 from common.basedir import BASEDIR
 from selfdrive.version import is_comma_remote, is_tested_branch
