@@ -395,9 +395,7 @@ if __name__ == "__main__":
   fw_vers = get_fw_versions(logcan, sendcan, 1, extra=extra, debug=args.debug, progress=True)
   _, candidates = match_fw_to_car(fw_vers)
 
-  community_feature_toggle = Params().get_bool("CommunityFeaturesToggle")
-
-  if community_feature_toggle and candidates == set():
+  if candidates == set():
     cloudlog.warning("No matching candidates found, retrying fingerprinting")
     time.sleep(10.)
     fw_vers = get_fw_versions(logcan, sendcan, 1, extra=extra, debug=args.debug, progress=True)
