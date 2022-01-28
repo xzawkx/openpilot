@@ -40,10 +40,11 @@ class CarInterface(CarInterfaceBase):
       ret.openpilotLongitudinalControl = False
       ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.tesla, 0)]
 
+    ret.steerLimitTimer = 1.0
     ret.steerActuatorDelay = 0.1
     ret.steerRateCost = 0.5
 
-    if candidate in [CAR.AP2_MODELS, CAR.AP1_MODELS]:
+    if candidate in (CAR.AP2_MODELS, CAR.AP1_MODELS):
       ret.mass = 2100. + STD_CARGO_KG
       ret.wheelbase = 2.959
       ret.centerToFront = ret.wheelbase * 0.5
