@@ -187,6 +187,7 @@ FW_VERSIONS = {
       b'\xca!`0\a',
       b'\xcc\"f0\a',
       b'\xcc!fp\a',
+      b'\xca!a0\x07',
     ],
     (Ecu.transmission, 0x7e1, None): [
       b'\xe6\xf5\004\000\000',
@@ -248,7 +249,7 @@ FW_VERSIONS = {
       b'\032\xf6B0\000',
       b'\032\xf6F`\000',
       b'\032\xf6b`\000',
-      b'\032\xf6B`\000'
+      b'\032\xf6B`\000',
       b'\xf1\x00\xa4\x10@',
     ],
   },
@@ -271,7 +272,7 @@ FW_VERSIONS = {
     (Ecu.fwdCamera, 0x787, None): [
       b'\x00\x00\x64\x35\x1f\x40\x20\x09',
       b'\x00\x00c\xe9\x1f@ \x03',
-      b'\x00\x00d\xd3\x1f@ \t'
+      b'\x00\x00d\xd3\x1f@ \t',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xba"@p\a',
@@ -348,19 +349,19 @@ FW_VERSIONS = {
      # 2016 Subaru Levorg / @jpgnz
      # Ecu, addr, subaddr: ROM ID
      (Ecu.esp, 0x7b0, None): [
-       b'j\x9c\x92\002'
+       b'j\x9c\x92\002',
      ],
      (Ecu.eps, 0x746, None): [
-       b'Z\xb0\000\000'
+       b'Z\xb0\000\000',
      ],
      (Ecu.fwdCamera, 0x787, None): [
        b'\000\000c\xd3\000\000\000\000',
      ],
      (Ecu.engine, 0x7e0, None): [
-       b'\xf1\x82\xa6\000\xa1t\a'
+       b'\xf1\x82\xa6\000\xa1t\a',
      ],
      (Ecu.transmission, 0x7e1, None): [
-       b'\xcb\xd9\000p\000'
+       b'\xcb\xd9\000p\000',
      ],
   },
   CAR.OUTBACK: {
@@ -375,7 +376,7 @@ FW_VERSIONS = {
       b'\xa1  \a\x00',
       b'\xa1  \b\001',
       b'\xa1  \x06\x00',
-      b'\xa1 "\t\x01'
+      b'\xa1 "\t\x01',
     ],
     (Ecu.eps, 0x746, None): [
       b'\x9b\xc0\x10\x00',
@@ -453,7 +454,7 @@ FW_VERSIONS = {
       b'\xab"@s\a',
       b'\xab+@@\a',
       b'\xb4"@r\a',
-      b'\xa0+@@\x07'
+      b'\xa0+@@\x07',
       b'\xa0\"@\x80\a',
     ],
     (Ecu.transmission, 0x7e1, None): [
@@ -537,7 +538,7 @@ FW_VERSIONS = {
     ],
     (Ecu.fwdCamera, 0x787, None): [
       b'\x00\x00d\xae\x1f@ \r',
-      b'\x00\x00c\x93\x1f@\x10\r'
+      b'\x00\x00c\x93\x1f@\x10\r',
     ],
     (Ecu.engine, 0x7e0, None): [
       b'\xf1\x82\xb2)\xa0P\x97',
