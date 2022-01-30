@@ -162,10 +162,8 @@ class CarState(CarStateBase):
 
     # CruiseControl is on can1 for OUTBACK and not used for CROSSTREK_2020H
     if CP.carFingerprint not in [CAR.OUTBACK, CAR.CROSSTREK_2020H]:
-      signals += [
-        ("Cruise_On", "CruiseControl", 0),
-        ("Cruise_Activated", "CruiseControl", 0),
-      ]
+      signals.append(("Cruise_On", "CruiseControl", 0))
+      signals.append(("Cruise_Activated", "CruiseControl", 0))
 
     if CP.carFingerprint in PREGLOBAL_CARS:
       signals += [
@@ -222,7 +220,6 @@ class CarState(CarStateBase):
         ("Steer_Warning", "Steering_Torque", 0),
         ("UNITS", "Dashlights", 0),
       ]
-
       checks.append(("Dashlights", 10))
       checks.append(("BodyInfo", 10))
 
@@ -318,9 +315,9 @@ class CarState(CarStateBase):
         ("Cruise_Button", "ES_Distance", 0),
         ("Signal7", "ES_Distance", 0),
       ]
-
       checks.append(("ES_DashStatus", 20))
       checks.append(("ES_Distance", 20))
+
     else:
       signals = [
         ("Counter", "ES_DashStatus", 0),
@@ -366,7 +363,6 @@ class CarState(CarStateBase):
         ("LKAS_Alert", "ES_LKAS_State", 0),
         ("Signal3", "ES_LKAS_State", 0),
       ]
-
       checks.append(("ES_DashStatus", 10))
       checks.append(("ES_LKAS_State", 10))
 
@@ -390,7 +386,6 @@ class CarState(CarStateBase):
           ("Cruise_Resume", "ES_Distance", 0),
           ("Signal6", "ES_Distance", 0),
         ]
-
         checks.append(("ES_Distance", 20))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)
