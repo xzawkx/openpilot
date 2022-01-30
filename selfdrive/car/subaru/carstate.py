@@ -118,9 +118,7 @@ class CarState(CarStateBase):
         ("L_APPROACHING", "BSD_RCTA"),
         ("R_APPROACHING", "BSD_RCTA"),
       ]
-      checks += [
-        ("BSD_RCTA", 17),
-      ]
+      checks.append(("BSD_RCTA", 17))
 
     if CP.carFingerprint not in PREGLOBAL_CARS:
       signals += [
@@ -136,10 +134,7 @@ class CarState(CarStateBase):
         ("CruiseControl", 20),
       ]
     else:
-      signals += [
-        ("UNITS", "Dash_State2"),
-      ]
-
+      signals.append(("UNITS", "Dash_State2"))
       checks += [
         ("BodyInfo", 1),
         ("CruiseControl", 50),
@@ -147,13 +142,9 @@ class CarState(CarStateBase):
       ]
 
       if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.LEVORG_PREGLOBAL, CAR.WRX_PREGLOBAL]:
-        checks += [
-          ("Dashlights", 20),
-        ]
+        checks.append(("Dashlights", 20))
       elif CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.LEGACY_PREGLOBAL_2018, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
-        checks += [
-          ("Dashlights", 10),
-        ]
+        checks.append(("Dashlights", 10))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0)
 
