@@ -315,7 +315,7 @@ class CarState(CarStateBase):
         ("Cruise_Button", "ES_Distance", 0),
         ("Signal7", "ES_Distance", 0),
       ]
-      checks.append(("ES_DashStatus", 20))
+      checks = [("ES_DashStatus", 20)]
       checks.append(("ES_Distance", 20))
 
     else:
@@ -363,7 +363,7 @@ class CarState(CarStateBase):
         ("LKAS_Alert", "ES_LKAS_State", 0),
         ("Signal3", "ES_LKAS_State", 0),
       ]
-      checks.append(("ES_DashStatus", 10))
+      checks = [("ES_DashStatus", 10)]
       checks.append(("ES_LKAS_State", 10))
 
       if CP.carFingerprint not in [CAR.CROSSTREK_2020H, CAR.OUTBACK]:
