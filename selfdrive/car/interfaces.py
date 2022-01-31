@@ -29,13 +29,11 @@ class CarInterfaceBase(ABC):
     self.CP = CP
     self.VM = VehicleModel(CP)
 
-    params = Params()
-
     self.frame = 0
     self.steering_unpressed = 0
     self.low_speed_alert = False
     self.silent_steer_warning = True
-    self.disengage_on_gas = params.get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
+    self.disengage_on_gas = Params().get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
 
     if CarState is not None:
       self.CS = CarState(CP)
@@ -76,7 +74,9 @@ class CarInterfaceBase(ABC):
   def get_std_params(candidate, fingerprint):
     ret = car.CarParams.new_message()
     ret.carFingerprint = candidate
-    ret.unsafeMode = 1 if self.disengage_on_gas else 0
+
+    disengage_on_gas = Params().get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
+    ret.unsafeMode = 1 if disengage_on_gas else 0
 
     # standard ALC params
     ret.steerControlType = car.CarParams.SteerControlType.torque
