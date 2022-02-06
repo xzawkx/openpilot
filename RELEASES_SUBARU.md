@@ -1,3 +1,7 @@
+2022-02-07
+==========
+* Fix for preglobal models FPv2 issue / @martinl
+
 2022-02-05
 ==========
 * Merge upstream (0.8.13) / @martinl
