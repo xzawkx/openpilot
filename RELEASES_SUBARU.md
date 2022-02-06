@@ -1,3 +1,9 @@
+2022-02-05
+==========
+* Merge upstream (0.8.13) / @martinl
+* Subaru car interface refactoring / @martinl
+* FPv2 retry always on if no candidates match after first pass / @martinl
+
 2022-01-30
 ==========
 * FPv2 updates
