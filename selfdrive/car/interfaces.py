@@ -1,6 +1,7 @@
 import os
 import time
-from typing import Dict
+from abc import abstractmethod, ABC
+from typing import Dict, Tuple, List
 
 from cereal import car
 from common.kalman.simple_kalman import KF1D
@@ -23,18 +24,16 @@ ACCEL_MIN = -3.5
 # generic car and radar interfaces
 
 
-class CarInterfaceBase():
+class CarInterfaceBase(ABC):
   def __init__(self, CP, CarController, CarState):
     self.CP = CP
     self.VM = VehicleModel(CP)
-
-    params = Params()
 
     self.frame = 0
     self.steering_unpressed = 0
     self.low_speed_alert = False
     self.silent_steer_warning = True
-    self.disengage_on_gas = params.get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
+    self.disengage_on_gas = Params().get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
 
     if CarState is not None:
       self.CS = CarState(CP)
@@ -52,8 +51,9 @@ class CarInterfaceBase():
     return ACCEL_MIN, ACCEL_MAX
 
   @staticmethod
+  @abstractmethod
   def get_params(candidate, fingerprint=gen_empty_fingerprint(), car_fw=None):
-    raise NotImplementedError
+    pass
 
   @staticmethod
   def init(CP, logcan, sendcan):
@@ -75,6 +75,9 @@ class CarInterfaceBase():
     ret = car.CarParams.new_message()
     ret.carFingerprint = candidate
 
+    disengage_on_gas = Params().get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
+    ret.unsafeMode = 1 if disengage_on_gas else 0
+
     # standard ALC params
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.steerMaxBP = [0.]
@@ -86,13 +89,10 @@ class CarInterfaceBase():
     ret.minEnableSpeed = -1. # enable is done by stock ACC, so ignore this
     ret.steerRatioRear = 0.  # no rear steering, at least on the listed cars aboveA
     ret.openpilotLongitudinalControl = False
-    ret.minSpeedCan = 0.3
-    ret.startAccel = -0.8
     ret.stopAccel = -2.0
-    ret.startingAccelRate = 3.2 # brake_travel/s while releasing on restart
     ret.stoppingDecelRate = 0.8 # brake_travel/s while trying to stop
     ret.vEgoStopping = 0.5
-    ret.vEgoStarting = 0.5
+    ret.vEgoStarting = 0.5  # needs to be >= vEgoStopping to avoid state transition oscillation
     ret.stoppingControl = True
     ret.longitudinalTuning.deadzoneBP = [0.]
     ret.longitudinalTuning.deadzoneV = [0.]
@@ -102,17 +102,18 @@ class CarInterfaceBase():
     ret.longitudinalTuning.kiV = [1.]
     ret.longitudinalActuatorDelayLowerBound = 0.15
     ret.longitudinalActuatorDelayUpperBound = 0.15
+    ret.steerLimitTimer = 1.0
     return ret
 
-  # returns a car.CarState, pass in car.CarControl
-  def update(self, c, can_strings):
-    raise NotImplementedError
+  @abstractmethod
+  def update(self, c: car.CarControl, can_strings: List[bytes]) -> car.CarState:
+    pass
 
-  # return sendcan, pass in a car.CarControl
-  def apply(self, c):
-    raise NotImplementedError
+  @abstractmethod
+  def apply(self, c: car.CarControl) -> Tuple[car.CarControl.Actuators, List[bytes]]:
+    pass
 
-  def create_common_events(self, cs_out, extra_gears=None, gas_resume_speed=-1, pcm_enable=True):
+  def create_common_events(self, cs_out, extra_gears=None, pcm_enable=True):
     events = Events()
 
     if cs_out.doorOpen:
@@ -157,9 +158,7 @@ class CarInterfaceBase():
       events.add(EventName.steerUnavailable)
 
     # Disable on rising edge of gas or brake. Also disable on brake when speed > 0.
-    # Optionally allow to press gas at zero speed to resume.
-    # e.g. Chrysler does not spam the resume button yet, so resuming with gas is handy. FIXME!
-    if (self.disengage_on_gas and cs_out.gasPressed and (not self.CS.out.gasPressed) and cs_out.vEgo > gas_resume_speed) or \
+    if (cs_out.gasPressed and not self.CS.out.gasPressed and self.disengage_on_gas) or \
        (cs_out.brakePressed and (not self.CS.out.brakePressed or not cs_out.standstill)):
       events.add(EventName.pedalPressed)
 
@@ -173,7 +172,7 @@ class CarInterfaceBase():
     return events
 
 
-class RadarInterfaceBase():
+class RadarInterfaceBase(ABC):
   def __init__(self, CP):
     self.pts = {}
     self.delay = 0
@@ -187,7 +186,7 @@ class RadarInterfaceBase():
     return ret
 
 
-class CarStateBase:
+class CarStateBase(ABC):
   def __init__(self, CP):
     self.CP = CP
     self.car_fingerprint = CP.carFingerprint

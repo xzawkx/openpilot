@@ -123,7 +123,6 @@ class CarState(CarStateBase):
 
   @staticmethod
   def get_can_parser(CP):
-    # this function generates lists for signal, messages and initial values
     signals = [
       # sig_name, sig_address, default
       ("Steer_Torque_Sensor", "Steering_Torque", 0),
@@ -153,26 +152,17 @@ class CarState(CarStateBase):
         ("RL", "Wheel_Speeds", 0),
         ("RR", "Wheel_Speeds", 0),
       ]
-      checks += [
-        ("Wheel_Speeds", 50),
-      ]
+      checks.append(("Wheel_Speeds", 50))
 
     # Transmission is on can1 for CROSSTREK_2020H
     if CP.carFingerprint != CAR.CROSSTREK_2020H:
-      signals += [
-        ("Gear", "Transmission", 0),
-      ]
-
-      checks += [
-        ("Transmission", 100),
-     ]
+      signals.append(("Gear", "Transmission", 0))
+      checks.append(("Transmission", 100))
 
     # CruiseControl is on can1 for OUTBACK and not used for CROSSTREK_2020H
     if CP.carFingerprint not in [CAR.OUTBACK, CAR.CROSSTREK_2020H]:
-      signals += [
-        ("Cruise_On", "CruiseControl", 0),
-        ("Cruise_Activated", "CruiseControl", 0),
-      ]
+      signals.append(("Cruise_On", "CruiseControl", 0))
+      signals.append(("Cruise_Activated", "CruiseControl", 0))
 
     if CP.carFingerprint in PREGLOBAL_CARS:
       signals += [
@@ -202,13 +192,9 @@ class CarState(CarStateBase):
       ]
 
       if CP.carFingerprint in [CAR.FORESTER_PREGLOBAL, CAR.LEVORG_PREGLOBAL, CAR.WRX_PREGLOBAL]:
-        checks += [
-          ("Dashlights", 20),
-        ]
+        checks.append(("Dashlights", 20))
       elif CP.carFingerprint in [CAR.LEGACY_PREGLOBAL, CAR.LEGACY_PREGLOBAL_2018, CAR.OUTBACK_PREGLOBAL, CAR.OUTBACK_PREGLOBAL_2018]:
-        checks += [
-          ("Dashlights", 10),
-        ]
+        checks.append(("Dashlights", 10))
 
     else:
       signals += [
@@ -233,27 +219,17 @@ class CarState(CarStateBase):
         ("Steer_Warning", "Steering_Torque", 0),
         ("UNITS", "Dashlights", 0),
       ]
-
-      checks += [
-        ("Dashlights", 10),
-        ("BodyInfo", 10),
-      ]
+      checks.append(("Dashlights", 10))
+      checks.append(("BodyInfo", 10))
 
       # Brake_Status is on can1 for OUTBACK
       if CP.carFingerprint != CAR.OUTBACK:
-        signals += [
-          ("Brake", "Brake_Status", 0),
-        ]
-
-        checks += [
-          ("Brake_Status", 50),
-        ]
+        signals.append(("Brake", "Brake_Status", 0))
+        checks.append(("Brake_Status", 50))
 
       # CruiseControl is on can1 for OUTBACK and nod used for CROSSTREK_2020H
       if CP.carFingerprint not in [CAR.OUTBACK, CAR.CROSSTREK_2020H]:
-        checks += [
-          ("CruiseControl", 20),
-        ]
+        checks.append(("CruiseControl", 20))
 
     if CP.enableBsm:
       signals += [
@@ -262,9 +238,7 @@ class CarState(CarStateBase):
         ("L_APPROACHING", "BSD_RCTA", 0),
         ("R_APPROACHING", "BSD_RCTA", 0),
       ]
-      checks += [
-        ("BSD_RCTA", 17),
-      ]
+      checks.append(("BSD_RCTA", 17))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 0)
 
@@ -340,11 +314,9 @@ class CarState(CarStateBase):
         ("Cruise_Button", "ES_Distance", 0),
         ("Signal7", "ES_Distance", 0),
       ]
+      checks = [("ES_DashStatus", 20)]
+      checks.append(("ES_Distance", 20))
 
-      checks = [
-        ("ES_DashStatus", 20),
-        ("ES_Distance", 20),
-      ]
     else:
       signals = [
         ("Counter", "ES_DashStatus", 0),
@@ -390,11 +362,8 @@ class CarState(CarStateBase):
         ("LKAS_Alert", "ES_LKAS_State", 0),
         ("Signal3", "ES_LKAS_State", 0),
       ]
-
-      checks = [
-        ("ES_DashStatus", 10),
-        ("ES_LKAS_State", 10),
-      ]
+      checks = [("ES_DashStatus", 10)]
+      checks.append(("ES_LKAS_State", 10))
 
       if CP.carFingerprint not in [CAR.CROSSTREK_2020H, CAR.OUTBACK]:
         signals += [
@@ -416,9 +385,6 @@ class CarState(CarStateBase):
           ("Cruise_Resume", "ES_Distance", 0),
           ("Signal6", "ES_Distance", 0),
         ]
-
-        checks += [
-          ("ES_Distance", 20),
-        ]
+        checks.append(("ES_Distance", 20))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, 2)

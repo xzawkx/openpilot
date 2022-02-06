@@ -22,11 +22,10 @@ class CarController():
     self.manual_hold = False
     self.prev_cruise_state = 0
 
-
     self.p = CarControllerParams(CP)
     self.packer = CANPacker(DBC[CP.carFingerprint]['pt'])
 
-  def update(self, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
+  def update(self, c, enabled, CS, frame, actuators, pcm_cancel_cmd, visual_alert, left_line, right_line, left_lane_depart, right_lane_depart):
 
     can_sends = []
 
@@ -41,7 +40,7 @@ class CarController():
       apply_steer = apply_std_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.p)
       self.steer_rate_limited = new_steer != apply_steer
 
-      if not enabled:
+      if not c.active:
         apply_steer = 0
 
       if CS.CP.carFingerprint in PREGLOBAL_CARS:
@@ -159,4 +158,7 @@ class CarController():
          can_sends.append(subarucan.create_brake_pedal(self.packer, CS.brake_pedal_msg, speed_cmd, pcm_cancel_cmd))
          self.brake_pedal_cnt = CS.brake_pedal_msg["Counter"]
 
-    return can_sends
+    new_actuators = actuators.copy()
+    new_actuators.steer = self.apply_steer_last / self.p.STEER_MAX
+
+    return new_actuators, can_sends
