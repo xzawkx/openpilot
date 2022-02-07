@@ -74,9 +74,7 @@ class CarInterfaceBase(ABC):
   def get_std_params(candidate, fingerprint):
     ret = car.CarParams.new_message()
     ret.carFingerprint = candidate
-
-    disengage_on_gas = Params().get("DisableDisengageOnGasToggle", encoding='utf8') == "0"
-    ret.unsafeMode = 1 if disengage_on_gas else 0
+    ret.unsafeMode = 1  # see safety_declarations.h for allowed values
 
     # standard ALC params
     ret.steerControlType = car.CarParams.SteerControlType.torque
