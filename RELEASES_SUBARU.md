@@ -1,6 +1,7 @@
 2022-02-07
 ==========
 * Fix for preglobal models FPv2 issue / @martinl
+* Fix for disengage on gas LKAS fault / @martinl
 
 2022-02-05
 ==========
